@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Trung Quốc 7N6Đ</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        .navbar {
+            background-color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            padding: 0;
+            margin: 0;
+        }
+        .navbar li {
+            padding: 10px 15px;
+        }
+        .navbar li.active a {
+            color: orange;
+            font-weight: bold;
+        }
+        .tour-container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .tour-header {
+            text-align: center;
+        }
+        .rating {
+            color: green;
+            font-weight: bold;
+        }
+        .tour-content {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tour-image {
+            position: relative;
+            width: 60%;
+        }
+        .tour-image img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .promotion-banner {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: orange;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        .tour-details {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .price {
+            color: red;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .book-btn {
+            background: orange;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+        .tour-tabs ul {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: #f0f0f0;
+            list-style: none;
+            border-radius: 5px;
+        }
+        .tour-tabs li {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .tour-tabs li.active {
+            border-bottom: 3px solid orange;
+            font-weight: bold;
+        }
+        .tour-description {
+            margin-top: 20px;
+            padding: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .highlight {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .itinerary {
+            margin-top: 20px;
+        }
+        .day {
+            background: #fff;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .day:hover {
+            background: #f1f1f1;
+        }
+        .day:after {
+            content: "▼";
+            font-size: 14px;
+            color: #888;
+            transition: 0.3s;
+        }
+        .day.active:after {
+            content: "▲";
+        }
+        .content {
+            display: none;
+            padding: 10px 15px;
+            background: #f9f9f9;
+            border-left: 3px solid orange;
+            transition: max-height 0.3s ease-out;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .tab.active {
+            background: orange;
+            color: white;
+        }
+        .table-container {
+            display: none;
+        }
+        .table-container.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+        .discount {
+            color: orange;
+            font-weight: bold;
+        }
+        .book-btn {
+            background: #ff5a5f;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .service-item {
+            background: #fff;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .service-item:hover {
+            background: #f1f1f1;
+        }
+        .icon {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        .arrow {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+            color: #666;
+        }
+        .service-item.active .arrow {
+            transform: rotate(180deg);
+            color: red;
+        }
+        .service-content {
+            display: none;
+            padding: 10px 15px;
+            background: #f9f9f9;
+            border-left: 3px solid orange;
+            transition: max-height 0.3s ease-out;
+        }
+        .review-summary {
+            display: flex;
+            align-items: center;
+            background: #d8f3dc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .review-score {
+            background: #40916c;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+        .review-details {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d6a4f;
+        }
+        .review-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .review-score-small {
+            background: #40916c;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+        .review-text {
+            flex-grow: 1;
+        }
+        .review-text p {
+            margin: 5px 0;
+        }
+        .review-text .author {
+            font-weight: bold;
+            color: #2d6a4f;
+        }
+        .toggle-text {
+            color: #007bff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .hidden {
+            display: none;
+        }
+        .review-images {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .review-images img {
+            width: 100px;
+            height: 70px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+        .footer {
+            background: #d9782c;
+            color: white;
+            padding: 30px 20px;
+        }
+        .footer-container {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+        .footer h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .footer p, .footer a {
+            font-size: 14px;
+            line-height: 1.6;
+            color: white;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .footer-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .footer-icons img {
+            width: 40px;
+            height: auto;
+        }
+        .newsletter {
+            background: #fff;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .newsletter input {
+            flex: 1;
+            border: none;
+            padding: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        .newsletter button {
+            background: orange;
+            border: none;
+            padding: 8px 15px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .footer-bottom {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <ul>
+                <li><a href="#">Vé máy bay</a></li>
+                <li><a href="#">Khách sạn</a></li>
+                <li class="active"><a href="#">Tour du lịch</a></li>
+                <li><a href="#">Du thuyền Hạ Long</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="tour-container">
+        <section class="tour-header">
+            <h1>Tour Trung Quốc 7N6Đ: Bắc Kinh - Thượng Hải - Hàng Châu - Ô Trấn</h1>
+            <span class="rating">9.1 <span class="excellent">Tuyệt vời</span> - 2 đánh giá</span>
+        </section>
+
+        <section class="tour-content">
+            <div class="tour-image">
+                <img src="tour-image.jpg" alt="Tour Trung Quốc">
+                <div class="promotion-banner">Tặng ngay Vali Cao Cấp 1,5 Triệu</div>
+            </div>
+            <div class="tour-details">
+                <p><strong>7 ngày 6 đêm</strong></p>
+                <p>Khởi hành từ Hà Nội</p>
+                <p>Giá từ: <span class="price">21.490.000đ</span></p>
+                <button class="book-btn">Gửi yêu cầu</button>
+            </div>
+        </section>
+
+        <nav class="tour-tabs">
+            <ul>
+                <li class="active">Giới thiệu</li>
+                <li>Lịch trình</li>
+                <li>Bảng giá</li>
+                <li>Đánh giá</li>
+                <li>Hỏi đáp</li>
+                <li>Tour tương tự</li>
+            </ul>
+        </nav>
+
+        <section class="tour-description">
+            <p>Cung đường Thượng Hải - Hàng Châu - Ô Trấn - Bắc Kinh được du khách yêu thích bởi sự kết hợp giữa 2 vẻ đẹp hiện đại và cổ kính...</p>
+            <h2>📌 Điểm nổi bật</h2>
+            <ul>
+                <li>✅ Bay hàng không China Airlines</li>
+                <li>✅ Chinh phục Vạn Lý Trường Thành</li>
+                <li>✅ Tham quan Tử Cấm Thành</li>
+                <li>✅ Thưởng thức vịt quay Bắc Kinh nổi tiếng</li>
+            </ul>
+        </section>
+        <section>
+        <h2>📍 Lịch trình tour</h2>
+        <div class="itinerary">
+            <div class="day">Ngày 1: Hà Nội - Thượng Hải</div>
+            <div class="content">🛫 Bay từ Hà Nội đến Thượng Hải. Tham quan Nam Kinh Lộ, Bến Thượng Hải.</div>
+
+            <div class="day">Ngày 2: Thượng Hải</div>
+            <div class="content">🏛 Tham quan Miếu Thành Hoàng, phố cổ, Tháp truyền hình Đông Phương Minh Châu.</div>
+
+            <div class="day">Ngày 3: Thượng Hải - Ô Trấn - Hàng Châu</div>
+            <div class="content">🌊 Du thuyền trên Tây Hồ, khám phá thị trấn cổ Ô Trấn.</div>
+
+            <div class="day">Ngày 4: Hàng Châu - Bắc Kinh</div>
+            <div class="content">🚆 Đi tàu cao tốc đến Bắc Kinh, thăm Quảng Trường Thiên An Môn.</div>
+
+            <div class="day">Ngày 5: Bắc Kinh</div>
+            <div class="content">🏯 Tham quan Tử Cấm Thành, Vạn Lý Trường Thành.</div>
+
+            <div class="day">Ngày 6: Bắc Kinh - Hà Nội</div>
+            <div class="content">💼 Tự do mua sắm, khởi hành về Hà Nội.</div>
+        </div>
+        </section>
+        <section>
+          <h2>📌 Bảng giá (Khởi hành từ Hà Nội)</h2>
+    <div class="tabs">
+        <div class="tab active" data-month="all">Tất cả</div>
+        <div class="tab" data-month="5">Tháng 5</div>
+        <div class="tab" data-month="6">Tháng 6</div>
+        <div class="tab" data-month="7">Tháng 7</div>
+        <div class="tab" data-month="8">Tháng 8</div>
+    </div>
+
+    <div class="table-container active" data-month="all">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ngày khởi hành</th>
+                    <th>Hãng tour</th>
+                    <th>Giá tour</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>04/05/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>21.990.000đ</del> <span class="price">21.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+                <tr>
+                    <td>15/06/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>22.990.000đ</del> <span class="price">22.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+                <tr>
+                    <td>05/07/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>23.990.000đ</del> <span class="price">23.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+                <tr>
+                    <td>10/08/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>23.990.000đ</del> <span class="price">23.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" data-month="5">
+        <table>
+          <thead>
+            <tr>
+                <th>Ngày khởi hành</th>
+                <th>Hãng tour</th>
+                <th>Giá tour</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+            <tbody>
+                <tr>
+                    <td>04/05/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>21.990.000đ</del> <span class="price">21.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" data-month="6">
+        <table>
+          <thead>
+            <tr>
+                <th>Ngày khởi hành</th>
+                <th>Hãng tour</th>
+                <th>Giá tour</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+            <tbody>
+                <tr>
+                    <td>15/06/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>22.990.000đ</del> <span class="price">22.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" data-month="7">
+        <table>
+          <thead>
+            <tr>
+                <th>Ngày khởi hành</th>
+                <th>Hãng tour</th>
+                <th>Giá tour</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+            <tbody>
+                <tr>
+                    <td>05/07/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>23.990.000đ</del> <span class="price">23.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-container" data-month="8">
+        <table>
+          <thead>
+            <tr>
+                <th>Ngày khởi hành</th>
+                <th>Hãng tour</th>
+                <th>Giá tour</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+            <tbody>
+                <tr>
+                    <td>10/08/2025<br><span class="discount">Còn chỗ</span></td>
+                    <td>China Airlines</td>
+                    <td><del>23.990.000đ</del> <span class="price">23.490.000đ</span></td>
+                    <td><button class="book-btn">Giữ chỗ ngay</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+        </section>
+        <section>
+          <h2>📌 Quy định dịch vụ</h2>
+          <div class="service-item">
+              <span>✔ Giá bao gồm</span>
+              <span class="arrow">▼</span>
+          </div>
+          <div class="service-content">
+              🛫 Vé máy bay khứ hồi, hành lý ký gửi 20kg, bảo hiểm du lịch,...
+          </div>
+
+          <div class="service-item">
+              <span>🚫 Giá không bao gồm</span>
+              <span class="arrow">▼</span>
+          </div>
+          <div class="service-content">
+              ❌ Chi phí cá nhân, đồ uống, tip cho hướng dẫn viên,...
+          </div>
+
+          <div class="service-item">
+              <span>❌ Quy định huỷ/đổi đặt tour</span>
+              <span class="arrow">▼</span>
+          </div>
+          <div class="service-content">
+              🔄 Miễn phí huỷ trước 7 ngày, huỷ dưới 7 ngày mất 50% phí.
+          </div>
+
+          <div class="service-item">
+              <span>🛏 Quy định trẻ em và em bé</span>
+              <span class="arrow">▼</span>
+          </div>
+          <div class="service-content">
+              👶 Trẻ dưới 2 tuổi miễn phí, từ 2-11 tuổi tính 75% giá vé.
+          </div>
+
+          <div class="service-item" style="color: red;">
+              <span>⚠ Lưu ý *</span>
+              <span class="arrow">▼</span>
+          </div>
+          <div class="service-content">
+              🔔 Giá có thể thay đổi tùy theo thời điểm đặt tour.
+          </div>
+          </section>
+          <section>
+            <h2>📌 Đánh giá</h2>
+
+    <div class="review-summary">
+        <div class="review-score">9.1</div>
+        <div class="review-details">
+            <p><strong>Tuyệt vời</strong></p>
+            <p>2 đánh giá</p>
+        </div>
+    </div>
+
+    <div class="review-item">
+        <div class="review-score-small">9.2</div>
+        <div class="review-text">
+            <p class="author">Tuyệt vời - Thu Huyền</p>
+            <p>17/12/2024</p>
+            <p>
+                Gia đình mình vừa có một chuyến du lịch tuyệt vời. Mình chọn tour này vì lịch trình đi qua những địa điểm rất thú vị mà cả nhà đều yêu thích.
+                <span class="extra hidden">Đặc biệt, đồ ăn trong chuyến đi rất hợp khẩu vị của gia đình mình, ai cũng khen ngon. Khi đến Vạn Lý Trường Thành, bố mẹ mình thật sự vui mừng và hào hứng. Nếu có cơ hội chắc chắn mình sẽ đi lại tour này.</span>
+                <span class="toggle-text">Xem thêm »</span>
+            </p>
+            <div class="review-images">
+                <img src="https://via.placeholder.com/100x70" alt="Ảnh đánh giá">
+                <img src="https://via.placeholder.com/100x70" alt="Ảnh đánh giá">
+            </div>
+        </div>
+    </div>
+
+    <div class="review-item">
+        <div class="review-score-small">9.0</div>
+        <div class="review-text">
+            <p class="author">Tuyệt vời - Quang Anh</p>
+            <p>01/12/2024</p>
+            <p>
+                Lịch trình chuyến đi khá dày, nhưng đổi lại giá cả rất hợp lý. Mình rất ấn tượng khi đến Thượng Hải, nơi đây mang nét đẹp cổ kính giao thoa với nhịp sống hiện đại vô cùng.
+                <span class="extra hidden">Mình còn chụp rất nhiều ảnh tại tháp truyền hình Minh...</span>
+                <span class="toggle-text">Xem thêm »</span>
+            </p>
+            <div class="review-images">
+                <img src="https://via.placeholder.com/100x70" alt="Ảnh đánh giá">
+                <img src="https://via.placeholder.com/100x70" alt="Ảnh đánh giá">
+            </div>
+        </div>
+    </div>
+          </section>
+        <script>
+          document.addEventListener("DOMContentLoaded", function () {
+            const days = document.querySelectorAll(".day");
+
+            if (days.length > 0) {  // Kiểm tra xem có phần tử .day nào không
+                days.forEach(day => {
+                    day.addEventListener("click", function () {
+                        // Đóng tất cả nội dung khác
+                        const allContents = document.querySelectorAll(".content");
+                        const allDays = document.querySelectorAll(".day");
+
+                        if (!this.classList.contains("active")) {
+                            allDays.forEach(d => d.classList.remove("active"));
+                            allContents.forEach(c => c.style.display = "none");
+                        }
+
+                        // Mở hoặc đóng nội dung
+                        this.classList.toggle("active");
+                        const content = this.nextElementSibling;
+
+                        if (content && content.classList.contains("content")) {
+                            content.style.display = (content.style.display === "block") ? "none" : "block";
+                        }
+                    });
+                });
+            }
+        });
+      </script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(".tab");
+    const tables = document.querySelectorAll(".table-container");
+
+    if (tabs.length === 0 || tables.length === 0) {
+        console.error("Không tìm thấy tabs hoặc bảng giá!");
+        return;
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function () {
+            tabs.forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+
+            const month = this.getAttribute("data-month");
+            tables.forEach(table => {
+                if (table.getAttribute("data-month") === month) {
+                    table.classList.add("active");
+                } else {
+                    table.classList.remove("active");
+                }
+            });
+        });
+    });
+});
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const items = document.querySelectorAll(".service-item");
+
+          items.forEach(item => {
+              item.addEventListener("click", function () {
+                  const content = this.nextElementSibling;
+                  const arrow = this.querySelector(".arrow");
+
+                  // Đóng tất cả các mục khác
+                  document.querySelectorAll(".service-content").forEach(c => c.style.display = "none");
+                  document.querySelectorAll(".service-item").forEach(i => i.classList.remove("active"));
+                  document.querySelectorAll(".arrow").forEach(a => a.style.transform = "rotate(0deg)");
+
+                  // Mở mục được nhấp vào
+                  if (content.style.display !== "block") {
+                      this.classList.add("active");
+                      content.style.display = "block";
+                      arrow.style.transform = "rotate(180deg)";
+                  }
+              });
+          });
+      });
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleTexts = document.querySelectorAll(".toggle-text");
+
+        toggleTexts.forEach(toggle => {
+            toggle.addEventListener("click", function () {
+                const extraText = this.previousElementSibling;
+                if (extraText.classList.contains("hidden")) {
+                    extraText.classList.remove("hidden");
+                    this.textContent = "Ít hơn «";
+                } else {
+                    extraText.classList.add("hidden");
+                    this.textContent = "Xem thêm »";
+                }
+            });
+        });
+    });
+</script>
+    </main>
+    <footer class="footer">
+      <div class="footer-container">
+
+          <div class="footer-column">
+              <h3>📍 TẬP ĐOÀN BPGROUP</h3>
+              <p><strong>Công ty Cổ Phần Công nghệ Du Lịch BestPrice</strong></p>
+              <p>📍 57 Trần Quốc Toản, Hoàn Kiếm, Hà Nội</p>
+              <p>📍 Số 32, Cái Tắt, An Dương, Hải Phòng</p>
+              <p>📞 (024) 7307 2605</p>
+              <p>📜 Giấy phép KD: 0104679428</p>
+          </div>
+
+          <div class="footer-column">
+              <h3>📌 DANH MỤC</h3>
+              <p><a href="#">Vé máy bay</a></p>
+              <p><a href="#">Khách sạn</a></p>
+              <p><a href="#">Tour du lịch</a></p>
+              <p><a href="#">Du thuyền Hạ Long</a></p>
+              <p><a href="#">Combo du lịch</a></p>
+          </div>
+
+          <div class="footer-column">
+              <h3>🔗 LIÊN KẾT</h3>
+              <p><a href="#">Về chúng tôi</a></p>
+              <p><a href="#">Liên hệ</a></p>
+              <p><a href="#">Chính sách riêng tư</a></p>
+              <p><a href="#">Điều khoản và điều kiện</a></p>
+          </div>
+
+          <div class="footer-column">
+              <h3>✉ ĐĂNG KÝ NHẬN TIN</h3>
+              <p>Nhận ưu đãi lên đến <strong>50%</strong> khi đăng ký</p>
+              <div class="newsletter">
+                  <input type="email" placeholder="Nhập email của bạn">
+                  <button>Đăng ký ngay</button>
+              </div>
+          </div>
+
+      </div>
+
+      <div class="footer-bottom">
+          <p>© 2025 BPGROUP. All rights reserved.</p>
+      </div>
+  </footer>
+</body>
+</html>
