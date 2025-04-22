@@ -1,18 +1,38 @@
-<form method="get" action="/tim-tour">
-  <label>Địa điểm:</label>
-  <select name="diadiem">
-    <option value="">--Chọn--</option>
-    <option value="sapa">Sapa</option>
-    <option value="da-nang">Đà Nẵng</option>
-    <option value="nha-trang">Nha Trang</option>
-  </select>
+function tour_search_form_shortcode() {
+    // Lấy tất cả địa điểm đã dùng trong ACF field 'dia_diem'
+    global $wpdb;
+    $dia_diems = $wpdb->get_col("
+        SELECT DISTINCT meta_value FROM {$wpdb->prefix}postmeta 
+        WHERE meta_key = 'dia_diem' AND meta_value != ''
+    ");
 
-  <label>Khởi hành từ:</label>
-  <select name="khoihanh">
-    <option value="">--Chọn--</option>
-    <option value="ha-noi">Hà Nội</option>
-    <option value="tp-hcm">TP. Hồ Chí Minh</option>
-  </select>
+    $khoi_hanh_tus = $wpdb->get_col("
+        SELECT DISTINCT meta_value FROM {$wpdb->prefix}postmeta 
+        WHERE meta_key = 'khoi_hanh_tu' AND meta_value != ''
+    ");
 
-  <button type="submit">Tìm ngay</button>
-</form>
+    ob_start();
+    ?>
+    <form method="get" action="/tim-tour">
+      <label>Địa điểm:</label>
+      <select name="diadiem">
+        <option value="">--Chọn--</option>
+        <?php foreach ($dia_diems as $diadiem): ?>
+            <option value="<?php echo esc_attr($diadiem); ?>"><?php echo esc_html($diadiem); ?></option>
+        <?php endforeach; ?>
+      </select>
+
+      <label>Khởi hành từ:</label>
+      <select name="khoihanh">
+        <option value="">--Chọn--</option>
+        <?php foreach ($khoi_hanh_tus as $khoihanh): ?>
+            <option value="<?php echo esc_attr($khoihanh); ?>"><?php echo esc_html($khoihanh); ?></option>
+        <?php endforeach; ?>
+      </select>
+
+      <button type="submit">Tìm ngay</button>
+    </form>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('tour_search_form', 'tour_search_form_shortcode');
