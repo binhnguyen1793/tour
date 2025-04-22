@@ -1,6 +1,7 @@
 function tour_search_form_shortcode() {
-    // Lấy tất cả địa điểm đã dùng trong ACF field 'dia_diem'
     global $wpdb;
+
+    // Lấy giá trị thực tế đã dùng trong các bài viết "tour"
     $dia_diems = $wpdb->get_col("
         SELECT DISTINCT meta_value FROM {$wpdb->prefix}postmeta 
         WHERE meta_key = 'dia_diem' AND meta_value != ''
@@ -11,27 +12,83 @@ function tour_search_form_shortcode() {
         WHERE meta_key = 'khoi_hanh_tu' AND meta_value != ''
     ");
 
+    // Giữ lại giá trị đã chọn (nếu có)
+    $selected_dd = $_GET['diadiem'] ?? '';
+    $selected_kh = $_GET['khoihanh'] ?? '';
+
     ob_start();
     ?>
-    <form method="get" action="/tim-tour">
-      <label>Địa điểm:</label>
-      <select name="diadiem">
-        <option value="">--Chọn--</option>
-        <?php foreach ($dia_diems as $diadiem): ?>
-            <option value="<?php echo esc_attr($diadiem); ?>"><?php echo esc_html($diadiem); ?></option>
-        <?php endforeach; ?>
-      </select>
+    <style>
+      .tour-search-box {
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .tour-search-box form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: flex-end;
+        justify-content: space-between;
+      }
+      .tour-search-box label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .tour-search-box select {
+        padding: 10px;
+        font-size: 16px;
+        width: 250px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .tour-search-box button {
+        background-color: #f26522;
+        color: white;
+        padding: 12px 25px;
+        font-size: 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .tour-search-box button:hover {
+        background-color: #d94f0c;
+      }
+    </style>
 
-      <label>Khởi hành từ:</label>
-      <select name="khoihanh">
-        <option value="">--Chọn--</option>
-        <?php foreach ($khoi_hanh_tus as $khoihanh): ?>
-            <option value="<?php echo esc_attr($khoihanh); ?>"><?php echo esc_html($khoihanh); ?></option>
-        <?php endforeach; ?>
-      </select>
-
-      <button type="submit">Tìm ngay</button>
-    </form>
+    <div class="tour-search-box">
+      <form method="get" action="/tim-tour">
+        <div>
+          <label>Địa điểm</label>
+          <select name="diadiem" required>
+            <option value="">Bạn muốn đi đâu?</option>
+            <?php foreach ($dia_diems as $dd): ?>
+              <option value="<?php echo esc_attr($dd); ?>" <?php selected($selected_dd, $dd); ?>>
+                <?php echo esc_html($dd); ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div>
+          <label>Khởi hành từ</label>
+          <select name="khoihanh" required>
+            <option value="">Vui lòng chọn</option>
+            <?php foreach ($khoi_hanh_tus as $kh): ?>
+              <option value="<?php echo esc_attr($kh); ?>" <?php selected($selected_kh, $kh); ?>>
+                <?php echo esc_html($kh); ?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div>
+          <button type="submit">Tìm ngay</button>
+        </div>
+      </form>
+    </div>
     <?php
     return ob_get_clean();
 }
