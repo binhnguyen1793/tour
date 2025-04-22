@@ -1,0 +1,18 @@
+<form method="get" action="/tim-tour">
+  <label>Địa điểm:</label>
+  <select name="diadiem">
+    <option value="">--Chọn--</option>
+    <option value="sapa">Sapa</option>
+    <option value="da-nang">Đà Nẵng</option>
+    <option value="nha-trang">Nha Trang</option>
+  </select>
+
+  <label>Khởi hành từ:</label>
+  <select name="khoihanh">
+    <option value="">--Chọn--</option>
+    <option value="ha-noi">Hà Nội</option>
+    <option value="tp-hcm">TP. Hồ Chí Minh</option>
+  </select>
+
+  <button type="submit">Tìm ngay</button>
+</form>
