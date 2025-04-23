@@ -1,95 +1,176 @@
-function tour_search_form_shortcode() {
-    global $wpdb;
-
-    // Lấy giá trị thực tế đã dùng trong các bài viết "tour"
-    $dia_diems = $wpdb->get_col("
-        SELECT DISTINCT meta_value FROM {$wpdb->prefix}postmeta 
-        WHERE meta_key = 'dia_diem' AND meta_value != ''
-    ");
-
-    $khoi_hanh_tus = $wpdb->get_col("
-        SELECT DISTINCT meta_value FROM {$wpdb->prefix}postmeta 
-        WHERE meta_key = 'khoi_hanh_tu' AND meta_value != ''
-    ");
-
-    // Giữ lại giá trị đã chọn (nếu có)
-    $selected_dd = $_GET['diadiem'] ?? '';
-    $selected_kh = $_GET['khoihanh'] ?? '';
-
-    ob_start();
-    ?>
-    <style>
-      .tour-search-box {
-        background: #fff;
-        padding: 30px;
-        border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-        max-width: 800px;
-        margin: 0 auto;
-      }
-      .tour-search-box form {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        align-items: flex-end;
-        justify-content: space-between;
-      }
-      .tour-search-box label {
-        font-weight: bold;
-        display: block;
-        margin-bottom: 5px;
-      }
-      .tour-search-box select {
-        padding: 10px;
-        font-size: 16px;
-        width: 250px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-      .tour-search-box button {
-        background-color: #f26522;
-        color: white;
-        padding: 12px 25px;
-        font-size: 16px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .tour-search-box button:hover {
-        background-color: #d94f0c;
-      }
-    </style>
-
-    <div class="tour-search-box">
-      <form method="get" action="/tim-tour">
-        <div>
-          <label>Địa điểm</label>
-          <select name="diadiem" required>
-            <option value="">Bạn muốn đi đâu?</option>
-            <?php foreach ($dia_diems as $dd): ?>
-              <option value="<?php echo esc_attr($dd); ?>" <?php selected($selected_dd, $dd); ?>>
-                <?php echo esc_html($dd); ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div>
-          <label>Khởi hành từ</label>
-          <select name="khoihanh" required>
-            <option value="">Vui lòng chọn</option>
-            <?php foreach ($khoi_hanh_tus as $kh): ?>
-              <option value="<?php echo esc_attr($kh); ?>" <?php selected($selected_kh, $kh); ?>>
-                <?php echo esc_html($kh); ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <div>
-          <button type="submit">Tìm ngay</button>
-        </div>
-      </form>
-    </div>
-    <?php
-    return ob_get_clean();
+/* Giao diện BestPrice cho single-tour */
+.tour-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background: #fff;
 }
-add_shortcode('tour_search_form', 'tour_search_form_shortcode');
+
+.tour-header img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.tour-title {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 20px;
+  color: #333;
+}
+
+.rating {
+  font-size: 16px;
+  color: green;
+}
+
+.tour-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.tour-image {
+  position: relative;
+  flex: 1 1 60%;
+}
+
+.tour-image img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.promotion-banner {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  background: orange;
+  color: white;
+  padding: 5px 10px;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.tour-details {
+  flex: 1 1 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.price {
+  color: red;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.book-btn {
+  background: #ff5a5f;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.tour-tabs ul {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: #f0f0f0;
+  list-style: none;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.tab {
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+  transition: 0.3s;
+}
+
+.tab.active {
+  color: orange;
+  border-bottom: 3px solid orange;
+}
+
+.tour-section {
+  margin-top: 40px;
+}
+
+.tour-section h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #f26522;
+  border-left: 4px solid #f26522;
+  padding-left: 10px;
+}
+
+.itinerary .day {
+  background: #fff;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.itinerary .content {
+  display: none;
+  padding: 10px 15px;
+  background: #f9f9f9;
+  border-left: 3px solid orange;
+}
+
+.service-item {
+  background: #fff;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.service-content {
+  display: none;
+  padding: 10px 15px;
+  background: #f9f9f9;
+  border-left: 3px solid orange;
+}
+
+.review-summary {
+  display: flex;
+  align-items: center;
+  background: #d8f3dc;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.review-score {
+  background: #40916c;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 10px;
+  margin-right: 15px;
+}
+
+.review-details {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2d6a4f;
+}
