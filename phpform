@@ -115,14 +115,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   toggleTexts.forEach(toggle => {
     toggle.addEventListener("click", function () {
-      const extraText = this.previousElementSibling;
-      if (extraText.classList.contains("hidden")) {
-        extraText.classList.remove("hidden");
-        this.textContent = "Ít hơn «";
-      } else {
-        extraText.classList.add("hidden");
-        this.textContent = "Xem thêm »";
-      }
+      const extraText = this.parentElement.querySelector(".extra");
+      if (!extraText) return;
+
+      const isHidden = extraText.classList.contains("hidden");
+      extraText.classList.toggle("hidden");
+
+      this.textContent = isHidden ? "Ít hơn «" : "Xem thêm »";
     });
   });
 });
