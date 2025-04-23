@@ -1,0 +1,39 @@
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.tab {
+  padding: 10px 15px;
+  cursor: pointer;
+  background: #f0f0f0;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+.tab.active {
+  background: orange;
+  color: white;
+}
+
+.price-tab {
+  padding: 10px 18px;
+  background: #f8f8f8;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  transition: all 0.3s ease;
+}
+
+.price-tab:hover {
+  background: #eee;
+}
+
+.price-tab.active {
+  background: #ff6600;
+  color: #fff;
+  border-color: #ff6600;
+}
