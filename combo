@@ -1,3 +1,17 @@
-<?php if ($gia = get_field('gia_tour')): ?>
-  <a href="<?= site_url('/thanh-toan?price=' . intval($gia)) ?>" class="tour-request-btn">Thanh toán</a>
-<?php endif; ?>
+fetch("http://YOUR_LOCAL_IP:8080/run-bot", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount: amount })
+})
+.then(res => {
+    if (!res.ok) throw new Error("Không lấy được ảnh QR");
+    return res.blob();
+})
+.then(blob => {
+    const url = URL.createObjectURL(blob);
+    document.getElementById("qr-popup").innerHTML = `<img src="${url}" style="max-width:300px;">`;
+})
+.catch(err => {
+    console.error(err);
+    alert("Lỗi khi gọi bot.");
+});
