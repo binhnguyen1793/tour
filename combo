@@ -1,17 +1,35 @@
-fetch("http://YOUR_LOCAL_IP:8080/run-bot", {
+<script>
+function submitPayment() {
+  const name = document.getElementById('user-name').value.trim();
+  const email = document.getElementById('user-email').value.trim();
+  const amount = <?= $gia_tour ?>; // hoặc lấy từ URL nếu muốn động
+
+  if (!name || !email || amount === 0) {
+    alert('Vui lòng nhập đủ thông tin hợp lệ.');
+    return;
+  }
+
+  const formData = new URLSearchParams();
+  formData.append('price', amount);  // Đổi sang `price` để khớp với API
+
+  fetch("http://192.168.1.5:8080/run-bot", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount: amount })
-})
-.then(res => {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData.toString()
+  })
+  .then(res => {
     if (!res.ok) throw new Error("Không lấy được ảnh QR");
     return res.blob();
-})
-.then(blob => {
+  })
+  .then(blob => {
     const url = URL.createObjectURL(blob);
     document.getElementById("qr-popup").innerHTML = `<img src="${url}" style="max-width:300px;">`;
-})
-.catch(err => {
+  })
+  .catch(err => {
     console.error(err);
     alert("Lỗi khi gọi bot.");
-});
+  });
+}
+</script>
