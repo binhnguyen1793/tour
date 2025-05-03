@@ -1,19 +1,91 @@
-<?php include get_template_directory() . '/single-tour.php'; ?>
+<?php
+/**
+ * Template for displaying single Tour post - Giao diện giống BestPrice
+ */
+get_header();
+global $post;
 
+// Lấy các trường từ ACF
+$img           = get_field('anh_dai_dien_tour');
+$gia           = get_field('gia_tour');
+$thoi_gian     = get_field('thoi_gian');
+$khoi_hanh     = get_field('khoihanh');
+$diem_den      = get_field('diemden');
+$phuong_tien   = get_field('phuong_tien');
+$ma_tour       = get_field('ma_tour');
+$lich_trinh    = get_field('lich_trinh');
+$bao_gom       = get_field('bao_gom');
+$khong_bao_gom = get_field('khong_bao_gom');
+$chinh_sach    = get_field('chinh_sach');
+$luu_y         = get_field('luu_y');
+$combo_bao_gom = get_field('combo_bao_gom');
+?>
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/style-tour.css">
+<div class ="container">
+<section class="tour-top-header">
+	<h1 class="tour-title"><?php the_title(); ?></h1>
+	<?php
+	  $rating = get_field('danh_gia'); // Ví dụ: 9.2
+	  $review_count = get_field('so_luot_danh_gia'); // Ví dụ: 3
+	  if ($rating && $review_count):
+		$label = 'Rất tốt';
+		if ($rating >= 9) $label = 'Tuyệt vời';
+		elseif ($rating >= 8) $label = 'Rất tốt';
+		elseif ($rating >= 7) $label = 'Tốt';
+		elseif ($rating >= 5) $label = 'Trung bình';
+		else $label = 'Kém';
+	?>
+	  <div class="tour-rating-box">
+		<div class="score-box"><?php echo number_format($rating, 1); ?></div>
+		<span class="score-label"><?php echo $label; ?></span>
+		<span class="review-count">– <?php echo $review_count; ?> đánh giá</span>
+	  </div>
+	<?php endif; ?>
+  <div class="tour-top-grid">
+    <!-- Ảnh đại diện -->
+    <div class="tour-featured-img">
+      <?php if (has_post_thumbnail()): ?>
+        <?php the_post_thumbnail('large'); ?>
+      <?php endif; ?>
+    </div>
 
-$post_type = get_post_type();
-if ($post_type === 'tour' || $post_type === 'combo') {
-    // xử lý như nhau
-}
+    <!-- Thông tin tour -->
+    <div class="tour-info-box">
+      <p class="tour-duration"><span class="icon">⏰</span> <?php the_field('thoi_gian'); ?></p>
+      <p class="tour-location">
+        <span class="icon">📍</span> <strong>Khởi hành từ:</strong> <?php the_field('khoihanh'); ?>
+      </p>
+      <p class="tour-route">
+        <span class="icon">🗺️</span> <strong>Lộ trình:</strong> <?php the_field('lo_trinh'); ?>
+      </p>
+      <?php if ($gia_km = get_field('gia_tour')): ?>
+        <p class="tour-price">
+          Giá từ: <del><?php echo number_format(get_field('gia_goc'), 0, ',', '.'); ?>đ</del>
+          <span><?php echo number_format($gia_km, 0, ',', '.'); ?>đ</span>
+        </p>
+      <?php endif; ?>
 
-
-<?php if (get_post_type() === 'combo' && get_field('combo_bao_gom')): ?>
-    <div style="margin-top:16px">
+      <?php if ($combo_bao_gom): ?>
+      <div class="combo-included-box">
         <strong>Combo bao gồm:</strong>
         <ul>
-            <?php foreach (explode("\n", get_field('combo_bao_gom')) as $line): ?>
-                <li><?= esc_html($line) ?></li>
-            <?php endforeach; ?>
+          <?php foreach (explode("\n", $combo_bao_gom) as $line): ?>
+            <li><?= esc_html(trim($line)) ?></li>
+          <?php endforeach; ?>
         </ul>
+      </div>
+      <?php endif; ?>
+
+      <!-- Ảnh đảm bảo 100% -->
+      <div class="tour-guarantee">
+        <img src="http://localhost/travelweb/wp-content/uploads/2025/04/icon-core-value-quality.png" alt="Đảm bảo 100%">
+      </div>
+
+      <!-- Button và xem lịch -->
+      <a href="#banggia" class="tour-schedule-btn">Xem lịch khởi hành</a>
+      <a href="#thanh-toan" class="tour-request-btn">Thanh toán</a>
     </div>
-<?php endif; ?>
+  </div>
+</section>
+</div>
+<!-- Các phần còn lại giữ nguyên như bạn đã có -->
