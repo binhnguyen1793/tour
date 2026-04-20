@@ -342,8 +342,14 @@ iframe:hover{
 <div class ="app">
 <div class="header">
   <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
-  <div>
+
+  <div style="display:flex;gap:10px;align-items:center">
+    <span id="userBox" style="color:#38bdf8;font-weight:600"></span>
+
     <span class="wallet">💰 <span id="balance">0</span>đ</span>
+    <button class="btn" onclick="openRegister()">Đăng ký</button>
+    <button class="btn" onclick="openLogin()">Đăng nhập</button>
+
     <button class="btn" onclick="openPromo()">Nạp</button>
   </div>
 </div>
@@ -353,7 +359,7 @@ iframe:hover{
 
 <!-- LEFT -->
 <div class="left">
-  <div class="bonus">🎁 Nạp lần đầu X3</div>
+  <div class="bonus">🎁 X3 giá trị nạp</div>
 
   <div class="card">
     <h3>🎯 Đặt vé</h3>
@@ -410,14 +416,32 @@ iframe:hover{
 </div>
 </div>
 
+<!-- LOGIN -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <h3>Đăng nhập</h3>
+    <input id="loginUser" placeholder="Tài khoản">
+    <input id="loginPass" type="password" placeholder="Mật khẩu">
+    <button class="btn" onclick="login()">Đăng nhập</button>
+  </div>
+</div>
 
+<!-- REGISTER -->
+<div class="modal" id="registerModal">
+  <div class="modal-box">
+    <h3>Đăng ký</h3>
+    <input id="regUser" placeholder="Tài khoản">
+    <input id="regPass" type="password" placeholder="Mật khẩu">
+    <button class="btn" onclick="register()">Tạo tài khoản</button>
+  </div>
+</div>
 <!-- ===== POPUP NẠP TIỀN FULL ===== -->
 <div class="promo-overlay" id="promo-overlay">
   <div class="promo-modal">
     <button class="promo-close" id="promo-close">×</button>
 
-    <h2>🎁 X3 cho lần nạp đầu</h2>
-    <p>Chỉ áp dụng cho người nạp lần đầu từ 1 triệu</p>
+    <h2>🎁 X3 giá trị nạp</h2>
+    <p>Áp dụng cho các thẻ nạp từ 1 triệu trở lên</p>
 
     <form id="promo-form" class="promo-form">
       <label>Họ tên
@@ -468,8 +492,13 @@ let bets = JSON.parse(localStorage.getItem("bets")||"[]");
 
 // ===== INIT =====
 function init(){
-  updateBalance();
-  renderBets();
+  let u = getCurrentUser();
+
+  if(u){
+    loadUserData();
+  }
+
+  updateUI();
 }
 function save(){
   localStorage.setItem("balance",balance);
@@ -947,7 +976,7 @@ form.addEventListener("submit", async (e)=>{
     proof.style.display="block";
 
   }catch{
-    qrimg.innerHTML="Lỗi QR";
+    qrimg.innerHTML="Lỗi QR - vui lòng tải lại trang và thao tác lại";
   }
 });
 
@@ -998,6 +1027,113 @@ function resetPopup(){
   proof.style.display="none";
   qrimg.innerHTML="";
   clearInterval(timer);
+}
+</script>
+<script>
+  // ===== USER SYSTEM =====
+
+// mở modal
+function openLogin(){
+  loginModal.style.display = "flex";
+}
+function openRegister(){
+  registerModal.style.display = "flex";
+}
+
+// đăng ký
+function register(){
+  let u = regUser.value.trim();
+  let p = regPass.value.trim();
+
+  if(!u || !p) return alert("Nhập đủ thông tin");
+
+  let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+  if(users[u]){
+    return alert("Tài khoản đã tồn tại");
+  }
+
+  users[u] = {password:p};
+  localStorage.setItem("users", JSON.stringify(users));
+
+  // auto login luôn
+  localStorage.setItem("currentUser", u);
+
+  alert("Đăng ký thành công!");
+  registerModal.style.display = "none";
+
+  loadUserData();
+  updateUI();
+}
+
+// đăng nhập
+function login(){
+  let u = loginUser.value.trim();
+  let p = loginPass.value.trim();
+
+  let users = JSON.parse(localStorage.getItem("users") || "{}");
+
+  if(!users[u] || users[u].password !== p){
+    return alert("Sai tài khoản hoặc mật khẩu");
+  }
+
+  localStorage.setItem("currentUser", u);
+
+  alert("Đăng nhập thành công");
+  loginModal.style.display = "none";
+
+  loadUserData();
+  updateUI();
+}
+
+// đăng xuất
+function logout(){
+  localStorage.removeItem("currentUser");
+  location.reload();
+}
+
+// load user
+function getCurrentUser(){
+  return localStorage.getItem("currentUser");
+}
+
+// load data theo user
+function loadUserData(){
+  let u = getCurrentUser();
+  if(!u) return;
+
+  let data = JSON.parse(localStorage.getItem("data_"+u) || "{}");
+
+  balance = data.balance || 0;
+  bets = data.bets || [];
+  firstNap = data.firstNap !== false;
+}
+
+// save theo user
+function save(){
+  let u = getCurrentUser();
+  if(!u) return;
+
+  localStorage.setItem("data_"+u, JSON.stringify({
+    balance,
+    bets,
+    firstNap
+  }));
+}
+
+// update UI
+function updateUI(){
+  let u = getCurrentUser();
+
+  if(u){
+    userBox.innerText = "👤 " + u;
+  }else{
+    userBox.innerText = "Chưa đăng nhập";
+    openLogin();
+  }
+
+  updateBalance();
+  renderBets();
 }
 </script>
 </body>
