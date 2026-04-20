@@ -11,7 +11,8 @@
 
 <style>
 :root{
-  --main:#22c55e;
+  --main:#7a1f2b;        /* đỏ đô */
+  --main-soft:#a83244;
   --bg1:#020617;
   --bg2:#0f172a;
   --card:rgba(30,41,59,0.6);
@@ -20,7 +21,7 @@
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family: 'Segoe UI',system-ui,Arial;
+  font-family:'Segoe UI',system-ui;
   background: radial-gradient(circle at top,var(--bg2),var(--bg1));
   color:#fff;
 }
@@ -35,21 +36,28 @@ body{
   background:rgba(2,6,23,0.7);
   border-bottom:1px solid rgba(255,255,255,0.08);
 }
-.logo{font-weight:700;color:var(--main);letter-spacing:.5px}
+.logo{font-weight:700;color:var(--main-soft)}
 .wallet{
   background:var(--card);
   padding:8px 12px;
   border-radius:10px;
-  box-shadow:0 10px 25px rgba(0,0,0,.35);
 }
+
+/* BUTTON */
 .btn{
   padding:10px 12px;
-  background:var(--main);
-  border:none;border-radius:10px;
-  cursor:pointer;font-weight:700;color:#000;
+  background:linear-gradient(135deg,var(--main),var(--main-soft));
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  color:#fff;
   transition:.2s;
 }
-.btn:hover{transform:translateY(-1px) scale(1.03); box-shadow:0 0 18px rgba(34,197,94,.7)}
+.btn:hover{
+  transform:translateY(-1px) scale(1.03);
+  box-shadow:0 0 18px rgba(122,31,43,.8);
+}
 
 /* GRID */
 .container{
@@ -72,23 +80,22 @@ body{
 
 /* BONUS */
 .bonus{
-  background: linear-gradient(90deg,#22c55e,#4ade80);
-  color:#001b0a;
+  background: linear-gradient(90deg,#7a1f2b,#a83244);
+  color:#fff;
   padding:10px;
   border-radius:10px;
   text-align:center;
   font-weight:800;
-  letter-spacing:.3px;
-  box-shadow:0 0 24px rgba(34,197,94,.9);
-  animation: glow 2s infinite;
+  box-shadow:0 0 24px rgba(122,31,43,.9);
 }
-@keyframes glow{50%{box-shadow:0 0 42px rgba(34,197,94,1)}}
 
 /* BET */
 .bet-item{
-  display:flex;justify-content:space-between;
+  display:flex;
+  justify-content:space-between;
   background:#1e293b;
-  padding:10px;margin:6px 0;
+  padding:10px;
+  margin:6px 0;
   border-radius:8px;
   border-left:4px solid var(--main);
 }
@@ -96,41 +103,44 @@ body{
 /* INPUT */
 input,select{
   width:100%;
-  padding:10px;margin:8px 0;
-  border-radius:10px;border:none;
-  background:#0f172a;color:#fff;
+  padding:10px;
+  margin:8px 0;
+  border-radius:10px;
+  border:none;
+  background:#0f172a;
+  color:#fff;
 }
 
 /* MODAL */
 .modal{
-  position:fixed;top:0;left:0;width:100%;height:100%;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
   background:rgba(0,0,0,.8);
-  display:none;justify-content:center;align-items:center;
-  backdrop-filter: blur(8px);
-  z-index:9999;
+  display:none;
+  justify-content:center;
+  align-items:center;
 }
 .modal-box{
   background:#0f172a;
-  padding:18px;border-radius:14px;
-  width:92%;max-width:420px;
-  box-shadow:0 0 50px rgba(0,0,0,.8);
-  animation: pop .25s ease;
+  padding:18px;
+  border-radius:14px;
+  width:92%;
+  max-width:420px;
 }
-@keyframes pop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
 
-/* HISTORY */
-.history{max-height:220px;overflow:auto}
-
-/* AI */
+/* CHAT */
 #chatBox{
-  height:200px;overflow:auto;
+  height:200px;
+  overflow:auto;
   background:#020617;
-  padding:10px;border-radius:10px;
+  padding:10px;
+  border-radius:10px;
 }
-.chat-user{color:#38bdf8;margin:6px 0}
-.chat-ai{color:#22c55e;margin:6px 0}
+.chat-user{color:#38bdf8}
+.chat-ai{color:#f87171}
 
-/* RESULT FIX */
+/* RESULT */
 #box_kqxs_minhngoc{width:100%;overflow-x:auto}
 #box_kqxs_minhngoc table{width:100% !important;font-size:14px !important}
 </style>
