@@ -11,7 +11,7 @@
 
 <style>
 :root{
-  --main:#7a1f2b;        /* đỏ đô */
+  --main:#7a1f2b;
   --main-soft:#a83244;
   --bg1:#020617;
   --bg2:#0f172a;
@@ -32,39 +32,91 @@ body{
   justify-content:space-between;
   align-items:center;
   padding:14px 18px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   background:rgba(2,6,23,0.7);
   border-bottom:1px solid rgba(255,255,255,0.08);
 }
-.logo{font-weight:700;color:var(--main-soft)}
+.logo{
+  font-weight:700;
+  color:var(--main-soft);
+  text-shadow:0 0 10px rgba(168,50,68,.5);
+}
 .wallet{
   background:var(--card);
   padding:8px 12px;
   border-radius:10px;
+  box-shadow:inset 0 0 10px rgba(255,255,255,0.05);
 }
 
-/* BUTTON */
+/* ===== BUTTON NÂNG CẤP ===== */
 .btn{
-  padding:10px 12px;
+  padding:10px 14px;
   background:linear-gradient(135deg,var(--main),var(--main-soft));
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
   font-weight:700;
   color:#fff;
-  transition:.2s;
+  position:relative;
+  overflow:hidden;
+
+  /* đổ bóng nhiều lớp */
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.5),
+    0 0 0 rgba(122,31,43,0.6);
+
+  transition:all .25s ease;
 }
+
+/* hover nổi + glow */
 .btn:hover{
-  transform:translateY(-1px) scale(1.03);
-  box-shadow:0 0 18px rgba(122,31,43,.8);
+  transform:translateY(-2px) scale(1.05);
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.7),
+    0 0 20px rgba(122,31,43,0.9);
+}
+
+/* click cảm giác bấm */
+.btn:active{
+  transform:scale(0.96);
+  box-shadow:
+    0 3px 8px rgba(0,0,0,0.6);
+}
+
+/* hiệu ứng ánh sáng chạy */
+.btn::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+  transition:.6s;
+}
+
+.btn:hover::after{
+  left:120%;
+}
+
+/* APP - Toàn bộ trang */
+.app{
+  max-width:1200px;     /* 👈 giới hạn độ rộng */
+  margin:0 auto;        /* 👈 căn giữa */
+  padding:0 12px;       /* 👈 tránh dính mép mobile */
 }
 
 /* GRID */
 .container{
   display:grid;
-  grid-template-columns:1.2fr 1fr;
-  gap:14px;
-  padding:14px;
+  grid-template-columns:1fr 1.3fr;
+  gap:16px;
+  padding:14px 0; /* bỏ padding ngang vì đã có .app */
 }
 @media(max-width:900px){ .container{grid-template-columns:1fr;} }
 
@@ -73,9 +125,14 @@ body{
   background:var(--card);
   padding:14px;
   border-radius:14px;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 15px 40px rgba(0,0,0,.45);
+  box-shadow:0 10px 35px rgba(0,0,0,.5);
+  transition:.3s;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 0 25px rgba(122,31,43,.3);
 }
 
 /* BONUS */
@@ -86,7 +143,11 @@ body{
   border-radius:10px;
   text-align:center;
   font-weight:800;
-  box-shadow:0 0 24px rgba(122,31,43,.9);
+  box-shadow:0 0 25px rgba(122,31,43,.9);
+  animation: glow 2s infinite;
+}
+@keyframes glow{
+  50%{box-shadow:0 0 40px rgba(122,31,43,1);}
 }
 
 /* BET */
@@ -98,6 +159,11 @@ body{
   margin:6px 0;
   border-radius:8px;
   border-left:4px solid var(--main);
+  transition:.2s;
+}
+.bet-item:hover{
+  transform:translateX(4px);
+  background:#111827;
 }
 
 /* INPUT */
@@ -106,9 +172,15 @@ input,select{
   padding:10px;
   margin:8px 0;
   border-radius:10px;
-  border:none;
+  border:1px solid #1f2937;
   background:#0f172a;
   color:#fff;
+  transition:.2s;
+}
+input:focus{
+  outline:none;
+  border-color:var(--main-soft);
+  box-shadow:0 0 10px rgba(168,50,68,.6);
 }
 
 /* MODAL */
@@ -127,6 +199,7 @@ input,select{
   border-radius:14px;
   width:92%;
   max-width:420px;
+  box-shadow:0 0 30px rgba(0,0,0,.8);
 }
 
 /* CHAT */
@@ -136,9 +209,29 @@ input,select{
   background:#020617;
   padding:10px;
   border-radius:10px;
+  border:1px solid rgba(255,255,255,0.05);
 }
 .chat-user{color:#38bdf8}
-.chat-ai{color:#f87171}
+.chat-ai{
+  color:#f87171;
+  animation:fadeIn .4s ease;
+}
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(5px)}
+  to{opacity:1; transform:translateY(0)}
+}
+
+/* LEFT iframe */
+.left{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.card{
+  padding:16px;
+  border-radius:16px;
+}
 
 /* RIGHT iframe */
 .right{
@@ -147,29 +240,26 @@ input,select{
 }
 iframe{
   width:100%;
-  max-width:520px;
   height:820px;
-  border-radius:10px;
-  box-shadow:0 0 20px rgba(122,31,43,0.5);
+  border-radius:12px;
+  box-shadow:0 0 25px rgba(122,31,43,0.6);
   background:#fff;
+  transition:.3s;
+}
+iframe:hover{
+  transform:scale(1.01);
 }
 
-/* MOBILE iframe */
+/* MOBILE */
 @media(max-width:500px){
-  iframe{
-    height:600px;
-  }
+  iframe{height:600px}
 }
-
-/* RESULT */
-#box_kqxs_minhngoc{width:100%;overflow-x:auto}
-#box_kqxs_minhngoc table{width:100% !important;font-size:14px !important}
 
 </style>
 </head>
 
 <body>
-
+<div class ="app">
 <div class="header">
   <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
   <div>
@@ -179,6 +269,7 @@ iframe{
 </div>
 
 <div class="container">
+    
 
 <!-- LEFT -->
 <div class="left">
@@ -216,20 +307,11 @@ iframe{
 <!-- RIGHT -->
 <div class= "right" style="width:100%; display:flex; justify-content:center;">
   <iframe
-    src="https://www.minhngoc.net.vn/free/index.php"
-    width="100%"
-    height="900"
-    frameborder="0"
-    scrolling="auto"
-    style="
-      border-radius:12px;
-      box-shadow:0 0 20px rgba(0,0,0,0.5);
-      background:#fff;
-      max-width:500px;
-    ">
-  </iframe>
+<iframe src="https://www.minhngoc.net.vn/free/index.php" width="300"
+ height="2000" frameborder="0" scrolling="auto" id="iframe_xosominhngoc"
+ name="iframe_xosominhngoc"></iframe>
 </div>
-
+</div>
 </div>
 
 <!-- MODAL BET -->
