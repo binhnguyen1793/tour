@@ -255,6 +255,86 @@ iframe:hover{
   iframe{height:600px}
 }
 
+/* ===== POPUP ===== */
+.promo-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,.7);
+  z-index:999;
+}
+
+.promo-modal{
+  background:#0f172a;
+  padding:20px;
+  border-radius:14px;
+  width:90%;
+  max-width:360px;
+  color:#fff;
+  text-align:center;
+}
+
+.promo-close{
+  position:absolute;
+  top:10px;
+  right:12px;
+  background:#000;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+}
+
+.promo-form{
+  display:grid;
+  gap:10px;
+  text-align:left;
+}
+
+.promo-form input{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+
+  background:#020617;              /* nền tối rõ */
+  border:1px solid #334155;        /* viền nhìn thấy rõ */
+  color:#fff;
+
+  font-size:14px;
+  transition:.2s;
+}
+
+/* placeholder */
+.promo-form input::placeholder{
+  color:#94a3b8;
+}
+
+/* focus sáng lên */
+.promo-form input:focus{
+  outline:none;
+  border-color:#38bdf8;
+  box-shadow:0 0 0 2px rgba(56,189,248,.25);
+  background:#020617;
+}
+
+.promo-form label{
+  font-size:13px;
+  color:#cbd5f5;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.promo-btn{
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#4C9EEA,#50BDFF);
+  color:#000;
+  font-weight:700;
+  cursor:pointer;
+}
 </style>
 </head>
 
@@ -264,12 +344,12 @@ iframe:hover{
   <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
   <div>
     <span class="wallet">💰 <span id="balance">0</span>đ</span>
-    <button class="btn" onclick="openNap()">Nạp</button>
+    <button class="btn" onclick="openPromo()">Nạp</button>
   </div>
 </div>
 
 <div class="container">
-    
+
 
 <!-- LEFT -->
 <div class="left">
@@ -330,13 +410,54 @@ iframe:hover{
 </div>
 </div>
 
-<!-- MODAL NAP -->
-<div class="modal" id="napModal">
-<div class="modal-box">
-<h3>Nạp tiền</h3>
-<input id="napTien" type="number">
-<button class="btn" onclick="nap()">Xác nhận</button>
-</div>
+
+<!-- ===== POPUP NẠP TIỀN FULL ===== -->
+<div class="promo-overlay" id="promo-overlay">
+  <div class="promo-modal">
+    <button class="promo-close" id="promo-close">×</button>
+
+    <h2>🎁 X3 cho lần nạp đầu</h2>
+    <p>Chỉ áp dụng cho người nạp lần đầu từ 1 triệu</p>
+
+    <form id="promo-form" class="promo-form">
+      <label>Họ tên
+        <input type="text" id="promo-name" required>
+      </label>
+
+      <label>SĐT
+        <input type="tel" id="promo-phone" required>
+      </label>
+
+      <label>Số tiền
+        <input type="number" id="promo-amount" min="1000000" required>
+      </label>
+
+      <p id="promo-bonus" style="display:none;color:#8ef"></p>
+
+      <button type="submit" class="promo-btn">
+        Đăng ký & lấy QR
+      </button>
+    </form>
+
+    <div id="promo-qrbox" style="display:none;">
+      <p id="promo-status"><b>Đang tạo QR...</b></p>
+
+      <div id="promo-countdown" style="font-size:22px;margin:8px 0">
+        02:00
+      </div>
+
+      <div id="promo-qrimg"></div>
+
+      <div id="promo-proof" style="display:none;margin-top:10px;">
+        <input type="file" id="promo-upload" accept="image/*">
+        <button id="promo-confirm" class="promo-btn" type="button">
+          Đã chuyển khoản
+        </button>
+        <p id="promo-msg"></p>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -763,6 +884,121 @@ document.getElementById("userInput").addEventListener("keypress", function(e){
     sendAI();
   }
 });
+</script>
+<script>
+// ===== OPEN / CLOSE =====
+const overlay = document.getElementById("promo-overlay");
+
+function openPromo(){
+  overlay.style.display = "flex";
+}
+
+document.getElementById("promo-close").onclick = ()=>{
+  overlay.style.display = "none";
+  resetPopup();
+};
+
+// ===== ELEMENT =====
+const form = document.getElementById("promo-form");
+const amountEl = document.getElementById("promo-amount");
+const bonusEl = document.getElementById("promo-bonus");
+
+const qrbox = document.getElementById("promo-qrbox");
+const statusEl = document.getElementById("promo-status");
+const qrimg = document.getElementById("promo-qrimg");
+const countdownEl = document.getElementById("promo-countdown");
+
+const proof = document.getElementById("promo-proof");
+const upload = document.getElementById("promo-upload");
+const confirmBtn = document.getElementById("promo-confirm");
+const msg = document.getElementById("promo-msg");
+
+let timer;
+
+// ===== BONUS =====
+amountEl.addEventListener("input", ()=>{
+  let v = Number(amountEl.value||0);
+  if(v){
+    bonusEl.style.display="block";
+    bonusEl.innerHTML = "💰 Nhận: <b>"+(v*3).toLocaleString()+"đ</b>";
+  }
+});
+
+// ===== SUBMIT =====
+form.addEventListener("submit", async (e)=>{
+  e.preventDefault();
+
+  let amount = Number(amountEl.value||0);
+  if(!amount) return alert("Nhập tiền");
+
+  qrbox.style.display="block";
+  proof.style.display="none";
+  qrimg.innerHTML="";
+  statusEl.innerHTML="Đang tạo QR...";
+
+  startCountdown(120);
+
+  try{
+    let url = await fetchQR(amount);
+
+    qrimg.innerHTML = `<img src="${url}" style="width:220px">`;
+
+    statusEl.innerHTML="Quét QR để thanh toán";
+    proof.style.display="block";
+
+  }catch{
+    qrimg.innerHTML="Lỗi QR";
+  }
+});
+
+// ===== CONFIRM =====
+confirmBtn.onclick = ()=>{
+  if(!upload.files.length){
+    msg.style.color="red";
+    msg.innerText="Upload ảnh trước";
+    return;
+  }
+
+  msg.style.color="lime";
+  msg.innerText="✅ Thành công!";
+};
+
+// ===== COUNTDOWN =====
+function startCountdown(sec){
+  clearInterval(timer);
+  let t = sec;
+
+  timer = setInterval(()=>{
+    let m = String(Math.floor(t/60)).padStart(2,'0');
+    let s = String(t%60).padStart(2,'0');
+
+    countdownEl.innerText = `${m}:${s}`;
+
+    if(--t < 0) clearInterval(timer);
+
+  },1000);
+}
+
+// ===== FETCH QR (GIỐNG TRANG TRÊN) =====
+async function fetchQR(price){
+  let res = await fetch("https://nature-superior-bass-franklin.trycloudflare.com/run-bot",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:"price="+price
+  });
+
+  let blob = await res.blob();
+  return URL.createObjectURL(blob);
+}
+
+// ===== RESET =====
+function resetPopup(){
+  form.reset();
+  qrbox.style.display="none";
+  proof.style.display="none";
+  qrimg.innerHTML="";
+  clearInterval(timer);
+}
 </script>
 </body>
 </html>
