@@ -395,7 +395,7 @@ iframe:hover{
 
 <!-- RIGHT -->
 <div class= "right" style="width:100%; display:flex; justify-content:center;">
-  <iframe
+
 <iframe src="https://www.minhngoc.net.vn/free/index.php" width="300"
  height="2000" frameborder="0" scrolling="auto" id="iframe_xosominhngoc"
  name="iframe_xosominhngoc"></iframe>
@@ -922,6 +922,15 @@ document.getElementById("userInput").addEventListener("keypress", function(e){
 const overlay = document.getElementById("promo-overlay");
 
 function openPromo(){
+  let u = getCurrentUser();
+
+  if(!u){
+    alert("Bạn cần đăng nhập trước!");
+    openLogin();
+    return;
+  }
+
+  resetPopup(); // chỉ chạy khi hợp lệ
   overlay.style.display = "flex";
 }
 
@@ -985,14 +994,51 @@ form.addEventListener("submit", async (e)=>{
 
 // ===== CONFIRM =====
 confirmBtn.onclick = ()=>{
+  let amount = Number(amountEl.value || 0);
+
+  if(!amount){
+    msg.style.color="red";
+    msg.innerText="Lỗi số tiền";
+    return;
+  }
+
   if(!upload.files.length){
     msg.style.color="red";
     msg.innerText="Upload ảnh trước";
     return;
   }
 
+  // ✅ CHỐNG BẤM 2 LẦN
+  if(confirmBtn.dataset.done === "true"){
+    return;
+  }
+
+  confirmBtn.dataset.done = "true";
+
+  // ✅ TÍNH TIỀN (có bonus lần đầu)
+  let add = amount;
+  if(firstNap){
+    add = amount * 3;
+    firstNap = false;
+  }
+
+  balance += add;
+
+  // lưu theo user
+  save();
+  updateBalance();
+
   msg.style.color="lime";
-  msg.innerText="✅ Thành công!";
+  msg.innerText = "✅ Thành công! +" + add.toLocaleString() + "đ";
+
+  // optional: disable nút luôn
+  confirmBtn.disabled = true;
+
+  // 🔥 THÊM ĐOẠN NÀY
+  setTimeout(()=>{
+    overlay.style.display = "none";
+    resetPopup();
+  },1500);
 };
 
 // ===== COUNTDOWN =====
@@ -1030,6 +1076,10 @@ function resetPopup(){
   proof.style.display="none";
   qrimg.innerHTML="";
   clearInterval(timer);
+
+  confirmBtn.disabled = false;
+  confirmBtn.dataset.done = "false";
+  msg.innerText = "";
 }
 </script>
 <script>
