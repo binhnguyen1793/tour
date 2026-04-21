@@ -344,11 +344,14 @@ iframe:hover{
   <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
 
   <div style="display:flex;gap:10px;align-items:center">
-    <span id="userBox" style="color:#38bdf8;font-weight:600"></span>
+    <div id="userBox"></div>
 
     <span class="wallet">💰 <span id="balance">0</span>đ</span>
-    <button class="btn" onclick="openRegister()">Đăng ký</button>
-    <button class="btn" onclick="openLogin()">Đăng nhập</button>
+
+    <div id="authButtons">
+      <button class="btn" onclick="openRegister()">Đăng ký</button>
+      <button class="btn" onclick="openLogin()">Đăng nhập</button>
+    </div>
 
     <button class="btn" onclick="openPromo()">Nạp</button>
   </div>
@@ -1086,12 +1089,6 @@ function login(){
   updateUI();
 }
 
-// đăng xuất
-function logout(){
-  localStorage.removeItem("currentUser");
-  location.reload();
-}
-
 // load user
 function getCurrentUser(){
   return localStorage.getItem("currentUser");
@@ -1125,11 +1122,19 @@ function save(){
 function updateUI(){
   let u = getCurrentUser();
 
+  let userBox = document.getElementById("userBox");
+  let authButtons = document.getElementById("authButtons");
+
   if(u){
-    userBox.innerText = "👤 " + u;
+    // ✅ Đã đăng nhập
+    userBox.innerHTML = "👤 " + u;
+
+    authButtons.style.display = "none"; // Ẩn đăng ký / đăng nhập
   }else{
-    userBox.innerText = "Chưa đăng nhập";
-    openLogin();
+    // ❌ Chưa đăng nhập
+    userBox.innerHTML = "";
+
+    authButtons.style.display = "flex"; // Hiện lại
   }
 
   updateBalance();
