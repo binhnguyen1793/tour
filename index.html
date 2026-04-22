@@ -356,6 +356,7 @@ iframe:hover{
     font-size:11px;
   }
 }
+
 </style>
 </head>
 
@@ -672,10 +673,10 @@ function checkKetQua(){
   let kq = document.getElementById("checkResult");
   let trung = Math.random() > 0.7;
   if(trung){
-    kq.innerHTML = "🎉 Trúng! " + so;
+    kq.innerHTML = "🎉 Chưa có thông tin để dò số! " + so;
     kq.style.color="lime";
   }else{
-    kq.innerHTML = "❌ Chưa trúng";
+    kq.innerHTML = "🎉 Chưa có thông tin để dò số! " + so;
     kq.style.color="red";
   }
 }
