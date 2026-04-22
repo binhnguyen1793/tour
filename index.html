@@ -43,17 +43,20 @@ body{
 }
 .wallet{
   background:var(--card);
-  padding:8px 12px;
+  padding:6px 10px;
   border-radius:10px;
-  box-shadow:inset 0 0 10px rgba(255,255,255,0.05);
+  font-size:13px;
+  min-width:60px;
+  text-align:center;
 }
 
 /* ===== BUTTON NÂNG CẤP ===== */
 .btn{
-  padding:10px 14px;
+  padding:4px 9px; 
   background:linear-gradient(135deg,var(--main),var(--main-soft));
   border:none;
-  border-radius:12px;
+  border-radius:8px;
+  font-size:12px;
   cursor:pointer;
   font-weight:700;
   color:#fff;
@@ -335,6 +338,27 @@ iframe:hover{
   font-weight:700;
   cursor:pointer;
 }
+/* làm nhỏ nút đăng ký / đăng nhập */
+#authButtons{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+#authButtons .btn{
+  padding:6px 10px;   /* 👈 nhỏ lại */
+  font-size:12px;     /* 👈 chữ nhỏ */
+  border-radius:8px;
+  white-space:nowrap; /* 👈 không xuống dòng */
+}
+
+/* mobile gọn hơn nữa */
+@media(max-width:500px){
+  #authButtons .btn{
+    padding:5px 8px;
+    font-size:11px;
+  }
+}
 </style>
 </head>
 
@@ -362,7 +386,13 @@ iframe:hover{
 
 <!-- LEFT -->
 <div class="left">
-  <div class="bonus">🎁 X3 giá trị nạp</div>
+  <div class="bonus">
+    <span>🎁 Đăng ký đơn giản</span>
+    <span>🎁 Thưởng nạp x3</span>
+    <span>🎁 Nạp rút 1 phút</span>
+    <span>🎁 Thông tin bảo mật</span>
+  
+  </div>
 
   <div class="card">
     <h3>🎯 Đặt vé</h3>
