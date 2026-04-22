@@ -534,12 +534,44 @@ function addBet(){
   if(balance < tien) return alert("Không đủ tiền");
 
   balance -= tien;
-  let item = {so:s, loai, tien, time:Date.now()};
+  let item = {
+    so: s,
+    loai,
+    tien,
+    time: Date.now(),
+    status: "pending" // 👈 thêm dòng này
+  };
   bets.unshift(item);
 
   updateBalance(); save(); renderBets();
   closeBet();
 }
+
+function isAfter1835(){
+  let now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
+
+  return (h > 18) || (h === 18 && m >= 35);
+}
+
+function settleAllLose(){
+  let changed = false;
+
+  bets.forEach(b=>{
+    if(b.status === "pending"){
+      b.status = "lose";
+      changed = true;
+    }
+  });
+
+  if(changed){
+    save();
+    renderBets();
+    console.log("Đã settle tất cả vé = thua");
+  }
+}
+
 function renderBets(){
   list.innerHTML=""; history.innerHTML="";
   bets.slice(0,50).forEach(b=>{
@@ -623,6 +655,11 @@ function checkKetQua(){
 
 // ===== START =====
 init();
+setInterval(()=>{
+  if(isAfter1835()){
+    settleAllLose();
+  }
+},10000);
 </script>
 
 <script>
