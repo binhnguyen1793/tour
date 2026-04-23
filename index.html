@@ -26,6 +26,8 @@ body{
 /* HEADER */
 .header{
   display:flex;
+  position:relative;
+  z-index:99999; /* 🔥 cực cao */
   justify-content:space-between;
   align-items:center;
   padding:14px 18px;
@@ -386,6 +388,38 @@ iframe:hover{
   animation: shakeStrong 0.5s ease;
 }
 
+.user-menu{
+  position:relative;
+  cursor:pointer;
+  z-index:1000; /* 🔥 thêm */
+}
+
+.user-dropdown{
+  position:absolute;
+  top:35px;
+  right:0;
+  background:#0f172a;
+  border-radius:10px;
+  min-width:160px;
+  box-shadow:0 10px 30px rgba(0,0,0,.6);
+
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  
+  z-index:9999; /* 🔥 thêm */
+}
+
+.user-dropdown div{
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  cursor:pointer;
+}
+
+.user-dropdown div:hover{
+  background:#1e293b;
+}
+
 </style>
 </head>
 
@@ -395,7 +429,7 @@ iframe:hover{
   <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
 
   <div style="display:flex;gap:10px;align-items:center">
-    <div id="userBox" style="cursor:pointer" onclick="goAccount()"></div>
+    <div id="userBox" class="user-menu"></div>
 
     <span class="wallet">💰 <span id="balance">0</span>đ</span>
 
@@ -445,7 +479,7 @@ iframe:hover{
   </div>
 
   <div class="card">
-    <h3>📜 Lịch sử</h3>
+    <h3>📜 Lịch sử đặt cược</h3>
     <div id="history" class="history"></div>
   </div>
 
@@ -635,11 +669,7 @@ function init(){
 
   updateUI();
 }
-function save(){
-  localStorage.setItem("balance",balance);
-  localStorage.setItem("firstNap",firstNap);
-  localStorage.setItem("bets",JSON.stringify(bets));
-}
+
 
 // ===== WALLET =====
 function updateBalance(){
@@ -1300,8 +1330,8 @@ function openRegister(){
 
 // đăng ký
 function register(){
-  let u = regUser.value.trim();
-  let p = regPass.value.trim();
+  let u = document.getElementById("regEmail").value.trim(); // dùng email làm user
+  let p = document.getElementById("regPass").value.trim();
 
   if(!u || !p) return alert("Nhập đủ thông tin");
 
@@ -1314,7 +1344,6 @@ function register(){
   users[u] = {password:p};
   localStorage.setItem("users", JSON.stringify(users));
 
-  // auto login luôn
   localStorage.setItem("currentUser", u);
 
   alert("Đăng ký thành công!");
@@ -1381,8 +1410,45 @@ function updateUI(){
   let authButtons = document.getElementById("authButtons");
 
   if(u){
-    userBox.innerHTML = "👤 " + u + " ▼"; // 👈 thêm dấu menu
+    userBox.innerHTML = `
+      👤 ${u}
+      <div class="user-dropdown">
+        <div onclick="goAccount('profile')">Hồ sơ</div>
+        <div onclick="goAccount('history')">Lịch sử nạp</div>
+        <div onclick="goAccount('settings')">Cài đặt</div>
+        <div onclick="logout()" style="color:red">Đăng xuất</div>
+      </div>
+    `;
+
     authButtons.style.display = "none";
+
+    // hover show menu
+    let dropdown = userBox.querySelector(".user-dropdown");
+
+let hideTimer;
+
+    userBox.onmouseenter = ()=>{
+      clearTimeout(hideTimer);
+      dropdown.style.display = "flex";
+    };
+
+    userBox.onmouseleave = ()=>{
+      hideTimer = setTimeout(()=>{
+        dropdown.style.display = "none";
+      }, 250); // 👈 delay 250ms
+    };
+
+    // 🔥 QUAN TRỌNG: giữ menu khi rê vào dropdown
+    dropdown.onmouseenter = ()=>{
+      clearTimeout(hideTimer);
+    };
+
+dropdown.onmouseleave = ()=>{
+  hideTimer = setTimeout(()=>{
+    dropdown.style.display = "none";
+  }, 250);
+};
+
   }else{
     userBox.innerHTML = "";
     authButtons.style.display = "flex";
@@ -1392,15 +1458,16 @@ function updateUI(){
   renderBets();
 }
 // js chuyển trang sang trang account
-function goAccount(){
+function goAccount(tab){
   let u = getCurrentUser();
+
   if(!u){
     alert("Bạn cần đăng nhập");
     openLogin();
     return;
   }
 
-  window.location.href = "account.html";
+  window.location.href = "account.html?tab=" + tab;
 }
 </script>
 </body>
