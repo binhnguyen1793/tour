@@ -357,6 +357,35 @@ iframe:hover{
   }
 }
 
+/* rung nhẹ liên tục */
+@keyframes shakeSoft {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  50% { transform: rotate(-3deg); }
+  75% { transform: rotate(2deg); }
+}
+
+/* rung mạnh khi click */
+@keyframes shakeStrong {
+  0% { transform: rotate(0deg); }
+  20% { transform: rotate(8deg); }
+  40% { transform: rotate(-8deg); }
+  60% { transform: rotate(6deg); }
+  80% { transform: rotate(-6deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* áp dụng cho icon */
+.gift-icon {
+  display:inline-block;
+  animation: shakeSoft 2s infinite ease-in-out;
+}
+
+/* khi click */
+.gift-icon.active {
+  animation: shakeStrong 0.5s ease;
+}
+
 </style>
 </head>
 
@@ -366,7 +395,7 @@ iframe:hover{
   <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
 
   <div style="display:flex;gap:10px;align-items:center">
-    <div id="userBox"></div>
+    <div id="userBox" style="cursor:pointer" onclick="goAccount()"></div>
 
     <span class="wallet">💰 <span id="balance">0</span>đ</span>
 
@@ -376,6 +405,23 @@ iframe:hover{
     </div>
 
     <button class="btn" onclick="openPromo()">Nạp</button>
+    <div class="gift-icon"
+  onclick="event.stopPropagation(); openGiftPopup();"
+  style="position:relative;cursor:pointer">
+      🎁
+
+      <span id="giftBadge" style="
+        position:absolute;
+        top:-6px;
+        right:-6px;
+        background:#22c55e;
+        color:#000;
+        font-size:11px;
+        font-weight:700;
+        padding:2px 5px;
+        border-radius:50%;
+      ">1</span>
+    </div>
   </div>
 </div>
 
@@ -458,13 +504,71 @@ iframe:hover{
 </div>
 
 <!-- REGISTER -->
+<!-- REGISTER FULL -->
 <div class="modal" id="registerModal">
-  <div class="modal-box">
-    <h3>Đăng ký</h3>
-    <input id="regUser" placeholder="Tài khoản">
-    <input id="regPass" type="password" placeholder="Mật khẩu">
-    <button class="btn" onclick="register()">Tạo tài khoản</button>
+  <div class="modal-box" style="max-width:500px">
+
+    <h3>Đăng ký tài khoản</h3>
+
+    <div class="promo-form" style="grid-template-columns:1fr 1fr; gap:10px">
+
+      <select id="regCountry">
+        <option>Việt Nam</option>
+      </select>
+
+      <select id="regCurrency">
+        <option>VND</option>
+      </select>
+
+      <input id="regCity" placeholder="Thành phố">
+
+      <input id="regRegion" placeholder="Khu vực">
+
+      <input id="regEmail" placeholder="Email*" required>
+
+      <input id="regPhone" placeholder="Số điện thoại">
+
+      <input id="regFirstName" placeholder="Tên*" required>
+
+      <input id="regLastName" placeholder="Họ*" required>
+
+      <input id="regPass" type="password" placeholder="Mật khẩu*" required>
+
+      <input id="regPass2" type="password" placeholder="Nhập lại mật khẩu*" required>
+
+      <input id="regCode" placeholder="Mã khuyến mãi">
+
+    </div>
+
+    <button class="btn" style="width:100%;margin-top:12px"
+      onclick="register()">ĐĂNG KÝ</button>
+
   </div>
+</div>
+<div id="gift-popup" style="
+  position:fixed;
+  top:70px;
+  right:20px;
+  background:#fff;
+  color:#000;
+  padding:16px;
+  border-radius:12px;
+  width:260px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  display:none;
+  z-index:1000;
+">
+
+  <h4 style="margin:0 0 5px">Phần thưởng nạp tiền</h4>
+
+  <div style="color:#a00a0a;font-size:20px;font-weight:700;margin-bottom:10px">
+    nạp 1tr nhận 3tr
+  </div>
+
+  <button class="promo-btn" onclick="goNap()">
+    Nạp Ngay
+  </button>
+
 </div>
 <!-- ===== POPUP NẠP TIỀN FULL ===== -->
 <div class="promo-overlay" id="promo-overlay">
@@ -1146,6 +1250,42 @@ function resetPopup(){
   confirmBtn.dataset.done = "false";
   msg.innerText = "";
 }
+// ===== Quà nạp =====
+function openGiftPopup(){
+  let box = document.getElementById("gift-popup");
+  box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function goNap(){
+  // ẩn popup nhỏ
+  document.getElementById("gift-popup").style.display = "none";
+
+  // mở popup nạp FULL (giữ nguyên)
+  openPromo();
+
+  // tắt badge sau khi click
+  document.getElementById("giftBadge").style.display = "none";
+}
+document.addEventListener("click", function(e){
+  let popup = document.getElementById("gift-popup");
+  let icon = document.querySelector(".gift-icon");
+
+  // nếu click KHÔNG phải popup và KHÔNG phải icon
+  if(
+    popup.style.display === "block" &&
+    !popup.contains(e.target) &&
+    !icon.contains(e.target)
+  ){
+    popup.style.display = "none";
+  }
+});
+// click ra ngoài để đóng popup nạp
+overlay.addEventListener("click", function(e){
+  if(e.target === overlay){
+    overlay.style.display = "none";
+    resetPopup();
+  }
+});
 </script>
 <script>
   // ===== USER SYSTEM =====
@@ -1241,19 +1381,26 @@ function updateUI(){
   let authButtons = document.getElementById("authButtons");
 
   if(u){
-    // ✅ Đã đăng nhập
-    userBox.innerHTML = "👤 " + u;
-
-    authButtons.style.display = "none"; // Ẩn đăng ký / đăng nhập
+    userBox.innerHTML = "👤 " + u + " ▼"; // 👈 thêm dấu menu
+    authButtons.style.display = "none";
   }else{
-    // ❌ Chưa đăng nhập
     userBox.innerHTML = "";
-
-    authButtons.style.display = "flex"; // Hiện lại
+    authButtons.style.display = "flex";
   }
 
   updateBalance();
   renderBets();
+}
+// js chuyển trang sang trang account
+function goAccount(){
+  let u = getCurrentUser();
+  if(!u){
+    alert("Bạn cần đăng nhập");
+    openLogin();
+    return;
+  }
+
+  window.location.href = "account.html";
 }
 </script>
 </body>
