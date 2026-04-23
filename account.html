@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account</title>
+
+<style>
+:root{
+  --main:#7a1f2b;
+  --soft:#a83244;
+}
+
+body{
+  margin:0;
+  font-family:Segoe UI;
+  background:#020617;
+  color:#fff;
+}
+
+/* ===== LAYOUT ===== */
+.wrapper{
+  display:flex;
+  height:100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:240px;
+  background:#0f172a;
+  padding:20px;
+  border-right:1px solid #1e293b;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.logo{
+  font-weight:700;
+  margin-bottom:10px;
+  color:#f87171;
+}
+
+.menu-item{
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+  background:#020617;
+  transition:.2s;
+}
+
+.menu-item:hover{
+  background:#1e293b;
+}
+
+.menu-item.active{
+  background:linear-gradient(135deg,var(--main),var(--soft));
+}
+
+/* ===== CONTENT ===== */
+.content{
+  flex:1;
+  padding:20px;
+  overflow:auto;
+}
+
+/* ===== CARD ===== */
+.card{
+  background:#0f172a;
+  padding:20px;
+  border-radius:14px;
+  margin-bottom:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);
+}
+
+/* ===== PROFILE ===== */
+.profile-box{
+  display:flex;
+  gap:20px;
+  align-items:center;
+}
+
+.avatar{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  background:#111;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  overflow:hidden;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.upload{
+  margin-top:10px;
+}
+
+/* ===== BTN ===== */
+.btn{
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--main),var(--soft));
+  color:#fff;
+  font-weight:600;
+}
+
+.btn.logout{
+  background:red;
+}
+
+/* ===== INPUT ===== */
+input{
+  width:100%;
+  padding:10px;
+  margin:6px 0;
+  border-radius:8px;
+  border:none;
+  background:#020617;
+  color:#fff;
+}
+
+/* ===== HISTORY ===== */
+.row{
+  padding:10px;
+  border-bottom:1px solid #222;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .wrapper{flex-direction:column;}
+  .sidebar{width:100%;flex-direction:row;overflow:auto;}
+  .menu-item{flex:1;text-align:center;font-size:12px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">🔥 ACCOUNT</div>
+
+    <div class="menu-item" data-tab="profile">👤 Hồ sơ</div>
+    <div class="menu-item" data-tab="history">📜 Lịch sử</div>
+    <div class="menu-item" data-tab="settings">⚙️ Cài đặt</div>
+
+    <hr>
+
+    <div class="menu-item" onclick="goHome()">🏠 Trang chủ</div>
+    <div class="menu-item" onclick="logout()">🚪 Đăng xuất</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div id="contentBox"></div>
+  </div>
+
+</div>
+
+<script>
+
+// ===== USER =====
+function getUser(){
+  return localStorage.getItem("currentUser");
+}
+
+let user = getUser();
+
+if(!user){
+  alert("Bạn chưa đăng nhập!");
+  location.href = "index.html";
+}
+
+// ===== DATA =====
+function getData(){
+  return JSON.parse(localStorage.getItem("data_"+user) || "{}");
+}
+
+function saveData(data){
+  localStorage.setItem("data_"+user, JSON.stringify(data));
+}
+
+// ===== NAV =====
+function goHome(){
+  location.href = "index.html";
+}
+
+function logout(){
+  localStorage.removeItem("currentUser");
+  location.href = "index.html";
+}
+
+// ===== TAB =====
+function setActive(tab){
+  document.querySelectorAll(".menu-item").forEach(el=>{
+    el.classList.remove("active");
+    if(el.dataset.tab === tab){
+      el.classList.add("active");
+    }
+  });
+}
+
+function render(tab){
+  let box = document.getElementById("contentBox");
+  let data = getData();
+
+  setActive(tab);
+
+  // ===== PROFILE =====
+  if(tab === "profile"){
+
+    let avatar = data.avatar || "";
+
+    box.innerHTML = `
+      <div class="card">
+
+        <div class="profile-box">
+          <div class="avatar" id="avatarBox">
+            ${avatar ? `<img src="${avatar}">` : "👤"}
+          </div>
+
+          <div>
+            <h2>${user}</h2>
+            <p>💰 ${(data.balance||0).toLocaleString()} đ</p>
+
+            <input type="file" id="uploadAvatar" class="upload">
+          </div>
+        </div>
+
+      </div>
+    `;
+
+    // upload avatar
+    document.getElementById("uploadAvatar").onchange = function(e){
+      let file = e.target.files[0];
+      let reader = new FileReader();
+
+      reader.onload = function(){
+        data.avatar = reader.result;
+        saveData(data);
+        render("profile");
+      };
+
+      reader.readAsDataURL(file);
+    };
+  }
+
+  // ===== HISTORY =====
+  if(tab === "history"){
+    let bets = data.bets || [];
+
+    let html = bets.map(b=>`
+      <div class="row">
+        🎯 ${b.so} (${b.loai}) - ${b.tien.toLocaleString()}đ
+      </div>
+    `).join("");
+
+    box.innerHTML = `
+      <div class="card">
+        <h2>📜 Lịch sử cược</h2>
+        ${html || "Chưa có dữ liệu"}
+      </div>
+    `;
+  }
+
+  // ===== SETTINGS =====
+  if(tab === "settings"){
+    box.innerHTML = `
+      <div class="card">
+        <h2>⚙️ Cài đặt</h2>
+
+        <input id="oldPass" type="password" placeholder="Mật khẩu cũ">
+        <input id="newPass" type="password" placeholder="Mật khẩu mới">
+
+        <button class="btn" onclick="changePass()">Đổi mật khẩu</button>
+
+        <br><br>
+
+        <button class="btn logout" onclick="logout()">Đăng xuất</button>
+      </div>
+    `;
+  }
+}
+
+// ===== CHANGE PASS =====
+function changePass(){
+  let oldP = document.getElementById("oldPass").value;
+  let newP = document.getElementById("newPass").value;
+
+  let users = JSON.parse(localStorage.getItem("users")||"{}");
+
+  if(users[user].password !== oldP){
+    alert("Sai mật khẩu cũ");
+    return;
+  }
+
+  users[user].password = newP;
+  localStorage.setItem("users", JSON.stringify(users));
+
+  alert("Đổi mật khẩu thành công");
+}
+
+// ===== CLICK MENU =====
+document.querySelectorAll(".menu-item").forEach(el=>{
+  if(el.dataset.tab){
+    el.onclick = ()=>{
+      let tab = el.dataset.tab;
+      history.pushState({}, "", "?tab="+tab);
+      render(tab);
+    };
+  }
+});
+
+// ===== INIT =====
+function getTab(){
+  let url = new URL(location.href);
+  return url.searchParams.get("tab") || "profile";
+}
+
+render(getTab());
+
+</script>
+
+</body>
+</html>
