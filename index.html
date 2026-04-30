@@ -406,7 +406,7 @@ iframe:hover{
   display:none;
   flex-direction:column;
   overflow:hidden;
-  
+
   z-index:9999; /* 🔥 thêm */
 }
 
@@ -420,6 +420,63 @@ iframe:hover{
   background:#1e293b;
 }
 
+/*thêm phần cảnh báo cho khung đăng ký */
+
+.input-wrap{
+  position:relative;
+}
+
+/* popup nổi */
+.input-tooltip{
+  position:absolute;
+  bottom:110%; /* 👈 nằm phía trên input */
+  left:0;
+
+  background:#020617;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:8px;
+
+  font-size:12px;
+  white-space:nowrap;
+
+  border:1px solid #334155;
+  box-shadow:0 5px 15px rgba(0,0,0,.5);
+
+  opacity:0;
+  transform:translateY(5px);
+  pointer-events:none;
+  transition:.2s;
+}
+
+/* mũi tên nhỏ */
+.input-tooltip::after{
+  content:"";
+  position:absolute;
+  top:100%;
+  left:10px;
+
+  border-width:6px;
+  border-style:solid;
+  border-color:#020617 transparent transparent transparent;
+}
+
+/* show */
+.input-tooltip.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* màu trạng thái */
+.input-tooltip.error{
+  border-color:#ef4444;
+  color:#ef4444;
+}
+
+.input-tooltip.success{
+  border-color:#22c55e;
+  color:#22c55e;
+}
 </style>
 </head>
 
@@ -469,7 +526,7 @@ iframe:hover{
     <span>🎁 Thưởng nạp x3</span>
     <span>🎁 Nạp rút 1 phút</span>
     <span>🎁 Thông tin bảo mật</span>
-  
+
   </div>
 
   <div class="card">
@@ -546,30 +603,29 @@ iframe:hover{
 
     <div class="promo-form" style="grid-template-columns:1fr 1fr; gap:10px">
 
-      <select id="regCountry">
-        <option>Việt Nam</option>
-      </select>
+      <div class="input-wrap">
+        <input id="regUser" placeholder="Tên tài khoản" required>
+        <div id="regUserHint" class="input-tooltip">
+          Phải có ≥6 ký tự (chữ + số), không ký tự đặc biệt
+        </div>
+      </div>
 
-      <select id="regCurrency">
-        <option>VND</option>
-      </select>
-
-      <input id="regCity" placeholder="Thành phố">
-
-      <input id="regRegion" placeholder="Khu vực">
-
-      <input id="regEmail" placeholder="Email*" required>
-
-      <input id="regPhone" placeholder="Số điện thoại">
+      <input id="regEmail" placeholder="Email">
 
       <input id="regFirstName" placeholder="Tên*" required>
 
       <input id="regLastName" placeholder="Họ*" required>
 
-      <input id="regPass" type="password" placeholder="Mật khẩu*" required>
+      <div class="input-wrap">
+        <input id="regPass" type="password" placeholder="Mật khẩu*" required>
+        <div id="regPassHint" class="input-tooltip">
+          ≥6 ký tự, nên có chữ hoa + số
+        </div>
+      </div>
 
       <input id="regPass2" type="password" placeholder="Nhập lại mật khẩu*" required>
 
+      <input id="regPhone" placeholder="Số điện thoại">
       <input id="regCode" placeholder="Mã khuyến mãi">
 
     </div>
@@ -1330,7 +1386,7 @@ function openRegister(){
 
 // đăng ký
 function register(){
-  let u = document.getElementById("regEmail").value.trim(); // dùng email làm user
+  let u = document.getElementById("regUser").value.trim(); // dùng email làm user
   let p = document.getElementById("regPass").value.trim();
 
   if(!u || !p) return alert("Nhập đủ thông tin");
@@ -1352,6 +1408,7 @@ function register(){
   loadUserData();
   updateUI();
 }
+
 
 // đăng nhập
 function login(){
@@ -1469,6 +1526,80 @@ function goAccount(tab){
 
   window.location.href = "account.html?tab=" + tab;
 }
+
+// ===== USERNAME TOOLTIP =====
+let regUserInput = document.getElementById("regUser");
+let hint = document.getElementById("regUserHint");
+
+regUserInput.addEventListener("focus", ()=>{
+  hint.classList.add("active");
+});
+
+regUserInput.addEventListener("blur", ()=>{
+  // chỉ ẩn khi chưa nhập gì
+  if(regUserInput.value === ""){
+    hint.classList.remove("active");
+  }
+});
+
+regUserInput.addEventListener("input", ()=>{
+  let val = regUserInput.value;
+  let regex = /^[a-zA-Z0-9]{6,}$/;
+
+  // reset trạng thái
+  hint.classList.remove("error","success");
+
+  if(val.length === 0){
+    hint.classList.add("active");
+    hint.innerText = "Phải có ≥6 ký tự (chữ + số)";
+  }
+  else if(!regex.test(val)){
+    hint.classList.add("active","error");
+    hint.innerText = "❌ Không hợp lệ";
+  }else{
+    hint.classList.add("active","success");
+    hint.innerText = "✅ Hợp lệ";
+  }
+});
+
+
+// ===== PASSWORD TOOLTIP =====
+let regPassInput = document.getElementById("regPass");
+let passHint = document.getElementById("regPassHint");
+
+// 👉 nếu bạn muốn tooltip password nằm dưới input thì bật dòng này
+// passHint.classList.add("bottom");
+
+regPassInput.addEventListener("focus", ()=>{
+  passHint.classList.add("active");
+});
+
+regPassInput.addEventListener("blur", ()=>{
+  if(regPassInput.value === ""){
+    passHint.classList.remove("active");
+  }
+});
+
+regPassInput.addEventListener("input", ()=>{
+  let val = regPassInput.value;
+
+  // ≥6 ký tự + có chữ + số
+  let regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+
+  passHint.classList.remove("error","success");
+
+  if(val.length === 0){
+    passHint.classList.add("active");
+    passHint.innerText = "≥6 ký tự, nên có chữ + số";
+  }
+  else if(!regex.test(val)){
+    passHint.classList.add("active","error");
+    passHint.innerText = "❌ Mật khẩu yếu";
+  }else{
+    passHint.classList.add("active","success");
+    passHint.innerText = "✅ Mật khẩu mạnh";
+  }
+});
 </script>
 </body>
 </html>
