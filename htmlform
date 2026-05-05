@@ -1,110 +1,479 @@
-04/05/2025 | China Airlines | 21990000 | 21490000 | Tháng 5
-15/06/2025 | China Airlines | 22990000 | 22490000 | Tháng 6
-05/07/2025 | China Airlines | 23990000 | 23490000 | Tháng 7
-10/08/2025 | China Airlines | 23990000 | 23490000 | Tháng 8
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Lottery UI</title>
 
-
-
-<?php
-$bang_gia_text = get_field('bang_gia');
-
-if (!$bang_gia_text) {
-    echo "<p>Chưa có bảng giá.</p>";
-    return;
+<style>
+body{
+    margin:0;
+    font-family:"Segoe UI",sans-serif;
+    background:#f3f5f9;
 }
 
-$rows = explode(PHP_EOL, trim($bang_gia_text));
-$month_tabs = ['Tất cả'];
-$data_by_month = [];
-
-foreach ($rows as $row) {
-    $cols = explode('|', $row);
-    if (count($cols) !== 5) continue;
-
-    list($ngay, $hang, $gia_cu, $gia_moi, $thang) = array_map('trim', $cols);
-    $data_by_month[$thang][] = compact('ngay', 'hang', 'gia_cu', 'gia_moi');
-
-    if (!in_array($thang, $month_tabs)) $month_tabs[] = $thang;
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 25px;
+    background:#fff;
+    border-bottom:1px solid #ddd;
 }
-?>
 
-<div class="tabs">
-  <?php foreach ($month_tabs as $i => $month): ?>
-    <div class="tab <?php if ($i === 0) echo 'active'; ?>" data-month="<?php echo esc_attr($month); ?>">
-      <?php echo esc_html($month); ?>
+.balls span{
+    width:42px;height:42px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    color:#fff;
+    font-weight:bold;
+    margin:0 5px;
+    background:linear-gradient(145deg,#5a9df9,#2d6cdf);
+}
+
+/* LAYOUT */
+.container{display:flex;padding:20px}
+.left{flex:3;margin-right:20px}
+.right{flex:1;background:#fff;border-radius:12px;padding:15px}
+
+/* BOX */
+.box{background:#fff;border-radius:12px;padding:15px}
+
+/* TABS */
+.tabs{display:flex;gap:15px;border-bottom:1px solid #eee;padding-bottom:10px}
+.tab{cursor:pointer;padding:8px 14px;border-radius:6px}
+.tab.active{background:#e7f0ff;color:#2d6cdf;font-weight:bold}
+
+/* SUB */
+.subtabs{margin-top:10px;display:flex;gap:10px}
+.subtab{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
+.subtab.active{background:#2d6cdf;color:white}
+
+/* MODE */
+.mode-tabs{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
+.mode{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
+.mode.active{background:#2d6cdf;color:#fff}
+
+/* NUMBER */
+.row{margin-top:15px}
+.label{margin-bottom:5px;color:#555}
+.numbers span{
+    width:38px;height:38px;border-radius:50%;
+    border:1px solid #ccc;
+    display:inline-flex;align-items:center;justify-content:center;
+    margin:3px;cursor:pointer;background:#fff;
+    transition:0.2s;
+}
+.numbers span:hover{border-color:#2d6cdf}
+.numbers span.active{
+    background:#2d6cdf;color:#fff;border:none;
+    box-shadow:0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* ACTION */
+.actions{margin-top:5px}
+.actions button{
+    margin:2px;padding:5px 8px;border:none;border-radius:5px;
+    cursor:pointer;background:#e6ebf5;
+}
+.actions button:hover{background:#2d6cdf;color:#fff}
+
+/* INFO */
+.info{margin-top:15px;display:flex;justify-content:space-between;align-items:center}
+.badge{background:#e7f0ff;padding:5px 10px;border-radius:6px;color:#2d6cdf;font-weight:bold}
+
+/* BUTTON */
+.btn{padding:8px 15px;border:none;border-radius:6px;color:#fff;cursor:pointer}
+.blue{background:#2d6cdf}
+.orange{background:#ff8c1a}
+.gray{background:#ccc;color:#333}
+
+.table{margin-top:15px;border-top:1px solid #eee;padding:20px;text-align:center;color:#888}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div>
+        <b>Miền Bắc</b><br>Kết quả 04/05/2026
     </div>
-  <?php endforeach; ?>
+    <div class="balls">
+        <span>1</span><span>1</span><span>2</span><span>5</span><span>1</span>
+    </div>
 </div>
 
-<?php foreach ($data_by_month as $month => $items): ?>
-  <div class="table-container <?php echo $month === 'Tháng 5' ? 'active' : ''; ?>" data-month="<?php echo esc_attr($month); ?>">
-    <table>
-      <thead>
-        <tr>
-          <th>Ngày khởi hành</th>
-          <th>Hãng tour</th>
-          <th>Giá tour</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($items as $row): ?>
-          <tr>
-            <td><?php echo esc_html($row['ngay']); ?><br><span class="discount">Còn chỗ</span></td>
-            <td><?php echo esc_html($row['hang']); ?></td>
-            <td><del><?php echo number_format($row['gia_cu'], 0, ',', '.'); ?>đ</del> <span class="price"><?php echo number_format($row['gia_moi'], 0, ',', '.'); ?>đ</span></td>
-            <td><button class="book-btn">Giữ chỗ ngay</button></td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-  </div>
-<?php endforeach; ?>
+<div class="container">
 
+<div class="left">
+<div class="box">
 
+<!-- MAIN TAB -->
+<div class="tabs">
+    <div class="tab active">Bao lô</div>
+    <div class="tab">Lô xiên</div>
+    <div class="tab">Đánh đề</div>
+    
+    <span onclick="openGuide()" style="cursor:pointer;color:#2d6cdf;">
+        ℹ️ Cách chơi
+    </span>
+</div>
+<div style="text-align:right;margin-bottom:10px;">
+</div>
 
-<section id="banggia">
-  <h2>📌 Bảng giá (Khởi hành từ <?php echo esc_html($khoi_hanh); ?>)</h2>
-  <?php get_template_part('template-parts/price-table'); ?>
-</section>
+<!-- SUB TAB -->
+<div class="subtabs">
+    <div class="subtab active" data-type="2" data-rate="27000">Lô 2 số</div>
+    <div class="subtab" data-type="2" data-rate="23000">Lô 2 số đầu</div>
+    <div class="subtab" data-type="2" data-rate="1000">Lô 2 số 1K</div>
+    <div class="subtab" data-type="3" data-rate="23000">Lô 3 số</div>
+    <div class="subtab" data-type="4" data-rate="20000">Lô 4 số</div>
+</div>
 
+<!-- MODE -->
+<div class="mode-tabs">
+    <div class="mode active" data-mode="chon">Chọn số</div>
+    <div class="mode" data-mode="input">Con số</div>
+</div>
 
-.tabs {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+<!-- CHỌN -->
+<div id="chon">
+
+<div class="row" id="row-ngan" style="display:none;">
+<div class="label">Ngàn</div>
+<div class="numbers" id="ngan"></div>
+<div class="actions">
+<button onclick="selectRow('ngan','all')">Toàn bộ</button>
+<button onclick="selectRow('ngan','tai')">Tài</button>
+<button onclick="selectRow('ngan','xiu')">Xỉu</button>
+<button onclick="selectRow('ngan','le')">Lẻ</button>
+<button onclick="selectRow('ngan','chan')">Chẵn</button>
+<button onclick="clearRow('ngan')">Xóa</button>
+</div>
+</div>
+
+<div class="row" id="row-tram" style="display:none;">
+<div class="label">Trăm</div>
+<div class="numbers" id="tram"></div>
+<div class="actions">
+<button onclick="selectRow('tram','all')">Toàn bộ</button>
+<button onclick="selectRow('tram','tai')">Tài</button>
+<button onclick="selectRow('tram','xiu')">Xỉu</button>
+<button onclick="selectRow('tram','le')">Lẻ</button>
+<button onclick="selectRow('tram','chan')">Chẵn</button>
+<button onclick="clearRow('tram')">Xóa</button>
+</div>
+</div>
+
+<div class="row" id="row-chuc">
+<div class="label">Chục</div>
+<div class="numbers" id="chuc"></div>
+<div class="actions">
+<button onclick="selectRow('chuc','all')">Toàn bộ</button>
+<button onclick="selectRow('chuc','tai')">Tài</button>
+<button onclick="selectRow('chuc','xiu')">Xỉu</button>
+<button onclick="selectRow('chuc','le')">Lẻ</button>
+<button onclick="selectRow('chuc','chan')">Chẵn</button>
+<button onclick="clearRow('chuc')">Xóa</button>
+</div>
+</div>
+
+<div class="row" id="row-donvi">
+<div class="label">Đơn vị</div>
+<div class="numbers" id="donvi"></div>
+<div class="actions">
+<button onclick="selectRow('donvi','all')">Toàn bộ</button>
+<button onclick="selectRow('donvi','tai')">Tài</button>
+<button onclick="selectRow('donvi','xiu')">Xỉu</button>
+<button onclick="selectRow('donvi','le')">Lẻ</button>
+<button onclick="selectRow('donvi','chan')">Chẵn</button>
+<button onclick="clearRow('donvi')">Xóa</button>
+</div>
+</div>
+
+</div>
+
+<!-- INPUT -->
+<div id="input" style="display:none;margin-top:10px;">
+<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
+</div>
+
+<!-- INFO -->
+<div class="info">
+<div>
+<span class="badge">Tỉ lệ: 1 = <span id="rate">99.9</span></span><br>
+Đã chọn: <b id="count">0</b> mục |
+Số tiền: <b id="money">0</b> đ
+</div>
+
+<div>
+<button onclick="minus()">-</button>
+<span id="multi">1</span>
+<button onclick="plus()">+</button>
+
+<button class="btn blue">Cược ngay</button>
+<button class="btn orange">Thêm số</button>
+<button class="btn gray" onclick="resetAll()">Cài lại</button>
+</div>
+</div>
+
+<div class="table">Không có dữ liệu</div>
+
+</div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+<div id="kq"></div>
+</div>
+
+</div>
+
+<script>
+let rate = 27000;
+let multi = 1;
+let type = 2; // <-- THÊM
+let mainTab = "bao"; // bao | xien | de
+/* render số */
+function render(id){
+    let box=document.getElementById(id);
+    box.innerHTML="";
+    for(let i=0;i<=9;i++){
+        let s=document.createElement("span");
+        s.innerText=i;
+        s.onclick=()=>{s.classList.toggle("active");calc();}
+        box.appendChild(s);
+    }
 }
-.tab {
-  padding: 10px 15px;
-  cursor: pointer;
-  background: #f0f0f0;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: 0.3s;
-}
-.tab.active {
-  background: orange;
-  color: white;
-}
-.table-container {
-  display: none;
-}
-.table-container.active {
-  display: block;
-}
+render ("ngan");
+render ("tram");
+render("chuc");
+render("donvi");
 
 
+// gán giá trị cho tab lớn lô - xiên  - đề 
+document.querySelectorAll(".tab").forEach((tab, index)=>{
+    tab.onclick = ()=>{
+        document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
 
-
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', function () {
-    const month = this.getAttribute('data-month');
-
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    this.classList.add('active');
-
-    document.querySelectorAll('.table-container').forEach(container => {
-      container.style.display = (container.getAttribute('data-month') === month || month === 'Tất cả') ? 'block' : 'none';
-    });
-  });
+        // gán loại tab
+        if(index === 0) mainTab = "bao";
+        if(index === 1) mainTab = "xien";
+        if(index === 2) mainTab = "de";
+    }
 });
+
+
+
+/* tab click */
+document.querySelectorAll(".subtab").forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll(".subtab").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+
+        rate = parseInt(tab.dataset.rate);
+        type = parseInt(tab.dataset.type); // <-- THÊM
+
+        document.getElementById("rate").innerText = rate.toLocaleString();
+
+        // show / hide hàng
+        // reset tất cả trước
+// reset
+        document.getElementById("row-ngan").style.display = "none";
+        document.getElementById("row-tram").style.display = "none";
+
+        // theo type
+        if(type == 3){
+            document.getElementById("row-tram").style.display = "block";
+        }
+        else if(type == 4){
+            document.getElementById("row-tram").style.display = "block";
+            document.getElementById("row-ngan").style.display = "block";
+        }
+        calc();
+    }
+});
+
+/* mode */
+document.querySelectorAll(".mode").forEach(m=>{
+    m.onclick=()=>{
+        document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode=m.dataset.mode;
+        document.getElementById("chon").style.display=mode=="chon"?"block":"none";
+        document.getElementById("input").style.display=mode=="input"?"block":"none";
+    }
+});
+
+/* chọn */
+function selectRow(id,type){
+    let nums=document.querySelectorAll("#"+id+" span");
+    nums.forEach(n=>{
+        let v=parseInt(n.innerText);
+
+        if(type=="all") n.classList.add("active");
+        if(type=="tai") n.classList.toggle("active",v>=5);
+        if(type=="xiu") n.classList.toggle("active",v<5);
+        if(type=="le") n.classList.toggle("active",v%2==1);
+        if(type=="chan") n.classList.toggle("active",v%2==0);
+    });
+    calc();
+}
+
+function clearRow(id){
+    document.querySelectorAll("#"+id+" span")
+    .forEach(n=>n.classList.remove("active"));
+    calc();
+}
+
+/* tính */
+function calc(){
+    let c = document.querySelectorAll("#chuc .active").length;
+    let d = document.querySelectorAll("#donvi .active").length;
+
+    let t = 1;
+    let n = 1;
+
+    if(type >= 3){
+        t = document.querySelectorAll("#tram .active").length;
+        if(t === 0){ updateZero(); return; }
+    }
+
+    if(type >= 4){
+        n = document.querySelectorAll("#ngan .active").length;
+        if(n === 0){ updateZero(); return; }
+    }
+
+    if(c === 0 || d === 0){
+        updateZero();
+        return;
+    }
+
+    let count = c * d * t * n;
+    let money = count * rate * multi;
+
+    document.getElementById("count").innerText = count;
+    document.getElementById("money").innerText = money.toLocaleString();
+}
+
+function updateZero(){
+    document.getElementById("count").innerText = 0;
+    document.getElementById("money").innerText = 0;
+}
+
+/* nhân */
+function plus(){multi++;update()}
+function minus(){if(multi>1)multi--;update()}
+function update(){
+    document.getElementById("multi").innerText=multi;
+    calc();
+}
+
+/* reset */
+function resetAll(){
+    clearRow("ngan");
+    clearRow("tram");
+    clearRow("chuc");
+    clearRow("donvi");
+    multi=1;
+    update();
+}
+
+/* embed kết quả */
+document.getElementById("kq").innerHTML=`
+<script src="//www.minhngoc.net.vn/jquery/jquery-1.7.2.js"><\/script>
+<link rel="stylesheet" href="//www.minhngoc.net.vn/style/bangketqua_mini.css"/>
+<div id="box_kqxs_minhngoc">
+<script>
+bgcolor="#fff";
+titlecolor="#333";
+dbcolor="#000";
+fsize="12px";
+kqwidth="100%";
+<\/script>
+<script src="//www.minhngoc.net.vn/getkqxs/mien-bac.js"><\/script>
+</div>`;
+
+// pop up cách chơi 
+function openGuide(){
+    let title = "";
+    let content = "";
+
+    if(mainTab === "bao"){
+        title = "🎯 Bao lô";
+        content = `
+        Bao lô: Chọn số theo hàng (2, 3 hoặc 4 số).<br><br>
+        Trúng khi số xuất hiện trong kết quả xổ số.<br><br>
+        Tiền thắng tính theo số lần xuất hiện (nháy).
+        `;
+    }
+
+    if(mainTab === "xien"){
+        title = "🎯 Lô xiên";
+        content = `
+        Lô xiên: Chọn từ 2 - 4 số.<br><br>
+        Phải trúng đủ tất cả các số đã chọn mới thắng.<br><br>
+        Tỷ lệ thưởng cao hơn nhưng khó trúng hơn.
+        `;
+    }
+
+    if(mainTab === "de"){
+        title = "🎯 Đánh đề";
+        content = `
+        Đánh đề: Chọn 2 số cuối giải đặc biệt.<br><br>
+        Chỉ tính 1 lần duy nhất trong ngày.<br><br>
+        Trúng → ăn theo tỷ lệ đề (thường x70).
+        `;
+    }
+
+    document.getElementById("guideTitle").innerHTML = title;
+    document.querySelector("#guideModal p").innerHTML = content;
+    document.getElementById("guideModal").style.display = "flex";
+}
+
+function closeGuide(){
+    document.getElementById("guideModal").style.display = "none";
+}
+
+</script>
+<!-- POPUP -->
+<!-- POPUP -->
+<div id="guideModal" style="
+    display:none;
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.4);
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+">
+
+<div style="
+    width:500px;
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    position:relative;
+">
+
+    <!-- CLOSE -->
+    <span onclick="closeGuide()" style="
+        position:absolute;
+        right:15px;top:10px;
+        cursor:pointer;font-size:18px;
+    ">✕</span>
+
+    <!-- TITLE -->
+    <h3 id="guideTitle" style="margin-top:0;"></h3>
+
+    <!-- CONTENT -->
+    <p style="line-height:1.6;color:#555;"></p>
+
+</div>
+</div>
+</body>
+</html>
