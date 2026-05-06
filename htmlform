@@ -173,7 +173,7 @@ body{
 <div style="text-align:right;margin-bottom:10px;">
 </div>
 
-<!-- SUB TAB -->
+<!-- SUB TAB BAO LÔ -->
 <div class="subtabs" style="margin-top:15px;">
     <div class="subtab active" data-type="2" data-rate="27000">Lô 2 số</div>
     <div class="subtab" data-type="2" data-rate="23000">Lô 2 số đầu</div>
@@ -209,13 +209,96 @@ body{
 </div>
 
 </div>
-<!-- MODE -->
+
+<!-- ĐÁ ĐỀ -->
+<div id="deBox" style="display:none">
+
+<!-- SUB TAB ĐỀ -->
+<div class="subtabs" style="margin-top:15px;">
+    <div class="subtab active" data-type="de" data-rate="1000">Đề đặc biệt</div>
+    <div class="subtab" data-type="de" data-rate="1000">Đề đầu đặc biệt</div>
+    <div class="subtab" data-type="de" data-rate="1000">Đề giải 7</div>
+    <div class="subtab" data-type="de" data-rate="1000">Đề giải nhất</div>
+    <div class="subtab" data-type="de" data-rate="1000">Đề đầu giải nhất</div>
+</div>
+
+<!-- MODE ĐỀ -->
+<div class="mode-tabs-de" style="margin-top:10px;display:flex;gap:10px;justify-content:flex-end">
+    <div class="mode-de active" data-mode="chon">Chọn số</div>
+    <div class="mode-de" data-mode="input">Con số</div>
+</div>
+
+<!-- CHỌN ĐỀ -->
+<div id="chon-de">
+
+<div class="row">
+<div class="label">Chục 1</div>
+<div class="numbers" id="de-chuc1"></div>
+<div class="actions">
+<button onclick="selectRowDe('de-chuc1','all')">Toàn bộ</button>
+<button onclick="selectRowDe('de-chuc1','tai')">Tài</button>
+<button onclick="selectRowDe('de-chuc1','xiu')">Xỉu</button>
+<button onclick="selectRowDe('de-chuc1','le')">Lẻ</button>
+<button onclick="selectRowDe('de-chuc1','chan')">Chẵn</button>
+<button onclick="clearRowDe('de-chuc1')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Đơn vị 1</div>
+<div class="numbers" id="de-donvi1"></div>
+<div class="actions">
+<button onclick="selectRowDe('de-donvi1','all')">Toàn bộ</button>
+<button onclick="selectRowDe('de-donvi1','tai')">Tài</button>
+<button onclick="selectRowDe('de-donvi1','xiu')">Xỉu</button>
+<button onclick="selectRowDe('de-donvi1','le')">Lẻ</button>
+<button onclick="selectRowDe('de-donvi1','chan')">Chẵn</button>
+<button onclick="clearRowDe('de-donvi1')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Chục 2</div>
+<div class="numbers" id="de-chuc2"></div>
+<div class="actions">
+<button onclick="selectRowDe('de-chuc2','all')">Toàn bộ</button>
+<button onclick="selectRowDe('de-chuc2','tai')">Tài</button>
+<button onclick="selectRowDe('de-chuc2','xiu')">Xỉu</button>
+<button onclick="selectRowDe('de-chuc2','le')">Lẻ</button>
+<button onclick="selectRowDe('de-chuc2','chan')">Chẵn</button>
+<button onclick="clearRowDe('de-chuc2')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Đơn vị 2</div>
+<div class="numbers" id="de-donvi2"></div>
+<div class="actions">
+<button onclick="selectRowDe('de-donvi2','all')">Toàn bộ</button>
+<button onclick="selectRowDe('de-donvi2','tai')">Tài</button>
+<button onclick="selectRowDe('de-donvi2','xiu')">Xỉu</button>
+<button onclick="selectRowDe('de-donvi2','le')">Lẻ</button>
+<button onclick="selectRowDe('de-donvi2','chan')">Chẵn</button>
+<button onclick="clearRowDe('de-donvi2')">Xóa</button>
+</div>
+</div>
+
+</div>
+
+<!-- INPUT ĐỀ -->
+<div id="input-de" style="display:none;margin-top:10px;">
+<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
+</div>
+
+</div>
+
+<!-- MODE BAO LÔ -->
 <div class="mode-tabs">
     <div class="mode active" data-mode="chon">Chọn số</div>
     <div class="mode" data-mode="input">Con số</div>
 </div>
 
-<!-- CHỌN -->
+<!-- CHỌN BAO LÔ -->
 <div id="chon">
 
 <div class="row" id="row-ngan" style="display:none;">
@@ -272,7 +355,7 @@ body{
 
 </div>
 
-<!-- INPUT -->
+<!-- INPUT BAO LÔ -->
 <div id="input" style="display:none;margin-top:10px;">
 <textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
 </div>
@@ -311,8 +394,9 @@ Số tiền: <b id="money">0</b> đ
 <script>
 let rate = 27000;
 let multi = 1;
-let type = 2; // <-- THÊM
-let mainTab = "bao"; // bao | xien | de
+let type = 2;
+let mainTab = "bao";
+
 /* render số */
 function render(id){
     let box=document.getElementById(id);
@@ -328,7 +412,10 @@ render ("ngan");
 render ("tram");
 render("chuc");
 render("donvi");
-
+render("de-chuc1");
+render("de-donvi1");
+render("de-chuc2");
+render("de-donvi2");
 
 // gán giá trị cho tab lớn lô - xiên  - đề
 document.querySelectorAll(".tab").forEach((tab, index)=>{
@@ -341,9 +428,11 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
         document.getElementById("chon").style.display="none";
         document.getElementById("input").style.display="none";
         document.getElementById("xienBox").style.display="none";
+        document.getElementById("deBox").style.display="none";
 
         document.querySelector(".subtabs").style.display="none";
         document.querySelector(".mode-tabs").style.display="none";
+        document.querySelector(".mode-tabs-de").style.display="none";
 
         if(index === 0){
             mainTab = "bao";
@@ -351,19 +440,24 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
             document.getElementById("chon").style.display="block";
             document.querySelector(".subtabs").style.display="flex";
             document.querySelector(".mode-tabs").style.display="flex";
+            rate = 27000;
+            document.getElementById("rate").innerText = rate.toLocaleString();
+            resetAll();
         }
 
         if(index === 1){
             mainTab = "xien";
-
             document.getElementById("xienBox").style.display="block";
-
-            // 👉 reset khi vào xiên
             resetXien();
         }
 
         if(index === 2){
             mainTab = "de";
+            document.getElementById("deBox").style.display="block";
+            document.querySelector(".mode-tabs-de").style.display="flex";
+            rate = 1000;
+            document.getElementById("rate").innerText = rate.toLocaleString();
+            resetDe();
         }
     }
 });
@@ -378,24 +472,30 @@ function resetXien(){
     document.getElementById("money").innerText = 0;
 }
 
-/* tab click */
-document.querySelectorAll(".subtab").forEach(tab=>{
+function resetDe(){
+    clearRowDe("de-chuc1");
+    clearRowDe("de-donvi1");
+    clearRowDe("de-chuc2");
+    clearRowDe("de-donvi2");
+    multi = 1;
+    document.getElementById("multi").innerText = multi;
+    calcDe();
+}
+
+/* tab click BAO LÔ */
+document.querySelectorAll(".subtabs")[0].querySelectorAll(".subtab").forEach(tab=>{
     tab.onclick=()=>{
-        document.querySelectorAll(".subtab").forEach(t=>t.classList.remove("active"));
+        document.querySelectorAll(".subtabs")[0].querySelectorAll(".subtab").forEach(t=>t.classList.remove("active"));
         tab.classList.add("active");
 
         rate = parseInt(tab.dataset.rate);
-        type = parseInt(tab.dataset.type); // <-- THÊM
+        type = parseInt(tab.dataset.type);
 
         document.getElementById("rate").innerText = rate.toLocaleString();
 
-        // show / hide hàng
-        // reset tất cả trước
-// reset
         document.getElementById("row-ngan").style.display = "none";
         document.getElementById("row-tram").style.display = "none";
 
-        // theo type
         if(type == 3){
             document.getElementById("row-tram").style.display = "block";
         }
@@ -407,7 +507,7 @@ document.querySelectorAll(".subtab").forEach(tab=>{
     }
 });
 
-/* mode */
+/* mode BAO LÔ */
 document.querySelectorAll(".mode").forEach(m=>{
     m.onclick=()=>{
         document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
@@ -419,7 +519,19 @@ document.querySelectorAll(".mode").forEach(m=>{
     }
 });
 
-/* chọn */
+/* mode ĐỀ */
+document.querySelectorAll(".mode-de").forEach(m=>{
+    m.onclick=()=>{
+        document.querySelectorAll(".mode-de").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode=m.dataset.mode;
+        document.getElementById("chon-de").style.display=mode=="chon"?"block":"none";
+        document.getElementById("input-de").style.display=mode=="input"?"block":"none";
+    }
+});
+
+/* chọn BAO LÔ */
 function selectRow(id,type){
     let nums=document.querySelectorAll("#"+id+" span");
     nums.forEach(n=>{
@@ -440,7 +552,28 @@ function clearRow(id){
     calc();
 }
 
-/* tính */
+/* chọn ĐỀ */
+function selectRowDe(id,type){
+    let nums=document.querySelectorAll("#"+id+" span");
+    nums.forEach(n=>{
+        let v=parseInt(n.innerText);
+
+        if(type=="all") n.classList.add("active");
+        if(type=="tai") n.classList.toggle("active",v>=5);
+        if(type=="xiu") n.classList.toggle("active",v<5);
+        if(type=="le") n.classList.toggle("active",v%2==1);
+        if(type=="chan") n.classList.toggle("active",v%2==0);
+    });
+    calcDe();
+}
+
+function clearRowDe(id){
+    document.querySelectorAll("#"+id+" span")
+    .forEach(n=>n.classList.remove("active"));
+    calcDe();
+}
+
+/* tính BAO LÔ */
 function calc(){
     let c = document.querySelectorAll("#chuc .active").length;
     let d = document.querySelectorAll("#donvi .active").length;
@@ -470,6 +603,25 @@ function calc(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
+/* tính ĐỀ */
+function calcDe(){
+    let c1 = document.querySelectorAll("#de-chuc1 .active").length;
+    let d1 = document.querySelectorAll("#de-donvi1 .active").length;
+    let c2 = document.querySelectorAll("#de-chuc2 .active").length;
+    let d2 = document.querySelectorAll("#de-donvi2 .active").length;
+
+    if(c1 === 0 || d1 === 0 || c2 === 0 || d2 === 0){
+        updateZero();
+        return;
+    }
+
+    let count = c1 * d1 * c2 * d2;
+    let money = count * 1000 * multi;
+
+    document.getElementById("count").innerText = count;
+    document.getElementById("money").innerText = money.toLocaleString();
+}
+
 function updateZero(){
     document.getElementById("count").innerText = 0;
     document.getElementById("money").innerText = 0;
@@ -480,7 +632,11 @@ function plus(){multi++;update()}
 function minus(){if(multi>1)multi--;update()}
 function update(){
     document.getElementById("multi").innerText=multi;
-    calc();
+    if(mainTab === "de"){
+        calcDe();
+    } else {
+        calc();
+    }
 }
 
 /* reset */
@@ -536,7 +692,7 @@ function openGuide(){
         content = `
         Đánh đề: Chọn 2 số cuối giải đặc biệt.<br><br>
         Chỉ tính 1 lần duy nhất trong ngày.<br><br>
-        Trúng → ăn theo tỷ lệ đề (thường x70).
+        Trúng → ăn theo tỷ lệ đề (1000 VNĐ/mục).
         `;
     }
 
@@ -588,10 +744,7 @@ document.querySelectorAll(".subtab-xien").forEach(tab=>{
 
         xienType = parseInt(tab.dataset.x);
 
-        // 👉 RESET sạch
         resetXien();
-
-        // ❌ KHÔNG auto nữa
     }
 });
 
@@ -606,7 +759,6 @@ document.querySelectorAll(".mode-xien").forEach(m=>{
         document.getElementById("xienInput").style.display = mode=="input"?"block":"none";
         document.getElementById("xienChon").style.display = mode=="chon"?"block":"none";
 
-        // 👉 AUTO chọn khi vào tab chọn số nhanh
         if(mode=="chon"){
             quickPick();
         }
@@ -668,7 +820,6 @@ function calcXien(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 </script>
-<!-- POPUP -->
 <!-- POPUP -->
 <div id="guideModal" style="
     display:none;
