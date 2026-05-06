@@ -50,10 +50,19 @@ body{
 .subtab{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
 .subtab.active{background:#2d6cdf;color:white}
 
+/* SUBTABS DE */
+.subtabs-de{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+.subtab-de{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
+.subtab-de.active{background:#2d6cdf;color:white}
+
 /* MODE */
 .mode-tabs{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
 .mode{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
 .mode.active{background:#2d6cdf;color:#fff}
+
+.mode-tabs-de{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
+.mode-de{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
+.mode-de.active{background:#2d6cdf;color:#fff}
 
 /* NUMBER */
 .row{margin-top:15px}
@@ -173,13 +182,22 @@ body{
 <div style="text-align:right;margin-bottom:10px;">
 </div>
 
-<!-- SUB TAB -->
+<!-- SUB TAB BAO LÔ -->
 <div class="subtabs" style="margin-top:15px;">
     <div class="subtab active" data-type="2" data-rate="27000">Lô 2 số</div>
     <div class="subtab" data-type="2" data-rate="23000">Lô 2 số đầu</div>
     <div class="subtab" data-type="2" data-rate="1000">Lô 2 số 1K</div>
     <div class="subtab" data-type="3" data-rate="23000">Lô 3 số</div>
     <div class="subtab" data-type="4" data-rate="20000">Lô 4 số</div>
+</div>
+
+<!-- SUB TAB ĐỀ -->
+<div class="subtabs-de" style="display:none;">
+    <div class="subtab-de active" data-de-type="db">Đề đặc biệt</div>
+    <div class="subtab-de" data-de-type="db-dau">Đề đầu đặc biệt</div>
+    <div class="subtab-de" data-de-type="g7">Đề giải 7</div>
+    <div class="subtab-de" data-de-type="g1">Đề giải nhất</div>
+    <div class="subtab-de" data-de-type="g1-dau">Đề đầu giải nhất</div>
 </div>
 
 <!-- XIÊN -->
@@ -214,9 +232,9 @@ body{
 <div id="deBox" style="display:none">
 
 <!-- MODE -->
-<div class="mode-tabs" style="margin-top:10px;">
-    <div class="mode active" data-mode="chon-de">Chọn số</div>
-    <div class="mode" data-mode="input-de">Con số</div>
+<div class="mode-tabs-de">
+    <div class="mode-de active" data-mode="chon-de">Chọn số</div>
+    <div class="mode-de" data-mode="input-de">Con số</div>
 </div>
 
 <!-- CHỌN -->
@@ -359,9 +377,9 @@ Số tiền: <b id="money">0</b> đ
 <script>
 let rate = 27000;
 let multi = 1;
-let type = 2; // <-- THÊM
+let type = 2;
 let mainTab = "bao"; // bao | xien | de
-let deRate = 1000; // Giá cho đề
+let deRate = 1000;
 
 /* render số */
 function render(id){
@@ -396,14 +414,16 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
         document.getElementById("deBox").style.display="none";
 
         document.querySelector(".subtabs").style.display="none";
+        document.querySelector(".subtabs-de").style.display="none";
         document.querySelectorAll(".mode-tabs").forEach(m=>m.style.display="none");
+        document.querySelector(".mode-tabs-de").style.display="none";
 
         if(index === 0){
             mainTab = "bao";
 
             document.getElementById("chon").style.display="block";
             document.querySelector(".subtabs").style.display="flex";
-            document.querySelectorAll(".mode-tabs")[1].style.display="flex";
+            document.querySelectorAll(".mode-tabs")[0].style.display="flex";
             rate = 27000;
             document.getElementById("rate").innerText = rate.toLocaleString();
             resetAll();
@@ -421,7 +441,8 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
         if(index === 2){
             mainTab = "de";
             document.getElementById("deBox").style.display="block";
-            document.querySelectorAll(".mode-tabs")[0].style.display="flex";
+            document.querySelector(".subtabs-de").style.display="flex";
+            document.querySelector(".mode-tabs-de").style.display="flex";
             document.getElementById("rate").innerText = deRate.toLocaleString();
             resetDe();
         }
@@ -446,20 +467,18 @@ function resetDe(){
     calcDe();
 }
 
-/* tab click */
+/* tab click bao lô */
 document.querySelectorAll(".subtab").forEach(tab=>{
     tab.onclick=()=>{
         document.querySelectorAll(".subtab").forEach(t=>t.classList.remove("active"));
         tab.classList.add("active");
 
         rate = parseInt(tab.dataset.rate);
-        type = parseInt(tab.dataset.type); // <-- THÊM
+        type = parseInt(tab.dataset.type);
 
         document.getElementById("rate").innerText = rate.toLocaleString();
 
         // show / hide hàng
-        // reset tất cả trước
-// reset
         document.getElementById("row-ngan").style.display = "none";
         document.getElementById("row-tram").style.display = "none";
 
@@ -475,7 +494,19 @@ document.querySelectorAll(".subtab").forEach(tab=>{
     }
 });
 
-/* mode */
+/* tab click đề */
+document.querySelectorAll(".subtab-de").forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll(".subtab-de").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+
+        deRate = 1000;
+        document.getElementById("rate").innerText = deRate.toLocaleString();
+        resetDe();
+    }
+});
+
+/* mode bao lô */
 document.querySelectorAll(".mode").forEach(m=>{
     m.onclick=()=>{
         let modeGroup = m.parentElement;
@@ -492,7 +523,19 @@ document.querySelectorAll(".mode").forEach(m=>{
             document.getElementById("chon").style.display="none";
             document.getElementById("input").style.display="block";
         }
-        else if(mode == "chon-de"){
+    }
+});
+
+/* mode đề */
+document.querySelectorAll(".mode-de").forEach(m=>{
+    m.onclick=()=>{
+        let modeGroup = m.parentElement;
+        modeGroup.querySelectorAll(".mode-de").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode=m.dataset.mode;
+        
+        if(mode == "chon-de"){
             document.getElementById("chon-de").style.display="block";
             document.getElementById("input-de").style.display="none";
         }
@@ -648,8 +691,8 @@ function openGuide(){
     if(mainTab === "de"){
         title = "🎯 Đánh đề";
         content = `
-        Đánh đề: Chọn 2 số cuối giải đặc biệt (Chục & Đơn vị).<br><br>
-        Chỉ tính 1 lần duy nhất trong ngày.<br><br>
+        Đánh đề: Chọn 2 số cuối (Chục & Đơn vị).<br><br>
+        Có 5 loại đề: Đặc biệt, Giải 7, Giải nhất, và các loại đầu.<br><br>
         Trúng → ăn theo tỷ lệ đề (1000 VNĐ/mục).
         `;
     }
@@ -662,6 +705,7 @@ function openGuide(){
 function closeGuide(){
     document.getElementById("guideModal").style.display = "none";
 }
+
 let xienType = 2;
 let selectedXien = [];
 
@@ -782,7 +826,6 @@ function calcXien(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 </script>
-<!-- POPUP -->
 <!-- POPUP -->
 <div id="guideModal" style="
     display:none;
