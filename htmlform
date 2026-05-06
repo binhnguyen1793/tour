@@ -55,6 +55,11 @@ body{
 .subtab-de{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
 .subtab-de.active{background:#2d6cdf;color:white}
 
+/* SUBTABS DAU DUOI */
+.subtabs-dd{margin-top:10px;display:flex;gap:10px}
+.subtab-dd{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
+.subtab-dd.active{background:#2d6cdf;color:white}
+
 /* MODE */
 .mode-tabs{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
 .mode{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
@@ -63,6 +68,10 @@ body{
 .mode-tabs-de{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
 .mode-de{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
 .mode-de.active{background:#2d6cdf;color:#fff}
+
+.mode-tabs-dd{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
+.mode-dd{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
+.mode-dd.active{background:#2d6cdf;color:#fff}
 
 /* NUMBER */
 .row{margin-top:15px}
@@ -174,6 +183,7 @@ body{
     <div class="tab active">Bao lô</div>
     <div class="tab">Lô xiên</div>
     <div class="tab">Đánh đề</div>
+    <div class="tab">Đầu Đuôi</div>
 
     <span onclick="openGuide()" style="cursor:pointer;color:#2d6cdf;">
         ℹ️ Cách chơi
@@ -198,6 +208,12 @@ body{
     <div class="subtab-de" data-de-type="g7">Đề giải 7</div>
     <div class="subtab-de" data-de-type="g1">Đề giải nhất</div>
     <div class="subtab-de" data-de-type="g1-dau">Đề đầu giải nhất</div>
+</div>
+
+<!-- SUB TAB ĐẦUĐUÔI -->
+<div class="subtabs-dd" style="display:none;">
+    <div class="subtab-dd active" data-dd-type="dau">Đầu</div>
+    <div class="subtab-dd" data-dd-type="duoi">Đuôi</div>
 </div>
 
 <!-- XIÊN -->
@@ -270,6 +286,40 @@ body{
 
 <!-- INPUT -->
 <div id="input-de" style="display:none;margin-top:10px;">
+<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
+</div>
+
+</div>
+
+<!-- ĐẦUĐUÔI -->
+<div id="ddBox" style="display:none">
+
+<!-- MODE -->
+<div class="mode-tabs-dd">
+    <div class="mode-dd active" data-mode="chon-dd">Chọn số</div>
+    <div class="mode-dd" data-mode="input-dd">Con số</div>
+</div>
+
+<!-- CHỌN -->
+<div id="chon-dd">
+
+<div class="row">
+<div class="label">Chục</div>
+<div class="numbers" id="dd-chuc"></div>
+<div class="actions">
+<button onclick="selectRow('dd-chuc','all')">Toàn bộ</button>
+<button onclick="selectRow('dd-chuc','tai')">Tài</button>
+<button onclick="selectRow('dd-chuc','xiu')">Xỉu</button>
+<button onclick="selectRow('dd-chuc','le')">Lẻ</button>
+<button onclick="selectRow('dd-chuc','chan')">Chẵn</button>
+<button onclick="clearRow('dd-chuc')">Xóa</button>
+</div>
+</div>
+
+</div>
+
+<!-- INPUT -->
+<div id="input-dd" style="display:none;margin-top:10px;">
 <textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
 </div>
 
@@ -378,8 +428,9 @@ Số tiền: <b id="money">0</b> đ
 let rate = 27000;
 let multi = 1;
 let type = 2;
-let mainTab = "bao"; // bao | xien | de
+let mainTab = "bao"; // bao | xien | de | dd
 let deRate = 1000;
+let ddRate = 1000;
 
 /* render số */
 function render(id){
@@ -388,7 +439,7 @@ function render(id){
     for(let i=0;i<=9;i++){
         let s=document.createElement("span");
         s.innerText=i;
-        s.onclick=()=>{s.classList.toggle("active");if(mainTab==="de"){calcDe()}else{calc()};}
+        s.onclick=()=>{s.classList.toggle("active");if(mainTab==="de"){calcDe()}else if(mainTab==="dd"){calcDD()}else{calc()};}
         box.appendChild(s);
     }
 }
@@ -398,9 +449,10 @@ render("chuc");
 render("donvi");
 render("de-chuc");
 render("de-donvi");
+render("dd-chuc");
 
 
-// gán giá trị cho tab lớn lô - xiên  - đề
+// gán giá trị cho tab lớn lô - xiên  - đề - đầuđuôi
 document.querySelectorAll(".tab").forEach((tab, index)=>{
     tab.onclick = ()=>{
 
@@ -412,11 +464,14 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
         document.getElementById("input").style.display="none";
         document.getElementById("xienBox").style.display="none";
         document.getElementById("deBox").style.display="none";
+        document.getElementById("ddBox").style.display="none";
 
         document.querySelector(".subtabs").style.display="none";
         document.querySelector(".subtabs-de").style.display="none";
+        document.querySelector(".subtabs-dd").style.display="none";
         document.querySelectorAll(".mode-tabs").forEach(m=>m.style.display="none");
         document.querySelector(".mode-tabs-de").style.display="none";
+        document.querySelector(".mode-tabs-dd").style.display="none";
 
         if(index === 0){
             mainTab = "bao";
@@ -446,6 +501,15 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
             document.getElementById("rate").innerText = deRate.toLocaleString();
             resetDe();
         }
+
+        if(index === 3){
+            mainTab = "dd";
+            document.getElementById("ddBox").style.display="block";
+            document.querySelector(".subtabs-dd").style.display="flex";
+            document.querySelector(".mode-tabs-dd").style.display="flex";
+            document.getElementById("rate").innerText = ddRate.toLocaleString();
+            resetDD();
+        }
     }
 });
 
@@ -465,6 +529,13 @@ function resetDe(){
     multi = 1;
     document.getElementById("multi").innerText = multi;
     calcDe();
+}
+
+function resetDD(){
+    clearRow("dd-chuc");
+    multi = 1;
+    document.getElementById("multi").innerText = multi;
+    calcDD();
 }
 
 /* tab click bao lô */
@@ -503,6 +574,18 @@ document.querySelectorAll(".subtab-de").forEach(tab=>{
         deRate = 1000;
         document.getElementById("rate").innerText = deRate.toLocaleString();
         resetDe();
+    }
+});
+
+/* tab click đầu đuôi */
+document.querySelectorAll(".subtab-dd").forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll(".subtab-dd").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+
+        ddRate = 1000;
+        document.getElementById("rate").innerText = ddRate.toLocaleString();
+        resetDD();
     }
 });
 
@@ -546,6 +629,26 @@ document.querySelectorAll(".mode-de").forEach(m=>{
     }
 });
 
+/* mode đầu đuôi */
+document.querySelectorAll(".mode-dd").forEach(m=>{
+    m.onclick=()=>{
+        let modeGroup = m.parentElement;
+        modeGroup.querySelectorAll(".mode-dd").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode=m.dataset.mode;
+        
+        if(mode == "chon-dd"){
+            document.getElementById("chon-dd").style.display="block";
+            document.getElementById("input-dd").style.display="none";
+        }
+        else if(mode == "input-dd"){
+            document.getElementById("chon-dd").style.display="none";
+            document.getElementById("input-dd").style.display="block";
+        }
+    }
+});
+
 /* chọn */
 function selectRow(id,type){
     let nums=document.querySelectorAll("#"+id+" span");
@@ -561,6 +664,8 @@ function selectRow(id,type){
     
     if(mainTab === "de"){
         calcDe();
+    } else if(mainTab === "dd"){
+        calcDD();
     } else {
         calc();
     }
@@ -572,6 +677,8 @@ function clearRow(id){
     
     if(mainTab === "de"){
         calcDe();
+    } else if(mainTab === "dd"){
+        calcDD();
     } else {
         calc();
     }
@@ -623,6 +730,21 @@ function calcDe(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
+function calcDD(){
+    let c = document.querySelectorAll("#dd-chuc .active").length;
+
+    if(c === 0){
+        updateZero();
+        return;
+    }
+
+    let count = c;
+    let money = count * ddRate * multi;
+
+    document.getElementById("count").innerText = count;
+    document.getElementById("money").innerText = money.toLocaleString();
+}
+
 function updateZero(){
     document.getElementById("count").innerText = 0;
     document.getElementById("money").innerText = 0;
@@ -635,6 +757,8 @@ function update(){
     document.getElementById("multi").innerText=multi;
     if(mainTab === "de"){
         calcDe();
+    } else if(mainTab === "dd"){
+        calcDD();
     } else {
         calc();
     }
@@ -694,6 +818,15 @@ function openGuide(){
         Đánh đề: Chọn 2 số cuối (Chục & Đơn vị).<br><br>
         Có 5 loại đề: Đặc biệt, Giải 7, Giải nhất, và các loại đầu.<br><br>
         Trúng → ăn theo tỷ lệ đề (1000 VNĐ/mục).
+        `;
+    }
+
+    if(mainTab === "dd"){
+        title = "🎯 Đầu Đuôi";
+        content = `
+        Đầu Đuôi: Chọn chữ số hàng chục.<br><br>
+        Có 2 loại: Đầu và Đuôi.<br><br>
+        Chọn 1 mục = 1000 VNĐ.
         `;
     }
 
