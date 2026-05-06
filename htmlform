@@ -90,6 +90,57 @@ body{
 .gray{background:#ccc;color:#333}
 
 .table{margin-top:15px;border-top:1px solid #eee;padding:20px;text-align:center;color:#888}
+
+.numbers span.disabled{
+    opacity:0.3;
+    pointer-events:none;
+}
+
+.mode-tabs-xien{
+    margin-top:10px;
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+}
+/* SUBTAB XIÊN */
+.subtab-xien{
+    background:#f0f2f6;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+    transition:0.2s;
+}
+.subtab-xien.active{
+    background:#2d6cdf;
+    color:#fff;
+    font-weight:bold;
+}
+
+/* MODE XIÊN */
+.mode-xien{
+    padding:6px 12px;
+    border-radius:6px;
+    background:#eee;
+    cursor:pointer;
+    transition:0.2s;
+}
+.mode-xien.active{
+    background:#2d6cdf;
+    color:#fff;
+}
+
+/* QUICK BUTTON */
+#xienQuick button{
+    padding:8px 14px;
+    border:none;
+    border-radius:6px;
+    background:#2d6cdf;
+    color:#fff;
+    cursor:pointer;
+}
+#xienQuick button:hover{
+    background:#1f57b3;
+}
 </style>
 </head>
 
@@ -114,7 +165,7 @@ body{
     <div class="tab active">Bao lô</div>
     <div class="tab">Lô xiên</div>
     <div class="tab">Đánh đề</div>
-    
+
     <span onclick="openGuide()" style="cursor:pointer;color:#2d6cdf;">
         ℹ️ Cách chơi
     </span>
@@ -123,7 +174,7 @@ body{
 </div>
 
 <!-- SUB TAB -->
-<div class="subtabs">
+<div class="subtabs" style="margin-top:15px;">
     <div class="subtab active" data-type="2" data-rate="27000">Lô 2 số</div>
     <div class="subtab" data-type="2" data-rate="23000">Lô 2 số đầu</div>
     <div class="subtab" data-type="2" data-rate="1000">Lô 2 số 1K</div>
@@ -131,6 +182,33 @@ body{
     <div class="subtab" data-type="4" data-rate="20000">Lô 4 số</div>
 </div>
 
+<!-- XIÊN -->
+<div id="xienBox" style="display:none">
+
+<!-- SUB TAB XIÊN -->
+<div class="subtabs" style="margin-top:15px;">
+    <div class="subtab-xien active" data-x="2">Xiên 2</div>
+    <div class="subtab-xien" data-x="3">Xiên 3</div>
+    <div class="subtab-xien" data-x="4">Xiên 4</div>
+</div>
+
+<!-- MODE -->
+<div class="mode-tabs-xien">
+    <div class="mode-xien" data-mode="input">Con số</div>
+    <div class="mode-xien active" data-mode="chon">Chọn số nhanh</div>
+</div>
+
+<!-- CON SỐ -->
+<div id="xienInput" style="display:none">
+<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
+</div>
+
+<!-- CHỌN SỐ NHANH -->
+<div id="xienChon">
+    <div id="xienNumbers" class="numbers"></div>
+</div>
+
+</div>
 <!-- MODE -->
 <div class="mode-tabs">
     <div class="mode active" data-mode="chon">Chọn số</div>
@@ -252,20 +330,53 @@ render("chuc");
 render("donvi");
 
 
-// gán giá trị cho tab lớn lô - xiên  - đề 
+// gán giá trị cho tab lớn lô - xiên  - đề
 document.querySelectorAll(".tab").forEach((tab, index)=>{
     tab.onclick = ()=>{
+
         document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
         tab.classList.add("active");
 
-        // gán loại tab
-        if(index === 0) mainTab = "bao";
-        if(index === 1) mainTab = "xien";
-        if(index === 2) mainTab = "de";
+        // Ẩn tất cả
+        document.getElementById("chon").style.display="none";
+        document.getElementById("input").style.display="none";
+        document.getElementById("xienBox").style.display="none";
+
+        document.querySelector(".subtabs").style.display="none";
+        document.querySelector(".mode-tabs").style.display="none";
+
+        if(index === 0){
+            mainTab = "bao";
+
+            document.getElementById("chon").style.display="block";
+            document.querySelector(".subtabs").style.display="flex";
+            document.querySelector(".mode-tabs").style.display="flex";
+        }
+
+        if(index === 1){
+            mainTab = "xien";
+
+            document.getElementById("xienBox").style.display="block";
+
+            // 👉 reset khi vào xiên
+            resetXien();
+        }
+
+        if(index === 2){
+            mainTab = "de";
+        }
     }
 });
 
+function resetXien(){
+    selectedXien=[];
+    document.querySelectorAll("#xienNumbers span").forEach(n=>{
+        n.classList.remove("active","disabled");
+    });
 
+    document.getElementById("count").innerText = 0;
+    document.getElementById("money").innerText = 0;
+}
 
 /* tab click */
 document.querySelectorAll(".subtab").forEach(tab=>{
@@ -397,7 +508,7 @@ kqwidth="100%";
 <script src="//www.minhngoc.net.vn/getkqxs/mien-bac.js"><\/script>
 </div>`;
 
-// pop up cách chơi 
+// pop up cách chơi
 function openGuide(){
     let title = "";
     let content = "";
@@ -437,7 +548,125 @@ function openGuide(){
 function closeGuide(){
     document.getElementById("guideModal").style.display = "none";
 }
+let xienType = 2;
+let selectedXien = [];
 
+/* render 00-99 */
+function renderXien(){
+    let box = document.getElementById("xienNumbers");
+    box.innerHTML="";
+    for(let i=0;i<=99;i++){
+        let s=document.createElement("span");
+        s.innerText = i.toString().padStart(2,'0');
+
+        s.onclick=()=>{
+            if(s.classList.contains("disabled")) return;
+
+            if(s.classList.contains("active")){
+                s.classList.remove("active");
+                selectedXien = selectedXien.filter(x=>x!=s.innerText);
+            }else{
+                if(selectedXien.length >= xienType) return;
+                s.classList.add("active");
+                selectedXien.push(s.innerText);
+            }
+
+            updateXienUI();
+            calcXien();
+        }
+
+        box.appendChild(s);
+    }
+}
+renderXien();
+
+/* subtab xiên */
+document.querySelectorAll(".subtab-xien").forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll(".subtab-xien").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+
+        xienType = parseInt(tab.dataset.x);
+
+        // 👉 RESET sạch
+        resetXien();
+
+        // ❌ KHÔNG auto nữa
+    }
+});
+
+/* mode xiên */
+document.querySelectorAll(".mode-xien").forEach(m=>{
+    m.onclick=()=>{
+        document.querySelectorAll(".mode-xien").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode = m.dataset.mode;
+
+        document.getElementById("xienInput").style.display = mode=="input"?"block":"none";
+        document.getElementById("xienChon").style.display = mode=="chon"?"block":"none";
+
+        // 👉 AUTO chọn khi vào tab chọn số nhanh
+        if(mode=="chon"){
+            quickPick();
+        }
+    }
+});
+
+/* disable số khi đủ */
+function updateXienUI(){
+    let nums = document.querySelectorAll("#xienNumbers span");
+
+    if(selectedXien.length >= xienType){
+        nums.forEach(n=>{
+            if(!n.classList.contains("active")){
+                n.classList.add("disabled");
+            }
+        });
+    }else{
+        nums.forEach(n=>n.classList.remove("disabled"));
+    }
+}
+
+/* reset */
+function resetXien(){
+    selectedXien=[];
+    document.querySelectorAll("#xienNumbers span").forEach(n=>{
+        n.classList.remove("active","disabled");
+    });
+    calcXien();
+}
+
+/* chọn nhanh */
+function quickPick(){
+    resetXien();
+
+    let arr = [];
+    while(arr.length < xienType){
+        let num = Math.floor(Math.random()*100).toString().padStart(2,'0');
+        if(!arr.includes(num)) arr.push(num);
+    }
+
+    selectedXien = arr;
+
+    document.querySelectorAll("#xienNumbers span").forEach(n=>{
+        if(arr.includes(n.innerText)){
+            n.classList.add("active");
+        }
+    });
+
+    updateXienUI();
+    calcXien();
+}
+
+/* tính tiền */
+function calcXien(){
+    let count = selectedXien.length === xienType ? 1 : 0;
+    let money = count * 1000 * multi;
+
+    document.getElementById("count").innerText = count;
+    document.getElementById("money").innerText = money.toLocaleString();
+}
 </script>
 <!-- POPUP -->
 <!-- POPUP -->
