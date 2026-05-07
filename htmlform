@@ -60,6 +60,11 @@ body{
 .subtab-dd{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
 .subtab-dd.active{background:#2d6cdf;color:white}
 
+/* SUBTABS 3 CANG */
+.subtabs-3c{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
+.subtab-3c{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
+.subtab-3c.active{background:#2d6cdf;color:white}
+
 /* MODE */
 .mode-tabs{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
 .mode{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
@@ -72,6 +77,14 @@ body{
 .mode-tabs-dd{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
 .mode-dd{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
 .mode-dd.active{background:#2d6cdf;color:#fff}
+
+.mode-tabs-3c{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
+.mode-3c{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
+.mode-3c.active{background:#2d6cdf;color:#fff}
+
+.mode-tabs-4c{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
+.mode-4c{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
+.mode-4c.active{background:#2d6cdf;color:#fff}
 
 /* NUMBER */
 .row{margin-top:15px}
@@ -120,7 +133,7 @@ body{
     gap:10px;
     justify-content:flex-end;
 }
-/* SUBTAB XIÊN */
+
 .subtab-xien{
     background:#f0f2f6;
     padding:6px 12px;
@@ -134,7 +147,6 @@ body{
     font-weight:bold;
 }
 
-/* MODE XIÊN */
 .mode-xien{
     padding:6px 12px;
     border-radius:6px;
@@ -147,7 +159,6 @@ body{
     color:#fff;
 }
 
-/* QUICK BUTTON */
 #xienQuick button{
     padding:8px 14px;
     border:none;
@@ -184,12 +195,12 @@ body{
     <div class="tab">Lô xiên</div>
     <div class="tab">Đánh đề</div>
     <div class="tab">Đầu Đuôi</div>
+    <div class="tab">3 Càng</div>
+    <div class="tab">4 Càng</div>
 
     <span onclick="openGuide()" style="cursor:pointer;color:#2d6cdf;">
         ℹ️ Cách chơi
     </span>
-</div>
-<div style="text-align:right;margin-bottom:10px;">
 </div>
 
 <!-- SUB TAB BAO LÔ -->
@@ -214,6 +225,14 @@ body{
 <div class="subtabs-dd" style="display:none;">
     <div class="subtab-dd active" data-dd-type="dau">Đầu</div>
     <div class="subtab-dd" data-dd-type="duoi">Đuôi</div>
+</div>
+
+<!-- SUB TAB 3 CÀNG -->
+<div class="subtabs-3c" style="display:none;">
+    <div class="subtab-3c active" data-3c-type="db" data-3c-rate="1000">3 Càng Đặc Biệt</div>
+    <div class="subtab-3c" data-3c-type="g1" data-3c-rate="1000">3 Càng Giải Nhất</div>
+    <div class="subtab-3c" data-3c-type="dd" data-3c-rate="4000">3 Càng Đầu Đuôi</div>
+    <div class="subtab-3c" data-3c-type="dau" data-3c-rate="3000">3 Càng Đầu</div>
 </div>
 
 <!-- XIÊN -->
@@ -325,6 +344,139 @@ body{
 
 </div>
 
+<!-- 3 CÀNG -->
+<div id="3cBox" style="display:none">
+
+<!-- MODE -->
+<div class="mode-tabs-3c">
+    <div class="mode-3c active" data-mode="chon-3c">Chọn số</div>
+    <div class="mode-3c" data-mode="input-3c">Con số</div>
+</div>
+
+<!-- CHỌN -->
+<div id="chon-3c">
+
+<div class="row">
+<div class="label">Trăm</div>
+<div class="numbers" id="3c-tram"></div>
+<div class="actions">
+<button onclick="selectRow('3c-tram','all')">Toàn bộ</button>
+<button onclick="selectRow('3c-tram','tai')">Tài</button>
+<button onclick="selectRow('3c-tram','xiu')">Xỉu</button>
+<button onclick="selectRow('3c-tram','le')">Lẻ</button>
+<button onclick="selectRow('3c-tram','chan')">Chẵn</button>
+<button onclick="clearRow('3c-tram')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Chục</div>
+<div class="numbers" id="3c-chuc"></div>
+<div class="actions">
+<button onclick="selectRow('3c-chuc','all')">Toàn bộ</button>
+<button onclick="selectRow('3c-chuc','tai')">Tài</button>
+<button onclick="selectRow('3c-chuc','xiu')">Xỉu</button>
+<button onclick="selectRow('3c-chuc','le')">Lẻ</button>
+<button onclick="selectRow('3c-chuc','chan')">Chẵn</button>
+<button onclick="clearRow('3c-chuc')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Đơn vị</div>
+<div class="numbers" id="3c-donvi"></div>
+<div class="actions">
+<button onclick="selectRow('3c-donvi','all')">Toàn bộ</button>
+<button onclick="selectRow('3c-donvi','tai')">Tài</button>
+<button onclick="selectRow('3c-donvi','xiu')">Xỉu</button>
+<button onclick="selectRow('3c-donvi','le')">Lẻ</button>
+<button onclick="selectRow('3c-donvi','chan')">Chẵn</button>
+<button onclick="clearRow('3c-donvi')">Xóa</button>
+</div>
+</div>
+
+</div>
+
+<!-- INPUT -->
+<div id="input-3c" style="display:none;margin-top:10px;">
+<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
+</div>
+
+</div>
+
+<!-- 4 CÀNG -->
+<div id="4cBox" style="display:none">
+
+<!-- MODE -->
+<div class="mode-tabs-4c">
+    <div class="mode-4c active" data-mode="chon-4c">Chọn số</div>
+    <div class="mode-4c" data-mode="input-4c">Con số</div>
+</div>
+
+<!-- CHỌN -->
+<div id="chon-4c">
+
+<div class="row">
+<div class="label">Ngàn</div>
+<div class="numbers" id="4c-ngan"></div>
+<div class="actions">
+<button onclick="selectRow('4c-ngan','all')">Toàn bộ</button>
+<button onclick="selectRow('4c-ngan','tai')">Tài</button>
+<button onclick="selectRow('4c-ngan','xiu')">Xỉu</button>
+<button onclick="selectRow('4c-ngan','le')">Lẻ</button>
+<button onclick="selectRow('4c-ngan','chan')">Chẵn</button>
+<button onclick="clearRow('4c-ngan')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Trăm</div>
+<div class="numbers" id="4c-tram"></div>
+<div class="actions">
+<button onclick="selectRow('4c-tram','all')">Toàn bộ</button>
+<button onclick="selectRow('4c-tram','tai')">Tài</button>
+<button onclick="selectRow('4c-tram','xiu')">Xỉu</button>
+<button onclick="selectRow('4c-tram','le')">Lẻ</button>
+<button onclick="selectRow('4c-tram','chan')">Chẵn</button>
+<button onclick="clearRow('4c-tram')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Chục</div>
+<div class="numbers" id="4c-chuc"></div>
+<div class="actions">
+<button onclick="selectRow('4c-chuc','all')">Toàn bộ</button>
+<button onclick="selectRow('4c-chuc','tai')">Tài</button>
+<button onclick="selectRow('4c-chuc','xiu')">Xỉu</button>
+<button onclick="selectRow('4c-chuc','le')">Lẻ</button>
+<button onclick="selectRow('4c-chuc','chan')">Chẵn</button>
+<button onclick="clearRow('4c-chuc')">Xóa</button>
+</div>
+</div>
+
+<div class="row">
+<div class="label">Đơn vị</div>
+<div class="numbers" id="4c-donvi"></div>
+<div class="actions">
+<button onclick="selectRow('4c-donvi','all')">Toàn bộ</button>
+<button onclick="selectRow('4c-donvi','tai')">Tài</button>
+<button onclick="selectRow('4c-donvi','xiu')">Xỉu</button>
+<button onclick="selectRow('4c-donvi','le')">Lẻ</button>
+<button onclick="selectRow('4c-donvi','chan')">Chẵn</button>
+<button onclick="clearRow('4c-donvi')">Xóa</button>
+</div>
+</div>
+
+</div>
+
+<!-- INPUT -->
+<div id="input-4c" style="display:none;margin-top:10px;">
+<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
+</div>
+
+</div>
+
 <!-- MODE BAO -->
 <div class="mode-tabs">
     <div class="mode active" data-mode="chon">Chọn số</div>
@@ -428,9 +580,11 @@ Số tiền: <b id="money">0</b> đ
 let rate = 27000;
 let multi = 1;
 let type = 2;
-let mainTab = "bao"; // bao | xien | de | dd
+let mainTab = "bao"; // bao | xien | de | dd | 3c | 4c
 let deRate = 1000;
 let ddRate = 1000;
+let rate3c = 1000;
+let rate4c = 1000;
 
 /* render số */
 function render(id){
@@ -439,7 +593,14 @@ function render(id){
     for(let i=0;i<=9;i++){
         let s=document.createElement("span");
         s.innerText=i;
-        s.onclick=()=>{s.classList.toggle("active");if(mainTab==="de"){calcDe()}else if(mainTab==="dd"){calcDD()}else{calc()};}
+        s.onclick=()=>{
+            s.classList.toggle("active");
+            if(mainTab==="de"){calcDe()}
+            else if(mainTab==="dd"){calcDD()}
+            else if(mainTab==="3c"){calc3C()}
+            else if(mainTab==="4c"){calc4C()}
+            else{calc();}
+        }
         box.appendChild(s);
     }
 }
@@ -450,9 +611,15 @@ render("donvi");
 render("de-chuc");
 render("de-donvi");
 render("dd-chuc");
+render("3c-tram");
+render("3c-chuc");
+render("3c-donvi");
+render("4c-ngan");
+render("4c-tram");
+render("4c-chuc");
+render("4c-donvi");
 
-
-// gán giá trị cho tab lớn lô - xiên  - đề - đầuđuôi
+// gán giá trị cho tab lớn
 document.querySelectorAll(".tab").forEach((tab, index)=>{
     tab.onclick = ()=>{
 
@@ -465,17 +632,21 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
         document.getElementById("xienBox").style.display="none";
         document.getElementById("deBox").style.display="none";
         document.getElementById("ddBox").style.display="none";
+        document.getElementById("3cBox").style.display="none";
+        document.getElementById("4cBox").style.display="none";
 
         document.querySelector(".subtabs").style.display="none";
         document.querySelector(".subtabs-de").style.display="none";
         document.querySelector(".subtabs-dd").style.display="none";
+        document.querySelector(".subtabs-3c").style.display="none";
         document.querySelectorAll(".mode-tabs").forEach(m=>m.style.display="none");
         document.querySelector(".mode-tabs-de").style.display="none";
         document.querySelector(".mode-tabs-dd").style.display="none";
+        document.querySelector(".mode-tabs-3c").style.display="none";
+        document.querySelector(".mode-tabs-4c").style.display="none";
 
         if(index === 0){
             mainTab = "bao";
-
             document.getElementById("chon").style.display="block";
             document.querySelector(".subtabs").style.display="flex";
             document.querySelectorAll(".mode-tabs")[0].style.display="flex";
@@ -486,10 +657,7 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
 
         if(index === 1){
             mainTab = "xien";
-
             document.getElementById("xienBox").style.display="block";
-
-            // 👉 reset khi vào xiên
             resetXien();
         }
 
@@ -510,6 +678,24 @@ document.querySelectorAll(".tab").forEach((tab, index)=>{
             document.getElementById("rate").innerText = ddRate.toLocaleString();
             resetDD();
         }
+
+        if(index === 4){
+            mainTab = "3c";
+            document.getElementById("3cBox").style.display="block";
+            document.querySelector(".subtabs-3c").style.display="flex";
+            document.querySelector(".mode-tabs-3c").style.display="flex";
+            document.getElementById("rate").innerText = rate3c.toLocaleString();
+            reset3C();
+        }
+
+        if(index === 5){
+            mainTab = "4c";
+            document.getElementById("4cBox").style.display="block";
+            document.querySelector(".mode-tabs-4c").style.display="flex";
+            rate4c = 1000;
+            document.getElementById("rate").innerText = rate4c.toLocaleString();
+            reset4C();
+        }
     }
 });
 
@@ -518,7 +704,6 @@ function resetXien(){
     document.querySelectorAll("#xienNumbers span").forEach(n=>{
         n.classList.remove("active","disabled");
     });
-
     document.getElementById("count").innerText = 0;
     document.getElementById("money").innerText = 0;
 }
@@ -538,6 +723,25 @@ function resetDD(){
     calcDD();
 }
 
+function reset3C(){
+    clearRow("3c-tram");
+    clearRow("3c-chuc");
+    clearRow("3c-donvi");
+    multi = 1;
+    document.getElementById("multi").innerText = multi;
+    calc3C();
+}
+
+function reset4C(){
+    clearRow("4c-ngan");
+    clearRow("4c-tram");
+    clearRow("4c-chuc");
+    clearRow("4c-donvi");
+    multi = 1;
+    document.getElementById("multi").innerText = multi;
+    calc4C();
+}
+
 /* tab click bao lô */
 document.querySelectorAll(".subtab").forEach(tab=>{
     tab.onclick=()=>{
@@ -549,11 +753,9 @@ document.querySelectorAll(".subtab").forEach(tab=>{
 
         document.getElementById("rate").innerText = rate.toLocaleString();
 
-        // show / hide hàng
         document.getElementById("row-ngan").style.display = "none";
         document.getElementById("row-tram").style.display = "none";
 
-        // theo type
         if(type == 3){
             document.getElementById("row-tram").style.display = "block";
         }
@@ -562,6 +764,18 @@ document.querySelectorAll(".subtab").forEach(tab=>{
             document.getElementById("row-ngan").style.display = "block";
         }
         calc();
+    }
+});
+
+/* tab click 3 càng */
+document.querySelectorAll(".subtab-3c").forEach(tab=>{
+    tab.onclick=()=>{
+        document.querySelectorAll(".subtab-3c").forEach(t=>t.classList.remove("active"));
+        tab.classList.add("active");
+
+        rate3c = parseInt(tab.dataset["3c-rate"]);
+        document.getElementById("rate").innerText = rate3c.toLocaleString();
+        reset3C();
     }
 });
 
@@ -605,6 +819,46 @@ document.querySelectorAll(".mode").forEach(m=>{
         else if(mode == "input"){
             document.getElementById("chon").style.display="none";
             document.getElementById("input").style.display="block";
+        }
+    }
+});
+
+/* mode 3 càng */
+document.querySelectorAll(".mode-3c").forEach(m=>{
+    m.onclick=()=>{
+        let modeGroup = m.parentElement;
+        modeGroup.querySelectorAll(".mode-3c").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode=m.dataset.mode;
+        
+        if(mode == "chon-3c"){
+            document.getElementById("chon-3c").style.display="block";
+            document.getElementById("input-3c").style.display="none";
+        }
+        else if(mode == "input-3c"){
+            document.getElementById("chon-3c").style.display="none";
+            document.getElementById("input-3c").style.display="block";
+        }
+    }
+});
+
+/* mode 4 càng */
+document.querySelectorAll(".mode-4c").forEach(m=>{
+    m.onclick=()=>{
+        let modeGroup = m.parentElement;
+        modeGroup.querySelectorAll(".mode-4c").forEach(x=>x.classList.remove("active"));
+        m.classList.add("active");
+
+        let mode=m.dataset.mode;
+        
+        if(mode == "chon-4c"){
+            document.getElementById("chon-4c").style.display="block";
+            document.getElementById("input-4c").style.display="none";
+        }
+        else if(mode == "input-4c"){
+            document.getElementById("chon-4c").style.display="none";
+            document.getElementById("input-4c").style.display="block";
         }
     }
 });
@@ -666,6 +920,10 @@ function selectRow(id,type){
         calcDe();
     } else if(mainTab === "dd"){
         calcDD();
+    } else if(mainTab === "3c"){
+        calc3C();
+    } else if(mainTab === "4c"){
+        calc4C();
     } else {
         calc();
     }
@@ -679,12 +937,16 @@ function clearRow(id){
         calcDe();
     } else if(mainTab === "dd"){
         calcDD();
+    } else if(mainTab === "3c"){
+        calc3C();
+    } else if(mainTab === "4c"){
+        calc4C();
     } else {
         calc();
     }
 }
 
-/* tính */
+/* tính tiền - bao lô */
 function calc(){
     let c = document.querySelectorAll("#chuc .active").length;
     let d = document.querySelectorAll("#donvi .active").length;
@@ -709,6 +971,43 @@ function calc(){
 
     let count = c * d * t * n;
     let money = count * rate * multi;
+
+    document.getElementById("count").innerText = count;
+    document.getElementById("money").innerText = money.toLocaleString();
+}
+
+/* tính tiền - 3 càng */
+function calc3C(){
+    let tram = document.querySelectorAll("#3c-tram .active").length;
+    let chuc = document.querySelectorAll("#3c-chuc .active").length;
+    let donvi = document.querySelectorAll("#3c-donvi .active").length;
+
+    if(tram === 0 || chuc === 0 || donvi === 0){
+        updateZero();
+        return;
+    }
+
+    let count = tram * chuc * donvi;
+    let money = count * rate3c * multi;
+
+    document.getElementById("count").innerText = count;
+    document.getElementById("money").innerText = money.toLocaleString();
+}
+
+/* tính tiền - 4 càng */
+function calc4C(){
+    let ngan = document.querySelectorAll("#4c-ngan .active").length;
+    let tram = document.querySelectorAll("#4c-tram .active").length;
+    let chuc = document.querySelectorAll("#4c-chuc .active").length;
+    let donvi = document.querySelectorAll("#4c-donvi .active").length;
+
+    if(ngan === 0 || tram === 0 || chuc === 0 || donvi === 0){
+        updateZero();
+        return;
+    }
+
+    let count = ngan * tram * chuc * donvi;
+    let money = count * rate4c * multi;
 
     document.getElementById("count").innerText = count;
     document.getElementById("money").innerText = money.toLocaleString();
@@ -759,6 +1058,10 @@ function update(){
         calcDe();
     } else if(mainTab === "dd"){
         calcDD();
+    } else if(mainTab === "3c"){
+        calc3C();
+    } else if(mainTab === "4c"){
+        calc4C();
     } else {
         calc();
     }
@@ -830,6 +1133,24 @@ function openGuide(){
         `;
     }
 
+    if(mainTab === "3c"){
+        title = "🎯 3 Càng";
+        content = `
+        3 Càng: Chọn 3 số (Trăm, Chục, Đơn vị).<br><br>
+        Có 4 loại: Đặc biệt, Giải nhất, Đầu Đuôi, Đầu.<br><br>
+        Tỷ lệ thay đổi theo loại (1000 - 4000 VNĐ/mục).
+        `;
+    }
+
+    if(mainTab === "4c"){
+        title = "🎯 4 Càng";
+        content = `
+        4 Càng: Chọn 4 số (Ngàn, Trăm, Chục, Đơn vị).<br><br>
+        Tỷ lệ 1000 VNĐ/mục.<br><br>
+        Tỷ lệ thắng cao hơn các loại khác.
+        `;
+    }
+
     document.getElementById("guideTitle").innerHTML = title;
     document.querySelector("#guideModal p").innerHTML = content;
     document.getElementById("guideModal").style.display = "flex";
@@ -879,10 +1200,7 @@ document.querySelectorAll(".subtab-xien").forEach(tab=>{
 
         xienType = parseInt(tab.dataset.x);
 
-        // 👉 RESET sạch
         resetXien();
-
-        // ❌ KHÔNG auto nữa
     }
 });
 
@@ -897,7 +1215,6 @@ document.querySelectorAll(".mode-xien").forEach(m=>{
         document.getElementById("xienInput").style.display = mode=="input"?"block":"none";
         document.getElementById("xienChon").style.display = mode=="chon"?"block":"none";
 
-        // 👉 AUTO chọn khi vào tab chọn số nhanh
         if(mode=="chon"){
             quickPick();
         }
@@ -950,7 +1267,7 @@ function quickPick(){
     calcXien();
 }
 
-/* tính tiền */
+/* tính tiền xiên */
 function calcXien(){
     let count = selectedXien.length === xienType ? 1 : 0;
     let money = count * 1000 * multi;
