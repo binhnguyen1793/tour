@@ -644,6 +644,108 @@ body {
     background: #1f57b3;
 }
 
+/* ========== PHẦN 4: BẢNG NỘI DUNG CƯỢC ========== */
+.usage-table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.usage-table thead {
+    background: #f0f2f6;
+    border-bottom: 1px solid #ddd;
+}
+
+.usage-table th {
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+}
+
+.usage-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.usage-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+/* ========== PHẦN 5: HỒ SƠ CÁ CƯỢC ========== */
+.profile-section {
+    margin-top: 30px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.profile-tab {
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+    transition: 0.2s;
+}
+
+.profile-tab.active {
+    background: #e7f0ff;
+    color: #2d6cdf;
+    font-weight: bold;
+}
+
+.profile-content {
+    display: none;
+}
+
+.profile-content.active {
+    display: block;
+}
+
+.win-loss-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 10px;
+}
+
+.win-loss-table thead {
+    background: #f0f2f6;
+}
+
+.win-loss-table th,
+.win-loss-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.win-loss-table tr:hover {
+    background: #f9f9f9;
+}
+
+.win {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.loss {
+    color: #dc3545;
+    font-weight: 600;
+}
+
 /* ========== FOOTER ========== */
 .footer {
     background: linear-gradient(90deg, #0c2340 0%, #1a3a5a 100%);
@@ -848,7 +950,7 @@ body {
     </div>
 </div>
 
-<!-- CONTAINER -->
+<!-- PHẦN 3: CONTAINER CHÍNH -->
 <div class="container">
 
 <div class="left">
@@ -1000,6 +1102,19 @@ body {
 </div>
 </div>
 
+<div class="row">
+<div class="label">Đơn vị</div>
+<div class="numbers" id="dd-donvi"></div>
+<div class="actions">
+<button onclick="selectRow('dd-donvi','all')">Toàn bộ</button>
+<button onclick="selectRow('dd-donvi','tai')">Tài</button>
+<button onclick="selectRow('dd-donvi','xiu')">Xỉu</button>
+<button onclick="selectRow('dd-donvi','le')">Lẻ</button>
+<button onclick="selectRow('dd-donvi','chan')">Chẵn</button>
+<button onclick="clearRow('dd-donvi')">Xóa</button>
+</div>
+</div>
+
 </div>
 
 <!-- INPUT -->
@@ -1010,7 +1125,7 @@ body {
 </div>
 
 <!-- 3 CÀNG -->
-<div id="3cBox" style="display:none">
+<div id="cangBox" style="display:none">
 
 <!-- MODE -->
 <div class="mode-tabs-3c">
@@ -1020,19 +1135,6 @@ body {
 
 <!-- CHỌN -->
 <div id="chon-3c">
-
-<div class="row">
-<div class="label">Trăm</div>
-<div class="numbers" id="3c-tram"></div>
-<div class="actions">
-<button onclick="selectRow('3c-tram','all')">Toàn bộ</button>
-<button onclick="selectRow('3c-tram','tai')">Tài</button>
-<button onclick="selectRow('3c-tram','xiu')">Xỉu</button>
-<button onclick="selectRow('3c-tram','le')">Lẻ</button>
-<button onclick="selectRow('3c-tram','chan')">Chẵn</button>
-<button onclick="clearRow('3c-tram')">Xóa</button>
-</div>
-</div>
 
 <div class="row">
 <div class="label">Chục</div>
@@ -1069,218 +1171,207 @@ body {
 
 </div>
 
-<!-- 4 CÀNG -->
-<div id="4cBox" style="display:none">
+<!-- PHẦN 4: BẢNG NỘI DUNG CƯỢC -->
+<table class="usage-table">
+    <thead>
+        <tr>
+            <th>Cách chơi</th>
+            <th>Nội dung cược</th>
+            <th>Tổng đơn cược</th>
+            <th>Số nhân</th>
+            <th>Tiền cược</th>
+            <th>Tiền thắng /1 lần</th>
+            <th>Văn hành</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
 
-<!-- MODE -->
-<div class="mode-tabs-4c">
-    <div class="mode-4c active" data-mode="chon-4c">Chọn số</div>
-    <div class="mode-4c" data-mode="input-4c">Con số</div>
-</div>
-
-<!-- CHỌN -->
-<div id="chon-4c">
-
-<div class="row">
-<div class="label">Ngàn</div>
-<div class="numbers" id="4c-ngan"></div>
-<div class="actions">
-<button onclick="selectRow('4c-ngan','all')">Toàn bộ</button>
-<button onclick="selectRow('4c-ngan','tai')">Tài</button>
-<button onclick="selectRow('4c-ngan','xiu')">Xỉu</button>
-<button onclick="selectRow('4c-ngan','le')">Lẻ</button>
-<button onclick="selectRow('4c-ngan','chan')">Chẵn</button>
-<button onclick="clearRow('4c-ngan')">Xóa</button>
-</div>
-</div>
-
-<div class="row">
-<div class="label">Trăm</div>
-<div class="numbers" id="4c-tram"></div>
-<div class="actions">
-<button onclick="selectRow('4c-tram','all')">Toàn bộ</button>
-<button onclick="selectRow('4c-tram','tai')">Tài</button>
-<button onclick="selectRow('4c-tram','xiu')">Xỉu</button>
-<button onclick="selectRow('4c-tram','le')">Lẻ</button>
-<button onclick="selectRow('4c-tram','chan')">Chẵn</button>
-<button onclick="clearRow('4c-tram')">Xóa</button>
-</div>
-</div>
-
-<div class="row">
-<div class="label">Chục</div>
-<div class="numbers" id="4c-chuc"></div>
-<div class="actions">
-<button onclick="selectRow('4c-chuc','all')">Toàn bộ</button>
-<button onclick="selectRow('4c-chuc','tai')">Tài</button>
-<button onclick="selectRow('4c-chuc','xiu')">Xỉu</button>
-<button onclick="selectRow('4c-chuc','le')">Lẻ</button>
-<button onclick="selectRow('4c-chuc','chan')">Chẵn</button>
-<button onclick="clearRow('4c-chuc')">Xóa</button>
-</div>
-</div>
-
-<div class="row">
-<div class="label">Đơn vị</div>
-<div class="numbers" id="4c-donvi"></div>
-<div class="actions">
-<button onclick="selectRow('4c-donvi','all')">Toàn bộ</button>
-<button onclick="selectRow('4c-donvi','tai')">Tài</button>
-<button onclick="selectRow('4c-donvi','xiu')">Xỉu</button>
-<button onclick="selectRow('4c-donvi','le')">Lẻ</button>
-<button onclick="selectRow('4c-donvi','chan')">Chẵn</button>
-<button onclick="clearRow('4c-donvi')">Xóa</button>
-</div>
 </div>
 
 </div>
 
-<!-- INPUT -->
-<div id="input-4c" style="display:none;margin-top:10px;">
-<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
-</div>
-
-</div>
-
-<!-- MODE BAO -->
-<div class="mode-tabs">
-    <div class="mode active" data-mode="chon">Chọn số</div>
-    <div class="mode" data-mode="input">Con số</div>
-</div>
-
-<!-- CHỌN -->
-<div id="chon">
-
-<div class="row" id="row-ngan" style="display:none;">
-<div class="label">Ngàn</div>
-<div class="numbers" id="ngan"></div>
-<div class="actions">
-<button onclick="selectRow('ngan','all')">Toàn bộ</button>
-<button onclick="selectRow('ngan','tai')">Tài</button>
-<button onclick="selectRow('ngan','xiu')">Xỉu</button>
-<button onclick="selectRow('ngan','le')">Lẻ</button>
-<button onclick="selectRow('ngan','chan')">Chẵn</button>
-<button onclick="clearRow('ngan')">Xóa</button>
-</div>
-</div>
-
-<div class="row" id="row-tram" style="display:none;">
-<div class="label">Trăm</div>
-<div class="numbers" id="tram"></div>
-<div class="actions">
-<button onclick="selectRow('tram','all')">Toàn bộ</button>
-<button onclick="selectRow('tram','tai')">Tài</button>
-<button onclick="selectRow('tram','xiu')">Xỉu</button>
-<button onclick="selectRow('tram','le')">Lẻ</button>
-<button onclick="selectRow('tram','chan')">Chẵn</button>
-<button onclick="clearRow('tram')">Xóa</button>
-</div>
-</div>
-
-<div class="row" id="row-chuc">
-<div class="label">Chục</div>
-<div class="numbers" id="chuc"></div>
-<div class="actions">
-<button onclick="selectRow('chuc','all')">Toàn bộ</button>
-<button onclick="selectRow('chuc','tai')">Tài</button>
-<button onclick="selectRow('chuc','xiu')">Xỉu</button>
-<button onclick="selectRow('chuc','le')">Lẻ</button>
-<button onclick="selectRow('chuc','chan')">Chẵn</button>
-<button onclick="clearRow('chuc')">Xóa</button>
-</div>
-</div>
-
-<div class="row" id="row-donvi">
-<div class="label">Đơn vị</div>
-<div class="numbers" id="donvi"></div>
-<div class="actions">
-<button onclick="selectRow('donvi','all')">Toàn bộ</button>
-<button onclick="selectRow('donvi','tai')">Tài</button>
-<button onclick="selectRow('donvi','xiu')">Xỉu</button>
-<button onclick="selectRow('donvi','le')">Lẻ</button>
-<button onclick="selectRow('donvi','chan')">Chẵn</button>
-<button onclick="clearRow('donvi')">Xóa</button>
-</div>
-</div>
-
-</div>
-
-<!-- INPUT -->
-<div id="input" style="display:none;margin-top:10px;">
-<textarea style="width:100%;height:80px;border-radius:8px;padding:10px;border:1px solid #ccc"></textarea>
-</div>
-
-<!-- INFO -->
-<div class="info">
-<div>
-<span class="badge">Tỉ lệ: 1 = <span id="rate">99.9</span></span><br>
-Đã chọn: <b id="count">0</b> mục |
-Số tiền: <b id="money">0</b> đ
-</div>
-
-<div>
-<button onclick="minus()">-</button>
-<span id="multi">1</span>
-<button onclick="plus()">+</button>
-
-<button class="btn blue">Cược ngay</button>
-<button class="btn orange">Thêm số</button>
-<button class="btn gray" onclick="resetAll()">Cài lại</button>
-</div>
-</div>
-
-<div class="table">Không có dữ liệu</div>
-
-</div>
-</div>
-
-<!-- RIGHT -->
+<!-- PHẦN 3: BÊN PHẢI (NHÚNG KẾT QUẢ) -->
 <div class="right">
-<div id="kq"></div>
+    <div style="background: linear-gradient(90deg, #2d6cdf 0%, #1f57b3 100%); color: white; padding: 10px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 15px;">
+        🏆 VNLOTTERY
+    </div>
+    <p style="text-align: center; color: #666; font-size: 12px; margin-top: 10px;">
+        [Mã nhúng kết quả xổ số sẽ hiển thị tại đây]
+    </p>
+    <iframe style="width:100%;height:600px;border:none;border-radius:6px;margin-top:10px;" src="about:blank"></iframe>
 </div>
+
+</div>
+
+<!-- PHẦN 5: HỒ SƠ CÁ CƯỢC - THẮNG/THUA -->
+<div class="profile-section">
+    <h3 style="margin-bottom: 15px; color: #333;">📊 Hồ sơ cá cược</h3>
+    
+    <div class="profile-tabs">
+        <div class="profile-tab active" onclick="switchProfileTab(this, 'tab-history')">Trò chơi</div>
+        <div class="profile-tab" onclick="switchProfileTab(this, 'tab-win')">Lịch sử thắng</div>
+        <div class="profile-tab" onclick="switchProfileTab(this, 'tab-loss')">Lịch sử thua</div>
+        <div class="profile-tab" onclick="switchProfileTab(this, 'tab-total')">Thống kê</div>
+    </div>
+
+    <!-- TAB: LỊCH SỬ CÁ CƯỢC -->
+    <div id="tab-history" class="profile-content active">
+        <table class="win-loss-table">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Trò chơi</th>
+                    <th>Cách chơi</th>
+                    <th>Số tiền cược</th>
+                    <th>Tỷ lệ</th>
+                    <th>Tiền thắng</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>10/06/2026 14:30</td>
+                    <td>Lô 2 số</td>
+                    <td>Bao lô</td>
+                    <td>50,000₫</td>
+                    <td>27</td>
+                    <td class="win">+1,350,000₫</td>
+                    <td><span style="color: #28a745;">✓ Thắng</span></td>
+                </tr>
+                <tr>
+                    <td>09/06/2026 15:45</td>
+                    <td>Đề đặc biệt</td>
+                    <td>Đánh đề</td>
+                    <td>100,000₫</td>
+                    <td>100</td>
+                    <td class="loss">-100,000₫</td>
+                    <td><span style="color: #dc3545;">✗ Thua</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- TAB: LỊCH SỬ THẮNG -->
+    <div id="tab-win" class="profile-content">
+        <table class="win-loss-table">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Trò chơi</th>
+                    <th>Số tiền cược</th>
+                    <th>Tiền thắng</th>
+                    <th>Lợi nhuận</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>10/06/2026 14:30</td>
+                    <td>Lô 2 số</td>
+                    <td>50,000₫</td>
+                    <td class="win">1,350,000₫</td>
+                    <td class="win">+1,300,000₫</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- TAB: LỊCH SỬ THUA -->
+    <div id="tab-loss" class="profile-content">
+        <table class="win-loss-table">
+            <thead>
+                <tr>
+                    <th>Thời gian</th>
+                    <th>Trò chơi</th>
+                    <th>Số tiền cược</th>
+                    <th>Lỗ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>09/06/2026 15:45</td>
+                    <td>Đề đặc biệt</td>
+                    <td>100,000₫</td>
+                    <td class="loss">-100,000₫</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- TAB: THỐNG KÊ -->
+    <div id="tab-total" class="profile-content">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+            <div style="background: #f0f2f6; padding: 15px; border-radius: 6px; text-align: center;">
+                <div style="font-size: 12px; color: #666;">Tổng cược</div>
+                <div style="font-size: 18px; font-weight: bold; color: #333;">150,000₫</div>
+            </div>
+            <div style="background: #f0f2f6; padding: 15px; border-radius: 6px; text-align: center;">
+                <div style="font-size: 12px; color: #666;">Tổng thắng</div>
+                <div style="font-size: 18px; font-weight: bold; color: #28a745;">1,350,000₫</div>
+            </div>
+            <div style="background: #f0f2f6; padding: 15px; border-radius: 6px; text-align: center;">
+                <div style="font-size: 12px; color: #666;">Tổng thua</div>
+                <div style="font-size: 18px; font-weight: bold; color: #dc3545;">100,000₫</div>
+            </div>
+            <div style="background: #f0f2f6; padding: 15px; border-radius: 6px; text-align: center;">
+                <div style="font-size: 12px; color: #666;">Lợi nhuận ròng</div>
+                <div style="font-size: 18px; font-weight: bold; color: #2d6cdf;">1,200,000₫</div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
 <!-- FOOTER -->
-<footer class="footer">
+<div class="footer">
     <div class="footer-info">
         <div class="footer-item">
-            <div class="footer-item-icon">☎️</div>
+            <div class="footer-item-icon">📞</div>
             <div class="footer-item-text">
-                <strong>ĐIỆN THOẠI LIÊN LẠC</strong>
-                <a href="tel:+84123456789">+84 (123) 456-789</a>
+                <strong>Điện Thoại Liên Lạc</strong>
+                <a href="tel:+841234567890">+84 123 456 7890</a>
             </div>
         </div>
 
         <div class="footer-item">
             <div class="footer-item-icon">✉️</div>
             <div class="footer-item-text">
-                <strong>EMAIL</strong>
-                <a href="mailto:123B8COM@GMAIL.COM">123B8COM@GMAIL.COM</a>
+                <strong>Email</strong>
+                <a href="mailto:123b8com@gmail.com">123b8com@gmail.com</a>
             </div>
         </div>
 
         <div class="footer-item">
             <div class="footer-item-icon">👨‍💼</div>
             <div class="footer-item-text">
-                <strong>ĐẠI LÝ</strong>
-                <a href="#">Đăng ký làm đại lý</a>
+                <strong>Đại Lý</strong>
+                <span>Liên hệ để trở thành đại lý</span>
             </div>
         </div>
 
         <div class="footer-item">
             <div class="footer-item-icon">🛡️</div>
             <div class="footer-item-text">
-                <strong>HƯỚNG DẪN CHỐNG HACK DNS</strong>
-                <a href="#">Xem hướng dẫn</a>
+                <strong>Hướng Dẫn Chống Hack DNS</strong>
+                <span>Bảo mật tài khoản của bạn</span>
             </div>
         </div>
 
         <div class="footer-item">
             <div class="footer-item-icon">⏰</div>
             <div class="footer-item-text">
-                <strong>CHĂM SÓC KHÁCH HÀNG</strong>
-                <span>24/7</span>
+                <strong>Chăm Sóc Khách Hàng 24/7</strong>
+                <span>Luôn sẵn sàng hỗ trợ bạn</span>
             </div>
         </div>
     </div>
@@ -1288,536 +1379,101 @@ Số tiền: <b id="money">0</b> đ
     <div class="footer-divider"></div>
 
     <div class="footer-partners">
-        <span class="footer-partners-title">🤝 ĐỐI TÁC HỢP TÁC:</span>
+        <span class="footer-partners-title">🏆 Đối Tác</span>
         <div class="partner-logos">
             <div class="partner-logo">BA</div>
             <div class="partner-logo">KY</div>
             <div class="partner-logo">LEG</div>
-            <div class="partner-logo">ZE</div>
             <div class="partner-logo">W</div>
             <div class="partner-logo">BBN</div>
-            <div class="partner-logo">AF</div>
-            <div class="partner-logo">EBET</div>
-            <div class="partner-logo">SB</div>
-            <div class="partner-logo">PP</div>
-            <div class="partner-logo">M</div>
-            <div class="partner-logo">PT</div>
-            <div class="partner-logo">CQ9</div>
-            <div class="partner-logo">JF</div>
-            <div class="partner-logo">JDB</div>
-            <div class="partner-logo">PS</div>
+            <div class="partner-logo">EB</div>
+            <div class="partner-logo">BBT</div>
+            <div class="partner-logo">C99</div>
         </div>
     </div>
 
     <div class="footer-bottom">
-        <p>© 2026 123B - Trang web chính thức. Bảo lưu mọi quyền.</p>
-        <p>⚠️ Tuyên bố từ chối trách nhiệm: Cờ bạc có thể gây nghiện. Cân nhắc thận trọng trước khi tham gia.</p>
+        <p>© 2026 123B - Tất cả các quyền được bảo lưu</p>
+        <p>Chơi có trách nhiệm | Hỗ trợ 24/7 | Bảo mật tối cao</p>
     </div>
-</footer>
+</div>
 
 <script>
-let rate = 27000;
-let multi = 1;
-let type = 2;
-let mainTab = "bao";
-let deRate = 1000;
-let ddRate = 1000;
-let rate3c = 1000;
-let rate4c = 1000;
-
-function render(id) {
-    let box = document.getElementById(id);
-    box.innerHTML = "";
-    for (let i = 0; i <= 9; i++) {
-        let s = document.createElement("span");
-        s.innerText = i;
-        s.onclick = () => {
-            s.classList.toggle("active");
-            if (mainTab === "de") calcDe();
-            else if (mainTab === "dd") calcDD();
-            else if (mainTab === "3c") calc3C();
-            else if (mainTab === "4c") calc4C();
-            else calc();
-        };
-        box.appendChild(s);
-    }
-}
-
-render("ngan");
-render("tram");
-render("chuc");
-render("donvi");
-render("de-chuc");
-render("de-donvi");
-render("dd-chuc");
-render("3c-tram");
-render("3c-chuc");
-render("3c-donvi");
-render("4c-ngan");
-render("4c-tram");
-render("4c-chuc");
-render("4c-donvi");
-
-document.querySelectorAll(".tab").forEach((tab, index) => {
-    tab.onclick = () => {
-        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        document.getElementById("chon").style.display = "none";
-        document.getElementById("input").style.display = "none";
-        document.getElementById("xienBox").style.display = "none";
-        document.getElementById("deBox").style.display = "none";
-        document.getElementById("ddBox").style.display = "none";
-        document.getElementById("3cBox").style.display = "none";
-        document.getElementById("4cBox").style.display = "none";
-
-        document.querySelector(".subtabs").style.display = "none";
-        document.querySelector(".subtabs-de").style.display = "none";
-        document.querySelector(".subtabs-dd").style.display = "none";
-        document.querySelector(".subtabs-3c").style.display = "none";
-        document.querySelectorAll(".mode-tabs").forEach(m => m.style.display = "none");
-        document.querySelector(".mode-tabs-de").style.display = "none";
-        document.querySelector(".mode-tabs-dd").style.display = "none";
-        document.querySelector(".mode-tabs-3c").style.display = "none";
-        document.querySelector(".mode-tabs-4c").style.display = "none";
-
-        if (index === 0) {
-            mainTab = "bao";
-            document.getElementById("chon").style.display = "block";
-            document.querySelector(".subtabs").style.display = "flex";
-            document.querySelectorAll(".mode-tabs")[0].style.display = "flex";
-            rate = 27000;
-            document.getElementById("rate").innerText = rate.toLocaleString();
-            resetAll();
-        }
-
-        if (index === 1) {
-            mainTab = "xien";
-            document.getElementById("xienBox").style.display = "block";
-            resetXien();
-        }
-
-        if (index === 2) {
-            mainTab = "de";
-            document.getElementById("deBox").style.display = "block";
-            document.querySelector(".subtabs-de").style.display = "flex";
-            document.querySelector(".mode-tabs-de").style.display = "flex";
-            document.getElementById("rate").innerText = deRate.toLocaleString();
-            resetDe();
-        }
-
-        if (index === 3) {
-            mainTab = "dd";
-            document.getElementById("ddBox").style.display = "block";
-            document.querySelector(".subtabs-dd").style.display = "flex";
-            document.querySelector(".mode-tabs-dd").style.display = "flex";
-            document.getElementById("rate").innerText = ddRate.toLocaleString();
-            resetDD();
-        }
-
-        if (index === 4) {
-            mainTab = "3c";
-            document.getElementById("3cBox").style.display = "block";
-            document.querySelector(".subtabs-3c").style.display = "flex";
-            document.querySelector(".mode-tabs-3c").style.display = "flex";
-            document.getElementById("rate").innerText = rate3c.toLocaleString();
-            reset3C();
-        }
-
-        if (index === 5) {
-            mainTab = "4c";
-            document.getElementById("4cBox").style.display = "block";
-            document.querySelector(".mode-tabs-4c").style.display = "flex";
-            rate4c = 1000;
-            document.getElementById("rate").innerText = rate4c.toLocaleString();
-            reset4C();
-        }
-    };
-});
-
-function resetXien() {
-    selectedXien = [];
-    document.querySelectorAll("#xienNumbers span").forEach(n => {
-        n.classList.remove("active", "disabled");
+// Hàm chuyển đổi tab hồ sơ cá cược
+function switchProfileTab(element, tabId) {
+    // Xóa active từ tất cả tabs
+    document.querySelectorAll('.profile-tab').forEach(tab => {
+        tab.classList.remove('active');
     });
-    document.getElementById("count").innerText = 0;
-    document.getElementById("money").innerText = 0;
-}
-
-function resetDe() {
-    clearRow("de-chuc");
-    clearRow("de-donvi");
-    multi = 1;
-    document.getElementById("multi").innerText = multi;
-    calcDe();
-}
-
-function resetDD() {
-    clearRow("dd-chuc");
-    multi = 1;
-    document.getElementById("multi").innerText = multi;
-    calcDD();
-}
-
-function reset3C() {
-    clearRow("3c-tram");
-    clearRow("3c-chuc");
-    clearRow("3c-donvi");
-    multi = 1;
-    document.getElementById("multi").innerText = multi;
-    calc3C();
-}
-
-function reset4C() {
-    clearRow("4c-ngan");
-    clearRow("4c-tram");
-    clearRow("4c-chuc");
-    clearRow("4c-donvi");
-    multi = 1;
-    document.getElementById("multi").innerText = multi;
-    calc4C();
-}
-
-function resetAll() {
-    clearRow("ngan");
-    clearRow("tram");
-    clearRow("chuc");
-    clearRow("donvi");
-    multi = 1;
-    document.getElementById("multi").innerText = multi;
-    calc();
-}
-
-document.querySelectorAll(".subtab").forEach(tab => {
-    tab.onclick = () => {
-        document.querySelectorAll(".subtab").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        rate = parseInt(tab.dataset.rate);
-        type = parseInt(tab.dataset.type);
-
-        document.getElementById("rate").innerText = rate.toLocaleString();
-
-        document.getElementById("row-ngan").style.display = "none";
-        document.getElementById("row-tram").style.display = "none";
-
-        if (type == 3) {
-            document.getElementById("row-tram").style.display = "block";
-        } else if (type == 4) {
-            document.getElementById("row-tram").style.display = "block";
-            document.getElementById("row-ngan").style.display = "block";
-        }
-        calc();
-    };
-});
-
-document.querySelectorAll(".subtab-3c").forEach(tab => {
-    tab.onclick = () => {
-        document.querySelectorAll(".subtab-3c").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        rate3c = parseInt(tab.dataset["3c-rate"]);
-        document.getElementById("rate").innerText = rate3c.toLocaleString();
-        reset3C();
-    };
-});
-
-document.querySelectorAll(".subtab-de").forEach(tab => {
-    tab.onclick = () => {
-        document.querySelectorAll(".subtab-de").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        deRate = 1000;
-        document.getElementById("rate").innerText = deRate.toLocaleString();
-        resetDe();
-    };
-});
-
-document.querySelectorAll(".subtab-dd").forEach(tab => {
-    tab.onclick = () => {
-        document.querySelectorAll(".subtab-dd").forEach(t => t.classList.remove("active"));
-        tab.classList.add("active");
-
-        ddRate = 1000;
-        document.getElementById("rate").innerText = ddRate.toLocaleString();
-        resetDD();
-    };
-});
-
-document.querySelectorAll(".mode").forEach(m => {
-    m.onclick = () => {
-        let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode").forEach(x => x.classList.remove("active"));
-        m.classList.add("active");
-
-        let mode = m.dataset.mode;
-
-        if (mode == "chon") {
-            document.getElementById("chon").style.display = "block";
-            document.getElementById("input").style.display = "none";
-        } else if (mode == "input") {
-            document.getElementById("chon").style.display = "none";
-            document.getElementById("input").style.display = "block";
-        }
-    };
-});
-
-document.querySelectorAll(".mode-3c").forEach(m => {
-    m.onclick = () => {
-        let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-3c").forEach(x => x.classList.remove("active"));
-        m.classList.add("active");
-
-        let mode = m.dataset.mode;
-
-        if (mode == "chon-3c") {
-            document.getElementById("chon-3c").style.display = "block";
-            document.getElementById("input-3c").style.display = "none";
-        } else if (mode == "input-3c") {
-            document.getElementById("chon-3c").style.display = "none";
-            document.getElementById("input-3c").style.display = "block";
-        }
-    };
-});
-
-document.querySelectorAll(".mode-4c").forEach(m => {
-    m.onclick = () => {
-        let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-4c").forEach(x => x.classList.remove("active"));
-        m.classList.add("active");
-
-        let mode = m.dataset.mode;
-
-        if (mode == "chon-4c") {
-            document.getElementById("chon-4c").style.display = "block";
-            document.getElementById("input-4c").style.display = "none";
-        } else if (mode == "input-4c") {
-            document.getElementById("chon-4c").style.display = "none";
-            document.getElementById("input-4c").style.display = "block";
-        }
-    };
-});
-
-document.querySelectorAll(".mode-de").forEach(m => {
-    m.onclick = () => {
-        let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-de").forEach(x => x.classList.remove("active"));
-        m.classList.add("active");
-
-        let mode = m.dataset.mode;
-
-        if (mode == "chon-de") {
-            document.getElementById("chon-de").style.display = "block";
-            document.getElementById("input-de").style.display = "none";
-        } else if (mode == "input-de") {
-            document.getElementById("chon-de").style.display = "none";
-            document.getElementById("input-de").style.display = "block";
-        }
-    };
-});
-
-document.querySelectorAll(".mode-dd").forEach(m => {
-    m.onclick = () => {
-        let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-dd").forEach(x => x.classList.remove("active"));
-        m.classList.add("active");
-
-        let mode = m.dataset.mode;
-
-        if (mode == "chon-dd") {
-            document.getElementById("chon-dd").style.display = "block";
-            document.getElementById("input-dd").style.display = "none";
-        } else if (mode == "input-dd") {
-            document.getElementById("chon-dd").style.display = "none";
-            document.getElementById("input-dd").style.display = "block";
-        }
-    };
-});
-
-function selectRow(id, type) {
-    let nums = document.querySelectorAll("#" + id + " span");
-    nums.forEach(n => {
-        let v = parseInt(n.innerText);
-
-        if (type == "all") n.classList.add("active");
-        if (type == "tai") n.classList.toggle("active", v >= 5);
-        if (type == "xiu") n.classList.toggle("active", v < 5);
-        if (type == "le") n.classList.toggle("active", v % 2 == 1);
-        if (type == "chan") n.classList.toggle("active", v % 2 == 0);
+    
+    // Xóa active từ tất cả content
+    document.querySelectorAll('.profile-content').forEach(content => {
+        content.classList.remove('active');
     });
-
-    if (mainTab === "de") {
-        calcDe();
-    } else if (mainTab === "dd") {
-        calcDD();
-    } else if (mainTab === "3c") {
-        calc3C();
-    } else if (mainTab === "4c") {
-        calc4C();
-    } else {
-        calc();
-    }
+    
+    // Thêm active vào tab được click
+    element.classList.add('active');
+    
+    // Hiển thị content tương ứng
+    document.getElementById(tabId).classList.add('active');
 }
 
-function clearRow(id) {
-    document.querySelectorAll("#" + id + " span").forEach(n => n.classList.remove("active"));
+// Khởi tạo bảng số
+function initNumbers() {
+    const containers = [
+        { id: 'de-chuc', count: 10 },
+        { id: 'de-donvi', count: 10 },
+        { id: 'dd-chuc', count: 10 },
+        { id: 'dd-donvi', count: 10 },
+        { id: '3c-chuc', count: 10 },
+        { id: '3c-donvi', count: 10 },
+        { id: 'xienNumbers', count: 100 }
+    ];
 
-    if (mainTab === "de") {
-        calcDe();
-    } else if (mainTab === "dd") {
-        calcDD();
-    } else if (mainTab === "3c") {
-        calc3C();
-    } else if (mainTab === "4c") {
-        calc4C();
-    } else {
-        calc();
-    }
-}
-
-function calc() {
-    let c = document.querySelectorAll("#chuc .active").length;
-    let d = document.querySelectorAll("#donvi .active").length;
-
-    let t = 1;
-    let n = 1;
-
-    if (type >= 3) {
-        t = document.querySelectorAll("#tram .active").length;
-        if (t === 0) {
-            updateZero();
-            return;
+    containers.forEach(container => {
+        const el = document.getElementById(container.id);
+        if (el) {
+            for (let i = 0; i < container.count; i++) {
+                const span = document.createElement('span');
+                span.textContent = i.toString().padStart(2, '0');
+                span.onclick = function() {
+                    this.classList.toggle('active');
+                };
+                el.appendChild(span);
+            }
         }
-    }
-
-    if (type >= 4) {
-        n = document.querySelectorAll("#ngan .active").length;
-        if (n === 0) {
-            updateZero();
-            return;
-        }
-    }
-
-    if (c === 0 || d === 0) {
-        updateZero();
-        return;
-    }
-
-    let count = c * d * t * n;
-    let money = count * rate * multi;
-
-    document.getElementById("count").innerText = count;
-    document.getElementById("money").innerText = money.toLocaleString();
+    });
 }
 
-function calc3C() {
-    let tram = document.querySelectorAll("#3c-tram .active").length;
-    let chuc = document.querySelectorAll("#3c-chuc .active").length;
-    let donvi = document.querySelectorAll("#3c-donvi .active").length;
-
-    if (tram === 0 || chuc === 0 || donvi === 0) {
-        updateZero();
-        return;
-    }
-
-    let count = tram * chuc * donvi;
-    let money = count * rate3c * multi;
-
-    document.getElementById("count").innerText = count;
-    document.getElementById("money").innerText = money.toLocaleString();
+// Hàm chọn hàng
+function selectRow(containerId, type) {
+    const container = document.getElementById(containerId);
+    const spans = container.querySelectorAll('span');
+    
+    spans.forEach((span, index) => {
+        let shouldSelect = false;
+        const num = parseInt(span.textContent);
+        
+        if (type === 'all') shouldSelect = true;
+        else if (type === 'tai' && num > 4) shouldSelect = true;
+        else if (type === 'xiu' && num < 5) shouldSelect = true;
+        else if (type === 'le' && num % 2 === 1) shouldSelect = true;
+        else if (type === 'chan' && num % 2 === 0) shouldSelect = true;
+        
+        if (shouldSelect) span.classList.add('active');
+    });
 }
 
-function calc4C() {
-    let ngan = document.querySelectorAll("#4c-ngan .active").length;
-    let tram = document.querySelectorAll("#4c-tram .active").length;
-    let chuc = document.querySelectorAll("#4c-chuc .active").length;
-    let donvi = document.querySelectorAll("#4c-donvi .active").length;
-
-    if (ngan === 0 || tram === 0 || chuc === 0 || donvi === 0) {
-        updateZero();
-        return;
-    }
-
-    let count = ngan * tram * chuc * donvi;
-    let money = count * rate4c * multi;
-
-    document.getElementById("count").innerText = count;
-    document.getElementById("money").innerText = money.toLocaleString();
+// Hàm xóa hàng
+function clearRow(containerId) {
+    const container = document.getElementById(containerId);
+    container.querySelectorAll('span').forEach(span => {
+        span.classList.remove('active');
+    });
 }
 
-function calcDe() {
-    let chuc = document.querySelectorAll("#de-chuc .active").length;
-    let donvi = document.querySelectorAll("#de-donvi .active").length;
-
-    if (chuc === 0 || donvi === 0) {
-        updateZero();
-        return;
-    }
-
-    let count = chuc * donvi;
-    let money = count * deRate * multi;
-
-    document.getElementById("count").innerText = count;
-    document.getElementById("money").innerText = money.toLocaleString();
-}
-
-function calcDD() {
-    let chuc = document.querySelectorAll("#dd-chuc .active").length;
-
-    if (chuc === 0) {
-        updateZero();
-        return;
-    }
-
-    let count = chuc;
-    let money = count * ddRate * multi;
-
-    document.getElementById("count").innerText = count;
-    document.getElementById("money").innerText = money.toLocaleString();
-}
-
-function updateZero() {
-    document.getElementById("count").innerText = 0;
-    document.getElementById("money").innerText = 0;
-}
-
-function plus() {
-    multi++;
-    document.getElementById("multi").innerText = multi;
-
-    if (mainTab === "de") {
-        calcDe();
-    } else if (mainTab === "dd") {
-        calcDD();
-    } else if (mainTab === "3c") {
-        calc3C();
-    } else if (mainTab === "4c") {
-        calc4C();
-    } else {
-        calc();
-    }
-}
-
-function minus() {
-    if (multi > 1) multi--;
-    document.getElementById("multi").innerText = multi;
-
-    if (mainTab === "de") {
-        calcDe();
-    } else if (mainTab === "dd") {
-        calcDD();
-    } else if (mainTab === "3c") {
-        calc3C();
-    } else if (mainTab === "4c") {
-        calc4C();
-    } else {
-        calc();
-    }
-}
-
-function openGuide() {
-    alert("Cách chơi hướng dẫn...");
-}
+// Khởi tạo khi trang load
+document.addEventListener('DOMContentLoaded', initNumbers);
 </script>
 
 </body>
