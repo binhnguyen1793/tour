@@ -2,181 +2,845 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Lottery UI</title>
+<title>123B Lottery</title>
 
 <style>
-body{
-    margin:0;
-    font-family:"Segoe UI",sans-serif;
-    background:#f3f5f9;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-/* HEADER */
-.header{
-    display:flex;
-    justify-content:space-between;
-    padding:15px 25px;
-    background:#fff;
-    border-bottom:1px solid #ddd;
+body {
+    font-family: "Segoe UI", "Arial", sans-serif;
+    background: #f3f5f9;
 }
 
-.balls span{
-    width:42px;height:42px;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:50%;
-    color:#fff;
-    font-weight:bold;
-    margin:0 5px;
-    background:linear-gradient(145deg,#5a9df9,#2d6cdf);
+/* ========== HEADER TOP ========== */
+.header-top {
+    background: linear-gradient(90deg, #0c2340 0%, #1a3a5a 100%);
+    color: #fff;
+    padding: 6px 30px;
+    font-size: 11px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* LAYOUT */
-.container{display:flex;padding:20px}
-.left{flex:3;margin-right:20px}
-.right{flex:1;background:#fff;border-radius:12px;padding:15px}
+.header-top-left {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+}
+
+.header-top-item {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.header-top-item a {
+    color: #fff;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.header-top-item a:hover {
+    color: #ffa500;
+}
+
+/* ========== NAVBAR ========== */
+.navbar {
+    background: linear-gradient(90deg, #1f6db5 0%, #1f6db5 100%);
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    flex-wrap: wrap;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    min-width: 120px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 0;
+    flex: 1;
+    height: 70px;
+}
+
+.navbar-menu-item {
+    padding: 0 12px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 12px;
+    font-weight: 500;
+    height: 100%;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+
+.navbar-menu-item:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.navbar-menu-item.hot {
+    position: relative;
+}
+
+.navbar-menu-item.hot::after {
+    content: "HOT";
+    position: absolute;
+    top: -8px;
+    right: -5px;
+    background: #ff4400;
+    color: white;
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+.navbar-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 0 15px;
+    height: 70px;
+}
+
+.navbar-search {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.navbar-search input {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 4px;
+    width: 150px;
+    font-size: 11px;
+}
+
+.navbar-buttons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.btn-nav {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 11px;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.btn-login {
+    background: #fff;
+    color: #1f6db5;
+}
+
+.btn-login:hover {
+    background: #e8e8e8;
+}
+
+.btn-register {
+    background: #ffa500;
+    color: white;
+}
+
+.btn-register:hover {
+    background: #ff8c00;
+}
+
+.btn-play {
+    background: #28a745;
+    color: white;
+}
+
+.btn-play:hover {
+    background: #218838;
+}
+
+.btn-purple {
+    background: #9b59b6;
+    color: white;
+}
+
+.btn-purple:hover {
+    background: #8e44ad;
+}
+
+/* ========== LOTTERY SECTION HEADER ========== */
+.lottery-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.lottery-info {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.lottery-info b {
+    font-size: 14px;
+}
+
+.balls {
+    display: flex;
+    gap: 5px;
+}
+
+.balls span {
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: bold;
+    font-size: 16px;
+    background: linear-gradient(135deg, #4fa3ff 0%, #2d6cdf 100%);
+    box-shadow: 0 3px 10px rgba(45,108,223,0.3);
+}
+
+/* ========== MAIN CONTENT ========== */
+.container {
+    display: flex;
+    padding: 20px 30px;
+    gap: 20px;
+}
+
+.left {
+    flex: 3;
+}
+
+.right {
+    flex: 1;
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+}
 
 /* BOX */
-.box{background:#fff;border-radius:12px;padding:15px}
+.box {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+}
 
 /* TABS */
-.tabs{display:flex;gap:15px;border-bottom:1px solid #eee;padding-bottom:10px}
-.tab{cursor:pointer;padding:8px 14px;border-radius:6px}
-.tab.active{background:#e7f0ff;color:#2d6cdf;font-weight:bold}
+.tabs {
+    display: flex;
+    gap: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    flex-wrap: wrap;
+}
 
-/* SUB */
-.subtabs{margin-top:10px;display:flex;gap:10px}
-.subtab{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
-.subtab.active{background:#2d6cdf;color:white}
+.tab {
+    cursor: pointer;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+}
 
-/* SUBTABS DE */
-.subtabs-de{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
-.subtab-de{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
-.subtab-de.active{background:#2d6cdf;color:white}
+.tab.active {
+    background: #e7f0ff;
+    color: #2d6cdf;
+    font-weight: bold;
+}
 
-/* SUBTABS DAU DUOI */
-.subtabs-dd{margin-top:10px;display:flex;gap:10px}
-.subtab-dd{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
-.subtab-dd.active{background:#2d6cdf;color:white}
+/* SUBTABS */
+.subtabs {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
-/* SUBTABS 3 CANG */
-.subtabs-3c{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
-.subtab-3c{background:#f0f2f6;padding:6px 12px;border-radius:6px;cursor:pointer}
-.subtab-3c.active{background:#2d6cdf;color:white}
+.subtab {
+    background: #f0f2f6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.subtab.active {
+    background: #2d6cdf;
+    color: white;
+}
+
+.subtabs-de {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.subtab-de {
+    background: #f0f2f6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.subtab-de.active {
+    background: #2d6cdf;
+    color: white;
+}
+
+.subtabs-dd {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+
+.subtab-dd {
+    background: #f0f2f6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.subtab-dd.active {
+    background: #2d6cdf;
+    color: white;
+}
+
+.subtabs-3c {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.subtab-3c {
+    background: #f0f2f6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.subtab-3c.active {
+    background: #2d6cdf;
+    color: white;
+}
 
 /* MODE */
-.mode-tabs{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
-.mode{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
-.mode.active{background:#2d6cdf;color:#fff}
+.mode-tabs {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
 
-.mode-tabs-de{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
-.mode-de{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
-.mode-de.active{background:#2d6cdf;color:#fff}
+.mode {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 12px;
+}
 
-.mode-tabs-dd{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
-.mode-dd{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
-.mode-dd.active{background:#2d6cdf;color:#fff}
+.mode.active {
+    background: #2d6cdf;
+    color: #fff;
+}
 
-.mode-tabs-3c{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
-.mode-3c{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
-.mode-3c.active{background:#2d6cdf;color:#fff}
+.mode-tabs-de {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
 
-.mode-tabs-4c{margin-top:10px;display:flex;gap:10px;justify-content:flex-end}
-.mode-4c{padding:6px 12px;border-radius:6px;background:#eee;cursor:pointer}
-.mode-4c.active{background:#2d6cdf;color:#fff}
+.mode-de {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.mode-de.active {
+    background: #2d6cdf;
+    color: #fff;
+}
+
+.mode-tabs-dd {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.mode-dd {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.mode-dd.active {
+    background: #2d6cdf;
+    color: #fff;
+}
+
+.mode-tabs-3c {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.mode-3c {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.mode-3c.active {
+    background: #2d6cdf;
+    color: #fff;
+}
+
+.mode-tabs-4c {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.mode-4c {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.mode-4c.active {
+    background: #2d6cdf;
+    color: #fff;
+}
 
 /* NUMBER */
-.row{margin-top:15px}
-.label{margin-bottom:5px;color:#555}
-.numbers span{
-    width:38px;height:38px;border-radius:50%;
-    border:1px solid #ccc;
-    display:inline-flex;align-items:center;justify-content:center;
-    margin:3px;cursor:pointer;background:#fff;
-    transition:0.2s;
+.row {
+    margin-top: 15px;
 }
-.numbers span:hover{border-color:#2d6cdf}
-.numbers span.active{
-    background:#2d6cdf;color:#fff;border:none;
-    box-shadow:0 3px 8px rgba(0,0,0,0.15);
+
+.label {
+    margin-bottom: 5px;
+    color: #555;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.numbers span {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3px;
+    cursor: pointer;
+    background: #fff;
+    transition: 0.2s;
+    font-size: 12px;
+}
+
+.numbers span:hover {
+    border-color: #2d6cdf;
+}
+
+.numbers span.active {
+    background: #2d6cdf;
+    color: #fff;
+    border: none;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* ACTION */
-.actions{margin-top:5px}
-.actions button{
-    margin:2px;padding:5px 8px;border:none;border-radius:5px;
-    cursor:pointer;background:#e6ebf5;
+.actions {
+    margin-top: 8px;
 }
-.actions button:hover{background:#2d6cdf;color:#fff}
+
+.actions button {
+    margin: 2px;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: #e6ebf5;
+    font-size: 11px;
+    transition: 0.2s;
+}
+
+.actions button:hover {
+    background: #2d6cdf;
+    color: #fff;
+}
 
 /* INFO */
-.info{margin-top:15px;display:flex;justify-content:space-between;align-items:center}
-.badge{background:#e7f0ff;padding:5px 10px;border-radius:6px;color:#2d6cdf;font-weight:bold}
+.info {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.badge {
+    background: #e7f0ff;
+    padding: 5px 10px;
+    border-radius: 6px;
+    color: #2d6cdf;
+    font-weight: bold;
+    font-size: 12px;
+}
 
 /* BUTTON */
-.btn{padding:8px 15px;border:none;border-radius:6px;color:#fff;cursor:pointer}
-.blue{background:#2d6cdf}
-.orange{background:#ff8c1a}
-.gray{background:#ccc;color:#333}
-
-.table{margin-top:15px;border-top:1px solid #eee;padding:20px;text-align:center;color:#888}
-
-.numbers span.disabled{
-    opacity:0.3;
-    pointer-events:none;
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    margin: 2px;
+    font-size: 12px;
+    transition: 0.2s;
 }
 
-.mode-tabs-xien{
-    margin-top:10px;
-    display:flex;
-    gap:10px;
-    justify-content:flex-end;
+.blue {
+    background: #2d6cdf;
 }
 
-.subtab-xien{
-    background:#f0f2f6;
-    padding:6px 12px;
-    border-radius:6px;
-    cursor:pointer;
-    transition:0.2s;
-}
-.subtab-xien.active{
-    background:#2d6cdf;
-    color:#fff;
-    font-weight:bold;
+.blue:hover {
+    background: #1f57b3;
 }
 
-.mode-xien{
-    padding:6px 12px;
-    border-radius:6px;
-    background:#eee;
-    cursor:pointer;
-    transition:0.2s;
-}
-.mode-xien.active{
-    background:#2d6cdf;
-    color:#fff;
+.orange {
+    background: #ff8c1a;
 }
 
-#xienQuick button{
-    padding:8px 14px;
-    border:none;
-    border-radius:6px;
-    background:#2d6cdf;
-    color:#fff;
-    cursor:pointer;
+.orange:hover {
+    background: #ff7700;
 }
-#xienQuick button:hover{
-    background:#1f57b3;
+
+.gray {
+    background: #ccc;
+    color: #333;
+}
+
+.gray:hover {
+    background: #aaa;
+}
+
+.table {
+    margin-top: 15px;
+    border-top: 1px solid #eee;
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+}
+
+.numbers span.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.mode-tabs-xien {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.subtab-xien {
+    background: #f0f2f6;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 12px;
+}
+
+.subtab-xien.active {
+    background: #2d6cdf;
+    color: #fff;
+    font-weight: bold;
+}
+
+.mode-xien {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #eee;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 12px;
+}
+
+.mode-xien.active {
+    background: #2d6cdf;
+    color: #fff;
+}
+
+#xienQuick button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background: #2d6cdf;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+#xienQuick button:hover {
+    background: #1f57b3;
+}
+
+/* ========== FOOTER ========== */
+.footer {
+    background: linear-gradient(90deg, #0c2340 0%, #1a3a5a 100%);
+    color: #fff;
+    padding: 30px 30px;
+    margin-top: 40px;
+}
+
+.footer-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.footer-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+}
+
+.footer-item-icon {
+    font-size: 22px;
+    min-width: 30px;
+    margin-top: 2px;
+}
+
+.footer-item-text {
+    flex: 1;
+}
+
+.footer-item-text strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+}
+
+.footer-item-text a, .footer-item-text span {
+    color: #fff;
+    text-decoration: none;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.footer-item-text a:hover {
+    color: #ffa500;
+}
+
+.footer-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 20px 0;
+}
+
+.footer-partners {
+    padding: 15px 0;
+}
+
+.footer-partners-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.partner-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.partner-logo {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ffa500;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 11px;
+    color: #aaa;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .navbar-menu {
+        flex-wrap: wrap;
+        order: 3;
+        width: 100%;
+    }
+
+    .navbar-menu-item {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    .container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .left {
+        margin-right: 0;
+        margin-bottom: 20px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .header-top-left {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .footer-info {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <div>
+<!-- HEADER TOP -->
+<div class="header-top">
+    <div class="header-top-left">
+        <div class="header-top-item">
+            📅 Ngày 25 Tháng 05 Năm 2026 01:17 🇻🇳
+        </div>
+        <div class="header-top-item">
+            | 👑 <a href="#">Nhân hiệu</a> | 
+            <a href="#">Giới Thiệu</a> | 
+            👑 <a href="#">Tài trợ</a> | 
+            🤝 <a href="#">Hợp tác</a> | 
+            <a href="#">Đại Lý</a> | 
+            🛟 <a href="#">Cskh Hỗ trợ 24/7</a>
+        </div>
+    </div>
+    <div class="header-top-right">
+        🕐 Trực Tuyến: 2/7/0/5/2/4
+    </div>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="navbar-left">
+        <div class="navbar-logo">🎰 123B</div>
+
+        <div class="navbar-menu">
+            <a href="#" class="navbar-menu-item">🏠 TRANG CHỦ</a>
+            <a href="#" class="navbar-menu-item hot">⚽ FIFA</a>
+            <a href="#" class="navbar-menu-item hot">🎰 XỈ SỐ</a>
+            <a href="#" class="navbar-menu-item hot">🎲 CASINO</a>
+            <a href="#" class="navbar-menu-item hot">🏀 THỂ THAO</a>
+            <a href="#" class="navbar-menu-item hot">🎪 TRỢ CHƠI</a>
+            <a href="#" class="navbar-menu-item hot">🎮 GAME SLOT</a>
+            <a href="#" class="navbar-menu-item">🎮 GAME BÀI</a>
+            <a href="#" class="navbar-menu-item">🎣 BẮN CÁ</a>
+            <a href="#" class="navbar-menu-item">🐎 ĐÁ GÀ</a>
+            <a href="#" class="navbar-menu-item">🏅 ESPORTS</a>
+            <a href="#" class="navbar-menu-item hot">🎊 KHAI THƯỞNG</a>
+            <a href="#" class="navbar-menu-item">💰 CASH</a>
+        </div>
+    </div>
+
+    <div class="navbar-right">
+        <div class="navbar-search">
+            <input type="text" placeholder="Mã xác nhận...">
+        </div>
+        <div class="navbar-buttons">
+            <button class="btn-nav btn-login">Đăng nhập</button>
+            <button class="btn-nav btn-register">Đăng ký</button>
+            <button class="btn-nav btn-play">Chơi thử</button>
+            <button class="btn-nav btn-purple">Quên mật khẩu?</button>
+        </div>
+    </div>
+</div>
+
+<!-- LOTTERY HEADER -->
+<div class="lottery-header">
+    <div class="lottery-info">
         <b>Miền Bắc</b><br>Kết quả 04/05/2026
     </div>
     <div class="balls">
@@ -184,6 +848,7 @@ body{
     </div>
 </div>
 
+<!-- CONTAINER -->
 <div class="container">
 
 <div class="left">
@@ -198,7 +863,7 @@ body{
     <div class="tab">3 Càng</div>
     <div class="tab">4 Càng</div>
 
-    <span onclick="openGuide()" style="cursor:pointer;color:#2d6cdf;">
+    <span onclick="openGuide()" style="cursor:pointer;color:#2d6cdf;font-size:12px;">
         ℹ️ Cách chơi
     </span>
 </div>
@@ -576,36 +1241,110 @@ Số tiền: <b id="money">0</b> đ
 
 </div>
 
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-info">
+        <div class="footer-item">
+            <div class="footer-item-icon">☎️</div>
+            <div class="footer-item-text">
+                <strong>ĐIỆN THOẠI LIÊN LẠC</strong>
+                <a href="tel:+84123456789">+84 (123) 456-789</a>
+            </div>
+        </div>
+
+        <div class="footer-item">
+            <div class="footer-item-icon">✉️</div>
+            <div class="footer-item-text">
+                <strong>EMAIL</strong>
+                <a href="mailto:123B8COM@GMAIL.COM">123B8COM@GMAIL.COM</a>
+            </div>
+        </div>
+
+        <div class="footer-item">
+            <div class="footer-item-icon">👨‍💼</div>
+            <div class="footer-item-text">
+                <strong>ĐẠI LÝ</strong>
+                <a href="#">Đăng ký làm đại lý</a>
+            </div>
+        </div>
+
+        <div class="footer-item">
+            <div class="footer-item-icon">🛡️</div>
+            <div class="footer-item-text">
+                <strong>HƯỚNG DẪN CHỐNG HACK DNS</strong>
+                <a href="#">Xem hướng dẫn</a>
+            </div>
+        </div>
+
+        <div class="footer-item">
+            <div class="footer-item-icon">⏰</div>
+            <div class="footer-item-text">
+                <strong>CHĂM SÓC KHÁCH HÀNG</strong>
+                <span>24/7</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-partners">
+        <span class="footer-partners-title">🤝 ĐỐI TÁC HỢP TÁC:</span>
+        <div class="partner-logos">
+            <div class="partner-logo">BA</div>
+            <div class="partner-logo">KY</div>
+            <div class="partner-logo">LEG</div>
+            <div class="partner-logo">ZE</div>
+            <div class="partner-logo">W</div>
+            <div class="partner-logo">BBN</div>
+            <div class="partner-logo">AF</div>
+            <div class="partner-logo">EBET</div>
+            <div class="partner-logo">SB</div>
+            <div class="partner-logo">PP</div>
+            <div class="partner-logo">M</div>
+            <div class="partner-logo">PT</div>
+            <div class="partner-logo">CQ9</div>
+            <div class="partner-logo">JF</div>
+            <div class="partner-logo">JDB</div>
+            <div class="partner-logo">PS</div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>© 2026 123B - Trang web chính thức. Bảo lưu mọi quyền.</p>
+        <p>⚠️ Tuyên bố từ chối trách nhiệm: Cờ bạc có thể gây nghiện. Cân nhắc thận trọng trước khi tham gia.</p>
+    </div>
+</footer>
+
 <script>
 let rate = 27000;
 let multi = 1;
 let type = 2;
-let mainTab = "bao"; // bao | xien | de | dd | 3c | 4c
+let mainTab = "bao";
 let deRate = 1000;
 let ddRate = 1000;
 let rate3c = 1000;
 let rate4c = 1000;
 
-/* render số */
-function render(id){
-    let box=document.getElementById(id);
-    box.innerHTML="";
-    for(let i=0;i<=9;i++){
-        let s=document.createElement("span");
-        s.innerText=i;
-        s.onclick=()=>{
+function render(id) {
+    let box = document.getElementById(id);
+    box.innerHTML = "";
+    for (let i = 0; i <= 9; i++) {
+        let s = document.createElement("span");
+        s.innerText = i;
+        s.onclick = () => {
             s.classList.toggle("active");
-            if(mainTab==="de"){calcDe()}
-            else if(mainTab==="dd"){calcDD()}
-            else if(mainTab==="3c"){calc3C()}
-            else if(mainTab==="4c"){calc4C()}
-            else{calc();}
-        }
+            if (mainTab === "de") calcDe();
+            else if (mainTab === "dd") calcDD();
+            else if (mainTab === "3c") calc3C();
+            else if (mainTab === "4c") calc4C();
+            else calc();
+        };
         box.appendChild(s);
     }
 }
-render ("ngan");
-render ("tram");
+
+render("ngan");
+render("tram");
 render("chuc");
 render("donvi");
 render("de-chuc");
@@ -619,96 +1358,93 @@ render("4c-tram");
 render("4c-chuc");
 render("4c-donvi");
 
-// gán giá trị cho tab lớn
-document.querySelectorAll(".tab").forEach((tab, index)=>{
-    tab.onclick = ()=>{
-
-        document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".tab").forEach((tab, index) => {
+    tab.onclick = () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
 
-        // Ẩn tất cả
-        document.getElementById("chon").style.display="none";
-        document.getElementById("input").style.display="none";
-        document.getElementById("xienBox").style.display="none";
-        document.getElementById("deBox").style.display="none";
-        document.getElementById("ddBox").style.display="none";
-        document.getElementById("3cBox").style.display="none";
-        document.getElementById("4cBox").style.display="none";
+        document.getElementById("chon").style.display = "none";
+        document.getElementById("input").style.display = "none";
+        document.getElementById("xienBox").style.display = "none";
+        document.getElementById("deBox").style.display = "none";
+        document.getElementById("ddBox").style.display = "none";
+        document.getElementById("3cBox").style.display = "none";
+        document.getElementById("4cBox").style.display = "none";
 
-        document.querySelector(".subtabs").style.display="none";
-        document.querySelector(".subtabs-de").style.display="none";
-        document.querySelector(".subtabs-dd").style.display="none";
-        document.querySelector(".subtabs-3c").style.display="none";
-        document.querySelectorAll(".mode-tabs").forEach(m=>m.style.display="none");
-        document.querySelector(".mode-tabs-de").style.display="none";
-        document.querySelector(".mode-tabs-dd").style.display="none";
-        document.querySelector(".mode-tabs-3c").style.display="none";
-        document.querySelector(".mode-tabs-4c").style.display="none";
+        document.querySelector(".subtabs").style.display = "none";
+        document.querySelector(".subtabs-de").style.display = "none";
+        document.querySelector(".subtabs-dd").style.display = "none";
+        document.querySelector(".subtabs-3c").style.display = "none";
+        document.querySelectorAll(".mode-tabs").forEach(m => m.style.display = "none");
+        document.querySelector(".mode-tabs-de").style.display = "none";
+        document.querySelector(".mode-tabs-dd").style.display = "none";
+        document.querySelector(".mode-tabs-3c").style.display = "none";
+        document.querySelector(".mode-tabs-4c").style.display = "none";
 
-        if(index === 0){
+        if (index === 0) {
             mainTab = "bao";
-            document.getElementById("chon").style.display="block";
-            document.querySelector(".subtabs").style.display="flex";
-            document.querySelectorAll(".mode-tabs")[0].style.display="flex";
+            document.getElementById("chon").style.display = "block";
+            document.querySelector(".subtabs").style.display = "flex";
+            document.querySelectorAll(".mode-tabs")[0].style.display = "flex";
             rate = 27000;
             document.getElementById("rate").innerText = rate.toLocaleString();
             resetAll();
         }
 
-        if(index === 1){
+        if (index === 1) {
             mainTab = "xien";
-            document.getElementById("xienBox").style.display="block";
+            document.getElementById("xienBox").style.display = "block";
             resetXien();
         }
 
-        if(index === 2){
+        if (index === 2) {
             mainTab = "de";
-            document.getElementById("deBox").style.display="block";
-            document.querySelector(".subtabs-de").style.display="flex";
-            document.querySelector(".mode-tabs-de").style.display="flex";
+            document.getElementById("deBox").style.display = "block";
+            document.querySelector(".subtabs-de").style.display = "flex";
+            document.querySelector(".mode-tabs-de").style.display = "flex";
             document.getElementById("rate").innerText = deRate.toLocaleString();
             resetDe();
         }
 
-        if(index === 3){
+        if (index === 3) {
             mainTab = "dd";
-            document.getElementById("ddBox").style.display="block";
-            document.querySelector(".subtabs-dd").style.display="flex";
-            document.querySelector(".mode-tabs-dd").style.display="flex";
+            document.getElementById("ddBox").style.display = "block";
+            document.querySelector(".subtabs-dd").style.display = "flex";
+            document.querySelector(".mode-tabs-dd").style.display = "flex";
             document.getElementById("rate").innerText = ddRate.toLocaleString();
             resetDD();
         }
 
-        if(index === 4){
+        if (index === 4) {
             mainTab = "3c";
-            document.getElementById("3cBox").style.display="block";
-            document.querySelector(".subtabs-3c").style.display="flex";
-            document.querySelector(".mode-tabs-3c").style.display="flex";
+            document.getElementById("3cBox").style.display = "block";
+            document.querySelector(".subtabs-3c").style.display = "flex";
+            document.querySelector(".mode-tabs-3c").style.display = "flex";
             document.getElementById("rate").innerText = rate3c.toLocaleString();
             reset3C();
         }
 
-        if(index === 5){
+        if (index === 5) {
             mainTab = "4c";
-            document.getElementById("4cBox").style.display="block";
-            document.querySelector(".mode-tabs-4c").style.display="flex";
+            document.getElementById("4cBox").style.display = "block";
+            document.querySelector(".mode-tabs-4c").style.display = "flex";
             rate4c = 1000;
             document.getElementById("rate").innerText = rate4c.toLocaleString();
             reset4C();
         }
-    }
+    };
 });
 
-function resetXien(){
-    selectedXien=[];
-    document.querySelectorAll("#xienNumbers span").forEach(n=>{
-        n.classList.remove("active","disabled");
+function resetXien() {
+    selectedXien = [];
+    document.querySelectorAll("#xienNumbers span").forEach(n => {
+        n.classList.remove("active", "disabled");
     });
     document.getElementById("count").innerText = 0;
     document.getElementById("money").innerText = 0;
 }
 
-function resetDe(){
+function resetDe() {
     clearRow("de-chuc");
     clearRow("de-donvi");
     multi = 1;
@@ -716,14 +1452,14 @@ function resetDe(){
     calcDe();
 }
 
-function resetDD(){
+function resetDD() {
     clearRow("dd-chuc");
     multi = 1;
     document.getElementById("multi").innerText = multi;
     calcDD();
 }
 
-function reset3C(){
+function reset3C() {
     clearRow("3c-tram");
     clearRow("3c-chuc");
     clearRow("3c-donvi");
@@ -732,7 +1468,7 @@ function reset3C(){
     calc3C();
 }
 
-function reset4C(){
+function reset4C() {
     clearRow("4c-ngan");
     clearRow("4c-tram");
     clearRow("4c-chuc");
@@ -742,10 +1478,19 @@ function reset4C(){
     calc4C();
 }
 
-/* tab click bao lô */
-document.querySelectorAll(".subtab").forEach(tab=>{
-    tab.onclick=()=>{
-        document.querySelectorAll(".subtab").forEach(t=>t.classList.remove("active"));
+function resetAll() {
+    clearRow("ngan");
+    clearRow("tram");
+    clearRow("chuc");
+    clearRow("donvi");
+    multi = 1;
+    document.getElementById("multi").innerText = multi;
+    calc();
+}
+
+document.querySelectorAll(".subtab").forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll(".subtab").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
 
         rate = parseInt(tab.dataset.rate);
@@ -756,215 +1501,204 @@ document.querySelectorAll(".subtab").forEach(tab=>{
         document.getElementById("row-ngan").style.display = "none";
         document.getElementById("row-tram").style.display = "none";
 
-        if(type == 3){
+        if (type == 3) {
             document.getElementById("row-tram").style.display = "block";
-        }
-        else if(type == 4){
+        } else if (type == 4) {
             document.getElementById("row-tram").style.display = "block";
             document.getElementById("row-ngan").style.display = "block";
         }
         calc();
-    }
+    };
 });
 
-/* tab click 3 càng */
-document.querySelectorAll(".subtab-3c").forEach(tab=>{
-    tab.onclick=()=>{
-        document.querySelectorAll(".subtab-3c").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".subtab-3c").forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll(".subtab-3c").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
 
         rate3c = parseInt(tab.dataset["3c-rate"]);
         document.getElementById("rate").innerText = rate3c.toLocaleString();
         reset3C();
-    }
+    };
 });
 
-/* tab click đề */
-document.querySelectorAll(".subtab-de").forEach(tab=>{
-    tab.onclick=()=>{
-        document.querySelectorAll(".subtab-de").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".subtab-de").forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll(".subtab-de").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
 
         deRate = 1000;
         document.getElementById("rate").innerText = deRate.toLocaleString();
         resetDe();
-    }
+    };
 });
 
-/* tab click đầu đuôi */
-document.querySelectorAll(".subtab-dd").forEach(tab=>{
-    tab.onclick=()=>{
-        document.querySelectorAll(".subtab-dd").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".subtab-dd").forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll(".subtab-dd").forEach(t => t.classList.remove("active"));
         tab.classList.add("active");
 
         ddRate = 1000;
         document.getElementById("rate").innerText = ddRate.toLocaleString();
         resetDD();
-    }
+    };
 });
 
-/* mode bao lô */
-document.querySelectorAll(".mode").forEach(m=>{
-    m.onclick=()=>{
+document.querySelectorAll(".mode").forEach(m => {
+    m.onclick = () => {
         let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
+        modeGroup.querySelectorAll(".mode").forEach(x => x.classList.remove("active"));
         m.classList.add("active");
 
-        let mode=m.dataset.mode;
+        let mode = m.dataset.mode;
 
-        if(mode == "chon"){
-            document.getElementById("chon").style.display="block";
-            document.getElementById("input").style.display="none";
+        if (mode == "chon") {
+            document.getElementById("chon").style.display = "block";
+            document.getElementById("input").style.display = "none";
+        } else if (mode == "input") {
+            document.getElementById("chon").style.display = "none";
+            document.getElementById("input").style.display = "block";
         }
-        else if(mode == "input"){
-            document.getElementById("chon").style.display="none";
-            document.getElementById("input").style.display="block";
-        }
-    }
+    };
 });
 
-/* mode 3 càng */
-document.querySelectorAll(".mode-3c").forEach(m=>{
-    m.onclick=()=>{
+document.querySelectorAll(".mode-3c").forEach(m => {
+    m.onclick = () => {
         let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-3c").forEach(x=>x.classList.remove("active"));
+        modeGroup.querySelectorAll(".mode-3c").forEach(x => x.classList.remove("active"));
         m.classList.add("active");
 
-        let mode=m.dataset.mode;
+        let mode = m.dataset.mode;
 
-        if(mode == "chon-3c"){
-            document.getElementById("chon-3c").style.display="block";
-            document.getElementById("input-3c").style.display="none";
+        if (mode == "chon-3c") {
+            document.getElementById("chon-3c").style.display = "block";
+            document.getElementById("input-3c").style.display = "none";
+        } else if (mode == "input-3c") {
+            document.getElementById("chon-3c").style.display = "none";
+            document.getElementById("input-3c").style.display = "block";
         }
-        else if(mode == "input-3c"){
-            document.getElementById("chon-3c").style.display="none";
-            document.getElementById("input-3c").style.display="block";
-        }
-    }
+    };
 });
 
-/* mode 4 càng */
-document.querySelectorAll(".mode-4c").forEach(m=>{
-    m.onclick=()=>{
+document.querySelectorAll(".mode-4c").forEach(m => {
+    m.onclick = () => {
         let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-4c").forEach(x=>x.classList.remove("active"));
+        modeGroup.querySelectorAll(".mode-4c").forEach(x => x.classList.remove("active"));
         m.classList.add("active");
 
-        let mode=m.dataset.mode;
+        let mode = m.dataset.mode;
 
-        if(mode == "chon-4c"){
-            document.getElementById("chon-4c").style.display="block";
-            document.getElementById("input-4c").style.display="none";
+        if (mode == "chon-4c") {
+            document.getElementById("chon-4c").style.display = "block";
+            document.getElementById("input-4c").style.display = "none";
+        } else if (mode == "input-4c") {
+            document.getElementById("chon-4c").style.display = "none";
+            document.getElementById("input-4c").style.display = "block";
         }
-        else if(mode == "input-4c"){
-            document.getElementById("chon-4c").style.display="none";
-            document.getElementById("input-4c").style.display="block";
-        }
-    }
+    };
 });
 
-/* mode đề */
-document.querySelectorAll(".mode-de").forEach(m=>{
-    m.onclick=()=>{
+document.querySelectorAll(".mode-de").forEach(m => {
+    m.onclick = () => {
         let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-de").forEach(x=>x.classList.remove("active"));
+        modeGroup.querySelectorAll(".mode-de").forEach(x => x.classList.remove("active"));
         m.classList.add("active");
 
-        let mode=m.dataset.mode;
+        let mode = m.dataset.mode;
 
-        if(mode == "chon-de"){
-            document.getElementById("chon-de").style.display="block";
-            document.getElementById("input-de").style.display="none";
+        if (mode == "chon-de") {
+            document.getElementById("chon-de").style.display = "block";
+            document.getElementById("input-de").style.display = "none";
+        } else if (mode == "input-de") {
+            document.getElementById("chon-de").style.display = "none";
+            document.getElementById("input-de").style.display = "block";
         }
-        else if(mode == "input-de"){
-            document.getElementById("chon-de").style.display="none";
-            document.getElementById("input-de").style.display="block";
-        }
-    }
+    };
 });
 
-/* mode đầu đuôi */
-document.querySelectorAll(".mode-dd").forEach(m=>{
-    m.onclick=()=>{
+document.querySelectorAll(".mode-dd").forEach(m => {
+    m.onclick = () => {
         let modeGroup = m.parentElement;
-        modeGroup.querySelectorAll(".mode-dd").forEach(x=>x.classList.remove("active"));
+        modeGroup.querySelectorAll(".mode-dd").forEach(x => x.classList.remove("active"));
         m.classList.add("active");
 
-        let mode=m.dataset.mode;
+        let mode = m.dataset.mode;
 
-        if(mode == "chon-dd"){
-            document.getElementById("chon-dd").style.display="block";
-            document.getElementById("input-dd").style.display="none";
+        if (mode == "chon-dd") {
+            document.getElementById("chon-dd").style.display = "block";
+            document.getElementById("input-dd").style.display = "none";
+        } else if (mode == "input-dd") {
+            document.getElementById("chon-dd").style.display = "none";
+            document.getElementById("input-dd").style.display = "block";
         }
-        else if(mode == "input-dd"){
-            document.getElementById("chon-dd").style.display="none";
-            document.getElementById("input-dd").style.display="block";
-        }
-    }
+    };
 });
 
-/* chọn */
-function selectRow(id,type){
-    let nums=document.querySelectorAll("#"+id+" span");
-    nums.forEach(n=>{
-        let v=parseInt(n.innerText);
+function selectRow(id, type) {
+    let nums = document.querySelectorAll("#" + id + " span");
+    nums.forEach(n => {
+        let v = parseInt(n.innerText);
 
-        if(type=="all") n.classList.add("active");
-        if(type=="tai") n.classList.toggle("active",v>=5);
-        if(type=="xiu") n.classList.toggle("active",v<5);
-        if(type=="le") n.classList.toggle("active",v%2==1);
-        if(type=="chan") n.classList.toggle("active",v%2==0);
+        if (type == "all") n.classList.add("active");
+        if (type == "tai") n.classList.toggle("active", v >= 5);
+        if (type == "xiu") n.classList.toggle("active", v < 5);
+        if (type == "le") n.classList.toggle("active", v % 2 == 1);
+        if (type == "chan") n.classList.toggle("active", v % 2 == 0);
     });
 
-    if(mainTab === "de"){
+    if (mainTab === "de") {
         calcDe();
-    } else if(mainTab === "dd"){
+    } else if (mainTab === "dd") {
         calcDD();
-    } else if(mainTab === "3c"){
+    } else if (mainTab === "3c") {
         calc3C();
-    } else if(mainTab === "4c"){
+    } else if (mainTab === "4c") {
         calc4C();
     } else {
         calc();
     }
 }
 
-function clearRow(id){
-    document.querySelectorAll("#"+id+" span")
-    .forEach(n=>n.classList.remove("active"));
+function clearRow(id) {
+    document.querySelectorAll("#" + id + " span").forEach(n => n.classList.remove("active"));
 
-    if(mainTab === "de"){
+    if (mainTab === "de") {
         calcDe();
-    } else if(mainTab === "dd"){
+    } else if (mainTab === "dd") {
         calcDD();
-    } else if(mainTab === "3c"){
+    } else if (mainTab === "3c") {
         calc3C();
-    } else if(mainTab === "4c"){
+    } else if (mainTab === "4c") {
         calc4C();
     } else {
         calc();
     }
 }
 
-/* tính tiền - bao lô */
-function calc(){
+function calc() {
     let c = document.querySelectorAll("#chuc .active").length;
     let d = document.querySelectorAll("#donvi .active").length;
 
     let t = 1;
     let n = 1;
 
-    if(type >= 3){
+    if (type >= 3) {
         t = document.querySelectorAll("#tram .active").length;
-        if(t === 0){ updateZero(); return; }
+        if (t === 0) {
+            updateZero();
+            return;
+        }
     }
 
-    if(type >= 4){
+    if (type >= 4) {
         n = document.querySelectorAll("#ngan .active").length;
-        if(n === 0){ updateZero(); return; }
+        if (n === 0) {
+            updateZero();
+            return;
+        }
     }
 
-    if(c === 0 || d === 0){
+    if (c === 0 || d === 0) {
         updateZero();
         return;
     }
@@ -976,13 +1710,12 @@ function calc(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
-/* tính tiền - 3 càng */
-function calc3C(){
+function calc3C() {
     let tram = document.querySelectorAll("#3c-tram .active").length;
     let chuc = document.querySelectorAll("#3c-chuc .active").length;
     let donvi = document.querySelectorAll("#3c-donvi .active").length;
 
-    if(tram === 0 || chuc === 0 || donvi === 0){
+    if (tram === 0 || chuc === 0 || donvi === 0) {
         updateZero();
         return;
     }
@@ -994,14 +1727,13 @@ function calc3C(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
-/* tính tiền - 4 càng */
-function calc4C(){
+function calc4C() {
     let ngan = document.querySelectorAll("#4c-ngan .active").length;
     let tram = document.querySelectorAll("#4c-tram .active").length;
     let chuc = document.querySelectorAll("#4c-chuc .active").length;
     let donvi = document.querySelectorAll("#4c-donvi .active").length;
 
-    if(ngan === 0 || tram === 0 || chuc === 0 || donvi === 0){
+    if (ngan === 0 || tram === 0 || chuc === 0 || donvi === 0) {
         updateZero();
         return;
     }
@@ -1013,303 +1745,80 @@ function calc4C(){
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
-function calcDe(){
-    let c = document.querySelectorAll("#de-chuc .active").length;
-    let d = document.querySelectorAll("#de-donvi .active").length;
+function calcDe() {
+    let chuc = document.querySelectorAll("#de-chuc .active").length;
+    let donvi = document.querySelectorAll("#de-donvi .active").length;
 
-    if(c === 0 || d === 0){
+    if (chuc === 0 || donvi === 0) {
         updateZero();
         return;
     }
 
-    let count = c * d;
+    let count = chuc * donvi;
     let money = count * deRate * multi;
 
     document.getElementById("count").innerText = count;
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
-function calcDD(){
-    let c = document.querySelectorAll("#dd-chuc .active").length;
+function calcDD() {
+    let chuc = document.querySelectorAll("#dd-chuc .active").length;
 
-    if(c === 0){
+    if (chuc === 0) {
         updateZero();
         return;
     }
 
-    let count = c;
+    let count = chuc;
     let money = count * ddRate * multi;
 
     document.getElementById("count").innerText = count;
     document.getElementById("money").innerText = money.toLocaleString();
 }
 
-function updateZero(){
+function updateZero() {
     document.getElementById("count").innerText = 0;
     document.getElementById("money").innerText = 0;
 }
 
-/* nhân */
-function plus(){multi++;update()}
-function minus(){if(multi>1)multi--;update()}
-function update(){
-    document.getElementById("multi").innerText=multi;
-    if(mainTab === "de"){
+function plus() {
+    multi++;
+    document.getElementById("multi").innerText = multi;
+
+    if (mainTab === "de") {
         calcDe();
-    } else if(mainTab === "dd"){
+    } else if (mainTab === "dd") {
         calcDD();
-    } else if(mainTab === "3c"){
+    } else if (mainTab === "3c") {
         calc3C();
-    } else if(mainTab === "4c"){
+    } else if (mainTab === "4c") {
         calc4C();
     } else {
         calc();
     }
 }
 
-/* reset */
-function resetAll(){
-    clearRow("ngan");
-    clearRow("tram");
-    clearRow("chuc");
-    clearRow("donvi");
-    multi=1;
-    update();
-}
+function minus() {
+    if (multi > 1) multi--;
+    document.getElementById("multi").innerText = multi;
 
-/* embed kết quả */
-document.getElementById("kq").innerHTML=`
-<script src="//www.minhngoc.net.vn/jquery/jquery-1.7.2.js"><\/script>
-<link rel="stylesheet" href="//www.minhngoc.net.vn/style/bangketqua_mini.css"/>
-<div id="box_kqxs_minhngoc">
-<script>
-bgcolor="#fff";
-titlecolor="#333";
-dbcolor="#000";
-fsize="12px";
-kqwidth="100%";
-<\/script>
-<script src="//www.minhngoc.net.vn/getkqxs/mien-bac.js"><\/script>
-</div>`;
-
-// pop up cách chơi
-function openGuide(){
-    let title = "";
-    let content = "";
-
-    if(mainTab === "bao"){
-        title = "🎯 Bao lô";
-        content = `
-        Bao lô: Chọn số theo hàng (2, 3 hoặc 4 số).<br><br>
-        Trúng khi số xuất hiện trong kết quả xổ số.<br><br>
-        Tiền thắng tính theo số lần xuất hiện (nháy).
-        `;
-    }
-
-    if(mainTab === "xien"){
-        title = "🎯 Lô xiên";
-        content = `
-        Lô xiên: Chọn từ 2 - 4 số.<br><br>
-        Phải trúng đủ tất cả các số đã chọn mới thắng.<br><br>
-        Tỷ lệ thưởng cao hơn nhưng khó trúng hơn.
-        `;
-    }
-
-    if(mainTab === "de"){
-        title = "🎯 Đánh đề";
-        content = `
-        Đánh đề: Chọn 2 số cuối (Chục & Đơn vị).<br><br>
-        Có 5 loại đề: Đặc biệt, Giải 7, Giải nhất, và các loại đầu.<br><br>
-        Trúng → ăn theo tỷ lệ đề (1000 VNĐ/mục).
-        `;
-    }
-
-    if(mainTab === "dd"){
-        title = "🎯 Đầu Đuôi";
-        content = `
-        Đầu Đuôi: Chọn chữ số hàng chục.<br><br>
-        Có 2 loại: Đầu và Đuôi.<br><br>
-        Chọn 1 mục = 1000 VNĐ.
-        `;
-    }
-
-    if(mainTab === "3c"){
-        title = "🎯 3 Càng";
-        content = `
-        3 Càng: Chọn 3 số (Trăm, Chục, Đơn vị).<br><br>
-        Có 4 loại: Đặc biệt, Giải nhất, Đầu Đuôi, Đầu.<br><br>
-        Tỷ lệ thay đổi theo loại (1000 - 4000 VNĐ/mục).
-        `;
-    }
-
-    if(mainTab === "4c"){
-        title = "🎯 4 Càng";
-        content = `
-        4 Càng: Chọn 4 số (Ngàn, Trăm, Chục, Đơn vị).<br><br>
-        Tỷ lệ 1000 VNĐ/mục.<br><br>
-        Tỷ lệ thắng cao hơn các loại khác.
-        `;
-    }
-
-    document.getElementById("guideTitle").innerHTML = title;
-    document.querySelector("#guideModal p").innerHTML = content;
-    document.getElementById("guideModal").style.display = "flex";
-}
-
-function closeGuide(){
-    document.getElementById("guideModal").style.display = "none";
-}
-
-let xienType = 2;
-let selectedXien = [];
-
-/* render 00-99 */
-function renderXien(){
-    let box = document.getElementById("xienNumbers");
-    box.innerHTML="";
-    for(let i=0;i<=99;i++){
-        let s=document.createElement("span");
-        s.innerText = i.toString().padStart(2,'0');
-
-        s.onclick=()=>{
-            if(s.classList.contains("disabled")) return;
-
-            if(s.classList.contains("active")){
-                s.classList.remove("active");
-                selectedXien = selectedXien.filter(x=>x!=s.innerText);
-            }else{
-                if(selectedXien.length >= xienType) return;
-                s.classList.add("active");
-                selectedXien.push(s.innerText);
-            }
-
-            updateXienUI();
-            calcXien();
-        }
-
-        box.appendChild(s);
-    }
-}
-renderXien();
-
-/* subtab xiên */
-document.querySelectorAll(".subtab-xien").forEach(tab=>{
-    tab.onclick=()=>{
-        document.querySelectorAll(".subtab-xien").forEach(t=>t.classList.remove("active"));
-        tab.classList.add("active");
-
-        xienType = parseInt(tab.dataset.x);
-
-        resetXien();
-    }
-});
-
-/* mode xiên */
-document.querySelectorAll(".mode-xien").forEach(m=>{
-    m.onclick=()=>{
-        document.querySelectorAll(".mode-xien").forEach(x=>x.classList.remove("active"));
-        m.classList.add("active");
-
-        let mode = m.dataset.mode;
-
-        document.getElementById("xienInput").style.display = mode=="input"?"block":"none";
-        document.getElementById("xienChon").style.display = mode=="chon"?"block":"none";
-
-        if(mode=="chon"){
-            quickPick();
-        }
-    }
-});
-
-/* disable số khi đủ */
-function updateXienUI(){
-    let nums = document.querySelectorAll("#xienNumbers span");
-
-    if(selectedXien.length >= xienType){
-        nums.forEach(n=>{
-            if(!n.classList.contains("active")){
-                n.classList.add("disabled");
-            }
-        });
-    }else{
-        nums.forEach(n=>n.classList.remove("disabled"));
+    if (mainTab === "de") {
+        calcDe();
+    } else if (mainTab === "dd") {
+        calcDD();
+    } else if (mainTab === "3c") {
+        calc3C();
+    } else if (mainTab === "4c") {
+        calc4C();
+    } else {
+        calc();
     }
 }
 
-/* reset */
-function resetXien(){
-    selectedXien=[];
-    document.querySelectorAll("#xienNumbers span").forEach(n=>{
-        n.classList.remove("active","disabled");
-    });
-    calcXien();
-}
-
-/* chọn nhanh */
-function quickPick(){
-    resetXien();
-
-    let arr = [];
-    while(arr.length < xienType){
-        let num = Math.floor(Math.random()*100).toString().padStart(2,'0');
-        if(!arr.includes(num)) arr.push(num);
-    }
-
-    selectedXien = arr;
-
-    document.querySelectorAll("#xienNumbers span").forEach(n=>{
-        if(arr.includes(n.innerText)){
-            n.classList.add("active");
-        }
-    });
-
-    updateXienUI();
-    calcXien();
-}
-
-/* tính tiền xiên */
-function calcXien(){
-    let count = selectedXien.length === xienType ? 1 : 0;
-    let money = count * 1000 * multi;
-
-    document.getElementById("count").innerText = count;
-    document.getElementById("money").innerText = money.toLocaleString();
+function openGuide() {
+    alert("Cách chơi hướng dẫn...");
 }
 </script>
-<!-- POPUP -->
-<div id="guideModal" style="
-    display:none;
-    position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    background:rgba(0,0,0,0.4);
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-">
 
-<div style="
-    width:500px;
-    background:#fff;
-    border-radius:12px;
-    padding:20px;
-    position:relative;
-">
-
-    <!-- CLOSE -->
-    <span onclick="closeGuide()" style="
-        position:absolute;
-        right:15px;top:10px;
-        cursor:pointer;font-size:18px;
-    ">✕</span>
-
-    <!-- TITLE -->
-    <h3 id="guideTitle" style="margin-top:0;"></h3>
-
-    <!-- CONTENT -->
-    <p style="line-height:1.6;color:#555;"></p>
-
-</div>
-</div>
 </body>
 </html>
