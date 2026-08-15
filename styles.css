@@ -958,3 +958,349 @@
   .digit-row{grid-template-columns:88px minmax(0,1fr) !important}
   .digit-btn{width:37px !important;height:37px !important;font-size:18px !important}
 }
+
+
+/* =========================================================
+   V16 - FIX SCROLL MOBILE GAME PICKER
+   ========================================================= */
+@media(max-width:760px){
+
+  /* Overlay không tự scroll; chỉ dialog body scroll */
+  .mobile-game-menu{
+    overflow:hidden !important;
+    touch-action:none;
+  }
+
+  .mobile-game-menu.open{
+    padding:10px 0 62px !important;
+    align-items:center !important;
+  }
+
+  .mobile-game-dialog{
+    width:min(94vw,430px) !important;
+    height:min(76vh,680px) !important;
+    max-height:calc(100dvh - 118px) !important;
+    display:flex !important;
+    flex-direction:column !important;
+    overflow:visible !important;
+  }
+
+  .mobile-game-dialog-title{
+    flex:0 0 52px !important;
+  }
+
+  /* Chính BODY này là vùng scroll */
+  .mobile-game-dialog-body{
+    position:relative;
+    flex:1 1 auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+
+    display:grid !important;
+    grid-template-columns:82px minmax(0,1fr) !important;
+
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+    overscroll-behavior:contain !important;
+    touch-action:pan-y !important;
+
+    scrollbar-width:thin;
+  }
+
+  /* Không scroll riêng cột phải nữa */
+  .mobile-game-groups{
+    overflow:visible !important;
+    min-height:max-content !important;
+    padding:12px 13px 26px !important;
+  }
+
+  /* Cột Cổ điển đứng yên khi kéo */
+  .mobile-game-category{
+    position:sticky !important;
+    top:0 !important;
+    align-self:start !important;
+    height:104px !important;
+    min-height:104px !important;
+    z-index:2;
+  }
+
+  /* Đảm bảo nhóm cuối có khoảng trống để kéo tới hết */
+  .mobile-game-group:last-child{
+    margin-bottom:22px !important;
+    padding-bottom:8px !important;
+  }
+
+  /* Thanh nhỏ báo có thể cuộn */
+  .mobile-game-dialog-body::-webkit-scrollbar{
+    width:4px;
+  }
+  .mobile-game-dialog-body::-webkit-scrollbar-thumb{
+    background:#c6d3e5;
+    border-radius:999px;
+  }
+
+  .mobile-game-close{
+    bottom:-52px !important;
+    z-index:4 !important;
+  }
+}
+
+@media(max-width:430px){
+  .mobile-game-dialog{
+    height:min(75vh,620px) !important;
+    max-height:calc(100dvh - 112px) !important;
+  }
+
+  .mobile-game-dialog-body{
+    grid-template-columns:76px minmax(0,1fr) !important;
+  }
+}
+
+
+/* =========================================================
+   V17 - MOBILE "DANH SÁCH TRÒ CHƠI" sát ảnh gốc hơn
+   ========================================================= */
+@media(max-width:760px){
+
+  /* Nền phủ: xám vừa, không quá đen */
+  .mobile-game-menu{
+    background:rgba(0,0,0,.36) !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  .mobile-game-menu.open{
+    display:flex !important;
+    align-items:flex-start !important;
+    justify-content:center !important;
+    padding:118px 12px 72px !important;
+  }
+
+  /* Khung trắng */
+  .mobile-game-dialog{
+    width:calc(100vw - 24px) !important;
+    max-width:392px !important;
+    height:auto !important;
+    max-height:calc(100dvh - 190px) !important;
+
+    background:#fff !important;
+    border-radius:14px !important;
+    box-shadow:0 5px 18px rgba(0,0,0,.12) !important;
+    overflow:visible !important;
+  }
+
+  /* Tiêu đề */
+  .mobile-game-dialog-title{
+    height:55px !important;
+    min-height:55px !important;
+    flex:0 0 55px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    border-bottom:1px solid #e0e4ea !important;
+    color:#414854 !important;
+
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-size:18px !important;
+    line-height:22px !important;
+    font-weight:700 !important;
+  }
+
+  /* Body cuộn */
+  .mobile-game-dialog-body{
+    grid-template-columns:82px minmax(0,1fr) !important;
+    max-height:calc(100dvh - 245px) !important;
+    background:#fff !important;
+  }
+
+  /* Cột Cổ điển giống tab dọc ảnh gốc */
+  .mobile-game-category{
+    position:sticky !important;
+    top:0 !important;
+    height:69px !important;
+    min-height:69px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    background:#e6f0ff !important;
+    color:#4d8ce8 !important;
+
+    border-right:1px solid #e0e7f0 !important;
+
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-size:16px !important;
+    line-height:20px !important;
+    font-weight:700 !important;
+  }
+
+  /* Cột nội dung */
+  .mobile-game-groups{
+    padding:10px 12px 16px !important;
+    background:#fff !important;
+  }
+
+  .mobile-game-group{
+    margin:0 0 15px !important;
+    padding:0 !important;
+  }
+
+  .mobile-game-group:last-child{
+    margin-bottom:4px !important;
+    padding-bottom:0 !important;
+  }
+
+  .mobile-game-group h3{
+    margin:0 0 8px 5px !important;
+
+    color:#4388ec !important;
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-size:16px !important;
+    line-height:20px !important;
+    font-weight:700 !important;
+  }
+
+  /* 2 cột game */
+  .mobile-game-group-grid{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px 8px !important;
+  }
+
+  /* Nút game: thấp, bo nhẹ, chữ vừa */
+  .mobile-game-group-grid button{
+    width:100% !important;
+    min-width:0 !important;
+    height:42px !important;
+    padding:0 8px !important;
+
+    border:1px solid #d4deeb !important;
+    border-radius:7px !important;
+
+    background:#fff !important;
+    color:#454d5c !important;
+
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-size:14px !important;
+    line-height:18px !important;
+    font-weight:400 !important;
+
+    box-shadow:none !important;
+  }
+
+  .mobile-game-group-grid button:hover{
+    background:#f8fbff !important;
+  }
+
+  /* Game đang chọn: viền xanh + nền rất nhạt, không fill xanh toàn bộ */
+  .mobile-game-group-grid button.active{
+    border:2px solid #418ff2 !important;
+    background:#f6faff !important;
+    color:#3f86e9 !important;
+    font-weight:700 !important;
+  }
+
+  /* Nút đóng tròn phía dưới */
+  .mobile-game-close{
+    position:absolute !important;
+    left:50% !important;
+    bottom:-54px !important;
+    transform:translateX(-50%) !important;
+
+    width:44px !important;
+    height:44px !important;
+    border-radius:50% !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    border:0 !important;
+    background:#fff !important;
+    color:#171a1f !important;
+
+    font-size:31px !important;
+    font-weight:300 !important;
+    line-height:1 !important;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.12) !important;
+  }
+
+  .mobile-game-close::before{
+    content:"" !important;
+  }
+
+  /* scrollbar rất mảnh, gần như ẩn */
+  .mobile-game-dialog-body{
+    scrollbar-width:none !important;
+  }
+  .mobile-game-dialog-body::-webkit-scrollbar{
+    width:0 !important;
+    display:none !important;
+  }
+}
+
+@media(max-width:430px){
+  .mobile-game-menu.open{
+    padding-top:108px !important;
+  }
+
+  .mobile-game-dialog{
+    width:calc(100vw - 26px) !important;
+    max-width:none !important;
+    border-radius:13px !important;
+  }
+
+  .mobile-game-dialog-title{
+    height:52px !important;
+    min-height:52px !important;
+    flex-basis:52px !important;
+    font-size:17px !important;
+  }
+
+  .mobile-game-dialog-body{
+    grid-template-columns:79px minmax(0,1fr) !important;
+    max-height:calc(100dvh - 232px) !important;
+  }
+
+  .mobile-game-category{
+    height:66px !important;
+    min-height:66px !important;
+    font-size:15px !important;
+  }
+
+  .mobile-game-groups{
+    padding:9px 11px 14px !important;
+  }
+
+  .mobile-game-group{
+    margin-bottom:13px !important;
+  }
+
+  .mobile-game-group h3{
+    font-size:15px !important;
+    margin:0 0 7px 4px !important;
+  }
+
+  .mobile-game-group-grid{
+    gap:7px !important;
+  }
+
+  .mobile-game-group-grid button{
+    height:40px !important;
+    padding:0 6px !important;
+    border-radius:6px !important;
+    font-size:13px !important;
+  }
+
+  .mobile-game-close{
+    width:42px !important;
+    height:42px !important;
+    bottom:-51px !important;
+    font-size:29px !important;
+  }
+}

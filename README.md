@@ -117,3 +117,24 @@ Tất cả dùng cùng font-size 11px và font-weight 400.
 ## V15
 - Mobile chọn game chuyển thành modal giống ảnh gốc: nền mờ, tiêu đề, cột Cổ điển, nhóm game, nút đóng tròn.
 - Giảm kích thước mode tabs, nút số và bottom bar mobile để không bị phóng quá to.
+
+
+## V16
+Fix mobile game picker:
+- modal scroll toàn bộ nội dung từ Bao Lô đến 4 Càng;
+- không còn scroll lồng ở cột bên phải;
+- cột Cổ điển sticky;
+- hỗ trợ touch pan-y và momentum scrolling trên iPhone;
+- nhóm 4 Càng luôn nằm trong danh sách cuối cùng.
+
+
+## V17
+Chỉnh CSS mobile game picker sát ảnh gốc hơn:
+- modal hẹp hơn, bo góc ~14px;
+- tiêu đề nhỏ và gọn;
+- cột `Cổ điển` rộng ~82px, nền xanh nhạt;
+- nhóm game cách nhau ít hơn;
+- nút game thấp ~40-42px, chữ 13-14px;
+- active chỉ viền xanh + nền nhạt, không fill xanh đậm;
+- nút đóng tròn ~42-44px;
+- giữ scroll toàn body từ Bao Lô tới 4 Càng.
