@@ -1,0 +1,754 @@
+*{box-sizing:border-box}html,body{margin:0;max-width:100%;font-family:Arial,Helvetica,sans-serif;color:#354052}button,input{font:inherit}button{cursor:pointer}body{background:linear-gradient(rgba(16,7,29,.89),rgba(12,5,24,.91)),radial-gradient(circle at 55% 25%,#4a274d,transparent 45%),#160b20}.hidden{display:none!important}.toast{position:fixed;right:18px;top:18px;z-index:3000;background:#1475ba;color:#fff;padding:10px 14px;border-radius:5px;font-size:12px;opacity:0;transform:translateY(-8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}.toast.error{background:#b53d4e}
+/* desktop header */
+.mobile-header,.mobile-drawer,.drawer-backdrop,.mobile-betbar,.mobile-page,.mobile-game-head,.mobile-game-menu{display:none}.desktop-header{display:block;color:#fff}.topline{height:36px;background:#087ead}.head-wrap{width:1280px;max-width:calc(100% - 28px);height:100%;margin:auto;display:flex;align-items:center}.top-clock{font-size:13px;font-weight:700}.top-links{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px}.top-links i{height:17px;width:1px;background:rgba(255,255,255,.45)}.loginline{height:80px;background:#198fc4}.login-wrap{gap:26px}.demo-logo{min-width:330px;display:flex;align-items:baseline;color:#fff;font-style:italic}.demo-logo>span{font-size:36px;transform:skew(-16deg);margin-right:4px}.demo-logo strong{font-size:40px;letter-spacing:-3px}.demo-logo small{font-size:18px;margin-left:6px}.desktop-auth{margin-left:auto;display:flex;align-items:center;gap:7px}.desktop-auth input{height:35px;width:154px;border:0;border-radius:10px;padding:0 10px;outline:none}.desktop-auth .captcha-field{width:115px}.captcha-demo{height:35px;min-width:60px;border-radius:7px;background:#f2f2f2;color:#6f5f88;display:grid;place-items:center;letter-spacing:4px;text-decoration:line-through}.desktop-auth button{height:35px;border:0;border-radius:9px;color:#fff;font-weight:700;padding:0 14px}.btn-login{background:#ffa215}.btn-register{background:#28c95b}.btn-try{background:#2778ff}.btn-forgot{background:transparent!important;font-size:11px;padding:0 4px!important}.desktop-user{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px}.desktop-user strong{font-size:14px}.desktop-user em{font-style:normal;color:#ffe363}.desktop-user button{height:34px;border:0;border-radius:7px;background:#1574b8;color:#fff;padding:0 12px}.main-nav-line{height:82px;background:linear-gradient(#157dd3,#0768b7);display:grid;grid-template-columns:180px 1fr 200px}.nav-banner{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8442d,#f2a91d);font-size:11px;font-weight:800}.nav-banner.right{background:linear-gradient(135deg,#0c6db6,#e63a31)}.main-nav{display:grid;grid-template-columns:repeat(11,1fr);max-width:1120px;width:100%;margin:auto}.main-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;color:#fff;font-size:24px}.main-nav a span{font-size:11px}.main-nav a.active{background:rgba(0,55,112,.16)}.sub-nav-line{height:41px;background:#006291}.sub-nav{height:100%;max-width:1280px;margin:auto;display:flex;align-items:center;gap:14px;font-size:12px}.sub-nav i{height:19px;width:1px;background:rgba(255,255,255,.4)}.sub-nav b{margin-left:auto}.sub-nav em{width:22px;height:30px;background:#67b5e3;display:grid;place-items:center;font-style:normal;font-size:16px;margin-left:-12px}
+/* main desktop */
+.page-wrap{width:1404px;max-width:calc(100% - 96px);margin:60px auto}.lottery-shell{display:grid;grid-template-columns:minmax(0,1090px) 300px;gap:10px;align-items:stretch}.game-column{background:#fff;border-radius:0 0 12px 12px;overflow:hidden}.draw-banner{height:166px;display:grid;grid-template-columns:315px 1fr 360px;align-items:center;background:radial-gradient(circle at 55% 40%,rgba(244,244,244,.55),transparent 35%),#fff;border-bottom:1px solid #e8edf4}.game-brand{display:flex;align-items:center;gap:16px;padding:20px 29px;border-right:1px solid #cad7e5}.game-icon{width:95px;height:80px;border-radius:16px;background:linear-gradient(145deg,#54b8ff,#2d84e5);display:grid;place-items:center;font-size:44px;box-shadow:0 6px 14px rgba(0,0,0,.12)}.game-brand h3{margin:0;font-size:16px}.game-brand p{margin:6px 0 15px;font-size:13px}.hall-btn,.orange-btn{border:1px solid #ef7c00;border-radius:4px;background:linear-gradient(#ffa93b,#ff8000);color:#fff;font-weight:700}.hall-btn{height:38px;padding:0 14px}.last-result{text-align:center}.hero-balls{display:flex;justify-content:center;gap:12px}.hero-balls span{width:48px;height:48px;border-radius:50%;background:#4696fa;color:#fff;display:grid;place-items:center;font-size:25px;font-weight:700}.hero-balls .orange{background:#ffa126}.last-result p{margin:14px 0 0;font-size:15px}.draw-countdown{text-align:center;border-left:1px solid #cad7e5}.draw-countdown p{margin:0 0 13px}.countdown{display:flex;justify-content:center;align-items:center;gap:4px}.countdown b{min-width:31px;height:39px;border-radius:3px;background:#f4f6f9;color:#ef565a;display:grid;place-items:center;font-size:25px;font-weight:500}.countdown em{font-style:normal;color:#ef565a;font-size:23px}.game-tabs{height:36px;background:#eaf0f7;display:flex;align-items:flex-end;padding-left:9px}.game-tabs button{height:35px;border:0;background:transparent;padding:0 18px;color:#354052}.game-tabs button.active{background:#fff;color:#1479e8;border-radius:5px 5px 0 0}.game-tabs span{margin-left:auto;padding:0 18px 9px 0;font-size:12px}.sub-mode-row{min-height:55px;display:flex;align-items:center;gap:12px;padding:9px 18px;background:#fff;border-bottom:1px solid #e8edf3}.sub-tabs{display:flex;gap:12px;flex-wrap:wrap}.sub-tabs button{height:29px;border:0;border-radius:3px;background:#eff3f7;color:#364152;padding:0 13px;font-size:12px}.sub-tabs button.active{background:#3f91f4;color:#fff}.mode-hint{margin-left:auto;color:#556170;font-size:12px;white-space:nowrap}.mode-hint .help-dot{display:inline-grid;width:17px;height:17px;border-radius:50%;place-items:center;background:#ffac31;color:#fff;font-weight:800}.mode-tabs{display:grid;grid-auto-flow:column;border:1px solid #a8c3e4;border-radius:4px;overflow:hidden}.mode-tabs button{height:29px;min-width:102px;border:0;border-right:1px solid #a8c3e4;background:#f8fafc;color:#394455;font-size:12px}.mode-tabs button:last-child{border-right:0}.mode-tabs button.active{background:#3e91f5;color:#fff}.selection-area{min-height:160px;background:#edf2f8}.digit-row{min-height:80px;display:grid;grid-template-columns:120px 1fr 330px;align-items:center;padding:0 18px;border-bottom:1px solid #d9e2ec}.row-label{font-size:12px}.digit-list{display:flex;gap:10px;flex-wrap:wrap}.digit-btn{width:41px;height:41px;border-radius:50%;border:1px solid #bbc9d7;background:linear-gradient(#fff,#f4f7fa);color:#3d4654;font-size:16px;box-shadow:0 2px 4px rgba(0,0,0,.05)}.digit-btn.active{background:#4595f7;border-color:#2d83eb;color:#fff}.quick-actions{display:flex;justify-content:flex-end;gap:5px}.quick-actions button{height:27px;border:1px solid #80aee2;background:#fff;color:#3d4754;border-radius:3px;padding:0 10px;font-size:12px}.manual-box{padding:26px;background:#eef3f9}.manual-box label{display:block;margin-bottom:8px;font-size:12px}.manual-box textarea{width:100%;height:88px;border:1px solid #b8c8d8;border-radius:4px;padding:10px;resize:none}.manual-note{font-size:11px;color:#6e7c8c;margin-top:7px}.quick-groups{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:12px 18px;background:#f7f9fc;border-bottom:1px solid #dde5ee}.quick-groups span{font-size:12px;color:#5a6676;margin-right:6px}.quick-groups button{height:29px;border:1px solid #9cb8d8;background:#fff;border-radius:3px;padding:0 11px;font-size:12px}.number-grid-wrap{padding:16px 18px}.number-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:7px}.number-grid button{height:35px;border:1px solid #9cb8d8;background:#fff;border-radius:3px;color:#394455}.number-grid button.active{background:#4595f7;color:#fff;border-color:#3184e8}.selection-note{font-size:11px;color:#697889;margin-top:8px}.loxien-layout{min-height:496px;display:grid;grid-template-columns:365px minmax(0,1fr);background:#fff;border-top:1px solid #e0e6ee}.loxien-side{padding:17px 18px}.loxien-range,.loxien-random{height:31px;border:1px solid #8fb7e8;border-radius:3px;background:#fff;color:#3f4a5a;font-size:12px;padding:0 13px;position:relative}.loxien-range i{position:absolute;right:-10px;top:-10px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#ff6961;color:#fff;font-size:11px;font-style:normal}.loxien-side p{margin:23px 0 13px 14px;font-size:12px}.loxien-grid-panel{padding:17px 29px 10px 18px}.loxien-grid{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:10px}.loxien-number{position:relative;height:31px;border:1px solid #9db8d7;border-radius:3px;background:linear-gradient(#fff,#f5f8fb);color:#3e4858;font-size:12px}.loxien-number.active{background:#4595f6;border-color:#3485e9;color:#fff}.loxien-number i{position:absolute;right:-8px;top:-8px;min-width:20px;height:20px;padding:0 4px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-style:normal;background:#dceaff;color:#4e8ee9}.loxien-number i.red{background:#ffd9cd;color:#ff604d}.bet-toolbar{height:67px;display:flex;align-items:center;gap:20px;padding:0 18px;background:#fff;border-bottom:1px solid #dae2ed;font-size:12px}.odds-box{border:1px solid #2d86f2;border-radius:3px;padding:7px 9px}.odds-box b,.bet-toolbar>div>b{color:#237bd8}.multiplier{margin-left:auto;display:flex;align-items:center}.multiplier button{width:30px;height:31px;border:0;background:#eef4fb;color:#3d73aa}.multiplier input{width:72px;height:31px;border:1px solid #e0e6ed;text-align:center}.blue-btn{border:1px solid #1975e6;background:linear-gradient(#469afc,#0067ef);color:#fff;border-radius:4px;height:31px;padding:0 18px;font-weight:700}.orange-btn{height:31px;padding:0 21px}.gray-btn{height:31px;border:0;border-radius:3px;background:linear-gradient(#edf1f6,#dbe2eb);color:#4c5664;padding:0 23px}.draft-panel{margin:0 14px;border:1px solid #b9cee4;min-height:250px}.draft-title{height:39px;display:grid;place-items:center;border-top:4px solid #e7edf5;font-size:13px}.table-scroll,.history-scroll{overflow:auto}.draft-table,.history-table{width:100%;border-collapse:collapse;font-size:12px}.draft-table th{height:37px;background:#eef3f9;font-weight:400}.draft-table td{height:41px;text-align:center;border-top:1px solid #e7ebf0}.empty-message{height:145px;display:grid;place-items:center;font-size:13px}.remove-line{border:0;background:#ee5e64;color:#fff;border-radius:3px;padding:4px 8px}.checkout-row{height:96px;display:flex;justify-content:space-between;align-items:flex-start;padding:24px 20px}.checkout-row>div:last-child{display:flex;gap:16px}.wide{min-width:118px;height:37px}.result-column{background:#f7f9fc;border-radius:11px;padding:10px;overflow:hidden;min-height:829px}.result-logo{height:40px;border-radius:5px;background:#659cf4;color:#ffe326;display:flex;align-items:center;justify-content:center;font-size:25px}.result-date{height:45px;margin-top:7px;background:#fff;color:#2879df;display:flex;align-items:center;justify-content:center;position:relative;font-size:14px;font-weight:700}.result-date span:last-child{position:absolute;right:9px;color:#78879a}.result-draw-title{height:35px;background:#eaf0f7;display:flex;align-items:center;justify-content:center;font-size:12px}.result-loading{min-height:260px;background:#fff;display:flex;align-items:center;justify-content:center;color:#7b8797;font-size:11px;text-align:center;padding:18px}.result-column.results-ready .result-loading{display:none}.minhngoc-embed{background:#fff}.result-column:not(.results-ready) .minhngoc-embed,.result-column:not(.results-ready) .db-tags,.result-column:not(.results-ready) .head-tail-head,.result-column:not(.results-ready) .head-tail{display:none}.minhngoc-embed #box_kqxs_minhngoc{width:100%!important;max-width:100%!important;margin:0!important}.minhngoc-embed #box_kqxs_minhngoc>div:first-child{display:none!important}.minhngoc-embed .box_kqxs_mini{border:0!important;background:#fff!important;width:100%!important}.minhngoc-embed .box_kqxs_mini>.top{display:none!important}.minhngoc-embed .content{padding:0!important;border:0!important;background:#fff!important}.minhngoc-embed .content table{width:100%!important;border-collapse:collapse!important;table-layout:fixed!important;margin:0!important;font-size:12px!important}.minhngoc-embed .date-row-hidden{display:none!important}.minhngoc-embed td.giaidbl,.minhngoc-embed td.giai1l,.minhngoc-embed td.giai2l,.minhngoc-embed td.giai3l,.minhngoc-embed td.giai4l,.minhngoc-embed td.giai5l,.minhngoc-embed td.giai6l,.minhngoc-embed td.giai7l{width:87px!important;padding:7px 3px!important;background:#f0f4f8!important;color:#465268!important;border:0!important;border-bottom:1px solid #edf1f5!important;font-size:12px!important;font-weight:400!important;text-align:center!important;vertical-align:middle!important}.minhngoc-embed td.giaidb,.minhngoc-embed td.giai1,.minhngoc-embed td.giai2,.minhngoc-embed td.giai3,.minhngoc-embed td.giai4,.minhngoc-embed td.giai5,.minhngoc-embed td.giai6,.minhngoc-embed td.giai7{padding:7px 5px!important;background:#fff!important;color:#354052!important;border:0!important;border-bottom:1px solid #edf1f5!important;font-size:12px!important;font-weight:400!important;line-height:17px!important;text-align:center!important;vertical-align:middle!important;word-break:normal!important}.result-number{white-space:nowrap}.result-tail{color:#ff671c}.result-sep{color:#576375;margin:0 1px}.db-tags{display:flex;justify-content:flex-end;gap:3px;background:#fff;padding:0 7px 5px}.db-tags span{background:#e8f2ff;color:#3e8eea;padding:3px 5px;border-radius:3px;font-size:10px}.head-tail-head{height:36px;margin-top:9px;background:#eaf0f7;display:grid;grid-template-columns:1fr 2fr;align-items:center;text-align:center;font-size:12px}.head-tail{background:#fff}.head-tail>div{min-height:30px;display:grid;grid-template-columns:1fr 2fr;align-items:center;text-align:center;border-bottom:1px solid #f0f2f5;font-size:12px}.head-tail>div span:first-child{height:100%;display:grid;place-items:center;background:#fafbfd}.history-shell{margin-top:10px;background:#fff;min-height:277px}.history-tabs{height:46px;display:flex;align-items:center;justify-content:flex-end;padding-right:18px}.history-tabs button{height:27px;min-width:120px;border:1px solid #a8c3e4;background:#f6f8fb;color:#404b5b}.history-tabs button.active{background:#4495f6;color:#fff}.history-tabs button:last-child{border:0;background:#fff;min-width:80px}.history-table{min-width:1120px;font-size:11px}.history-table th{height:32px;background:#eaf0f7;border-right:1px solid #d7e0eb;font-weight:400;white-space:nowrap}.history-table td{text-align:center;height:39px;border-bottom:1px solid #eef1f4}.history-empty{height:150px;display:grid;place-items:center;color:#c0c0c0;font-size:13px}.pagination{display:flex;justify-content:center;gap:9px;padding-bottom:12px}.pagination button{border:0;width:31px;height:29px;background:#f4f5f7;color:#b8c0ca}.pagination .active{background:#4194f5;color:#fff}.status-pending{color:#d78a00!important}.status-win{color:#0a9a64!important}.status-lose{color:#e14652!important}footer{margin-top:40px}.contact-strip{min-height:100px;background:#004d72;color:#fff;display:flex;align-items:center;justify-content:center;gap:55px;font-size:13px}.brand-strip{min-height:208px;background:#2497d5;color:#fff;text-align:center;padding:42px 20px}.brand-strip>div{max-width:1260px;margin:auto;padding-bottom:24px;border-bottom:3px solid #fff;display:flex;justify-content:space-around;gap:18px;flex-wrap:wrap}.brand-strip b{font-size:27px;text-shadow:0 2px 4px rgba(0,0,0,.35)}.brand-strip p{font-size:12px}.modal{position:fixed;inset:0;z-index:2500;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:15px}.modal-card{width:min(380px,100%);background:#fff;border-radius:8px;padding:25px;position:relative}.modal-card h2{margin:0 0 12px}.modal-card input{width:100%;height:42px;margin:7px 0;border:1px solid #cbd5e1;border-radius:4px;padding:0 10px}.modal-close{position:absolute;right:10px;top:8px;border:0;background:transparent;font-size:24px}.full{width:100%;height:41px;margin-top:8px}.link-btn{border:0;background:none;color:#1683eb}
+/* mobile */
+@media(max-width:760px){body{background:#fff;padding-bottom:112px;overflow-x:hidden}.desktop-header,.draw-banner,.game-tabs,.sub-tabs,.bet-toolbar,.draft-panel,.checkout-row,.result-column,.history-shell,footer{display:none!important}.mobile-header{height:48px;position:sticky;top:0;z-index:1100;background:linear-gradient(135deg,#3478df,#6192fb);display:grid;grid-template-columns:48px 1fr 48px;color:#fff}.m-head-btn,.m-region{border:0;background:transparent;color:#fff}.m-head-btn{font-size:30px}.m-head-btn.menu{font-size:26px}.m-region{font-size:20px}.m-region span{font-size:13px}.page-wrap{width:100%;max-width:none;margin:0}.lottery-shell{display:block}.game-column{border-radius:0;overflow:visible}.mobile-game-head{display:block;background:#fff;border-bottom:1px solid #ccd5e2}.m-game-row,.m-draw-row{display:flex;align-items:center;justify-content:space-between;padding:0 12px}.m-game-row{height:39px}.m-draw-row{height:38px;font-size:15px}.m-game-picker{border:0;background:transparent;padding:0;font-size:16px;font-weight:700;color:#3c4352}.m-game-picker b{font-size:12px}.m-balls{display:flex;gap:3px}.m-balls span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#4c99fa;color:#fff;font-size:16px;font-weight:700}.m-balls .orange{background:#ffa127}.m-draw-row b{color:#327ed3}.m-countdown{display:flex;gap:2px;align-items:center}.m-countdown b{min-width:22px;height:26px;border-radius:3px;background:#f4f5f7;color:#ef5a5e;display:grid;place-items:center;font-size:16px;font-weight:700}.m-countdown em{font-style:normal;color:#ef5a5e}.mobile-game-menu{position:fixed;left:10px;right:10px;top:52px;z-index:1200;background:#fff;border:1px solid #d5deea;border-radius:7px;box-shadow:0 10px 30px rgba(0,0,0,.25);padding:8px;grid-template-columns:1fr 1fr;gap:5px}.mobile-game-menu.open{display:grid}.mobile-game-menu button{height:38px;border:1px solid #d3dce7;border-radius:5px;background:#f8fafc}.mobile-game-menu button.active{background:#4595f7;color:#fff;border-color:#4595f7}.sub-mode-row{display:block;padding:0;border:0;min-height:0}.mode-hint{display:none}.mode-tabs{width:calc(100% - 20px);height:45px;margin:10px;grid-template-columns:repeat(3,1fr);grid-auto-flow:initial}.mode-tabs.two{grid-template-columns:repeat(2,1fr)}.mode-tabs button{height:44px;min-width:0;font-size:15px}.selection-area{min-height:390px;background:#fff;border-top:1px solid #eef1f5}.selection-area:before{content:attr(data-mobile-odds);height:44px;display:flex;align-items:center;justify-content:flex-end;padding:0 16px;background:#eef3fb;color:#3e4653;font-size:14px}.digit-row{min-height:164px;grid-template-columns:96px minmax(0,1fr);grid-template-rows:35px 1fr;align-items:start;padding:10px 10px 11px;background:#fff;border-bottom:1px dashed #cbd1da}.row-label{grid-column:1;grid-row:1/3;padding-top:9px;font-size:16px}.quick-actions{grid-column:2;grid-row:1;width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}.quick-actions button{width:100%;height:30px;min-width:0;padding:0 1px;font-size:10px;white-space:nowrap;overflow:hidden}.digit-list{grid-column:2;grid-row:2;width:100%;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px 4px;padding-top:6px}.digit-btn{width:44px;height:44px;justify-self:center;font-size:21px}.manual-box{padding:14px;background:#fff}.manual-box textarea{height:105px;font-size:15px}.quick-groups{padding:8px}.number-grid-wrap{padding:12px;background:#fff}.number-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.number-grid button{height:42px;font-size:15px}.loxien-layout{min-height:440px;display:block}.loxien-side{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #e4e9ef}.loxien-side p{margin:0}.loxien-grid-panel{padding:12px}.loxien-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.loxien-number{height:42px;font-size:14px}.loxien-number i{right:-4px;top:-5px;min-width:17px;height:17px;font-size:9px}.mobile-betbar{position:fixed;left:0;right:0;bottom:0;z-index:1050;height:112px;background:#eaf0f8;border-top:1px solid #d6dfeb;box-shadow:0 -4px 16px rgba(31,51,78,.08);display:block}.chip-row{height:50px;display:flex;align-items:center;padding:4px 8px;gap:4px;background:#fff;overflow:hidden;font-size:12px}.chip-list{display:flex;gap:3px}.chip{width:42px;height:42px;border-radius:50%;border:4px dashed rgba(255,255,255,.85);color:#fff;font-size:12px;font-weight:800}.c1{background:#258cef}.c3{background:#6e3be5}.c5{background:#ed4659}.c10{background:#f7a019}.chip.active{outline:3px solid rgba(31,132,241,.22)}#mMultiplier{width:50px;height:36px;border:1px solid #b6c6d8;border-radius:5px;text-align:center;background:#fff}.mobile-action{height:62px;display:grid;grid-template-columns:78px minmax(0,1fr) 104px;gap:8px;align-items:center;padding:6px 10px}.m-reset,.m-bet{height:48px;border:0;border-radius:5px;color:#fff;font-size:17px}.m-reset{background:linear-gradient(#ffad3d,#ff7f00)}.m-bet{background:linear-gradient(#4b9bff,#006df1)}.m-money{display:flex;flex-direction:column;gap:2px;font-size:12px}.m-money b{color:#2e7fce;font-weight:400}.drawer-backdrop{display:block;position:fixed;inset:0;z-index:1200;background:rgba(0,0,0,.34);opacity:0;pointer-events:none;transition:.2s}.drawer-backdrop.open{opacity:1;pointer-events:auto}.mobile-drawer{display:block;position:fixed;right:0;top:0;bottom:0;width:55%;min-width:215px;max-width:310px;background:#fff;z-index:1210;transform:translateX(105%);transition:.22s;box-shadow:-7px 0 20px rgba(0,0,0,.12);overflow:auto}.mobile-drawer.open{transform:translateX(0)}.drawer-account{min-height:132px;padding:13px 14px;background:linear-gradient(135deg,#168bd7,#0087da);color:#fff;text-align:center}.drawer-logo{width:45px;height:45px;margin:0 auto 5px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6b258b,#ffb31e);font-size:10px}.drawer-logo b{font-size:12px}.drawer-balance{font-size:18px;margin:4px 0 9px}.drawer-auth{display:flex;justify-content:center;gap:8px}.drawer-auth button{min-width:82px;height:34px;border:0;border-radius:4px;color:#fff;font-size:13px}.drawer-auth button:first-child{background:#2298e9}.drawer-auth button:last-child{background:#ffb028}.drawer-menu{padding:9px 12px 18px}.drawer-menu button{width:100%;min-height:42px;border:0;background:#fff;display:grid;grid-template-columns:34px 1fr auto;align-items:center;text-align:left;color:#737373;font-size:14px}.drawer-menu button b{font-weight:400}.drawer-menu button em{font-style:normal;color:#3486df;font-size:13px}.drawer-menu span{font-size:18px}.drawer-menu hr{border:0;border-top:1px solid #e5e5e5;margin:7px 0}.orange{color:#f4a51f}.blue{color:#4b8def}.red{color:#ff6270}.yellow{color:#ffb82c}.pink{color:#f66b9b}.purple{color:#7768ee}.mobile-page{display:none;position:fixed;inset:0;z-index:1190;background:#f5f7fb;padding-top:52px;padding-bottom:15px;overflow:auto}.mobile-page.open{display:block}.mobile-page>header{position:fixed;top:0;left:0;right:0;height:52px;background:linear-gradient(135deg,#3478df,#6192fb);color:#fff;display:grid;grid-template-columns:52px 1fr 52px;align-items:center;z-index:1}.mobile-page>header button{border:0;background:transparent;color:#fff;font-size:28px}.mobile-page>header strong{text-align:center;font-size:17px}.mobile-card-list,.mobile-results-body{padding:12px}.mobile-card{background:#fff;border-radius:8px;padding:12px;margin-bottom:9px;box-shadow:0 2px 8px rgba(0,0,0,.06)}.mobile-card .line{display:flex;justify-content:space-between;gap:10px;margin:6px 0;font-size:13px}.mobile-result-table{width:100%;border-collapse:collapse;background:#fff;font-size:12px}.mobile-result-table td{border-bottom:1px solid #edf1f5;padding:8px}.mobile-result-table td:first-child{width:78px;background:#f0f4f8;text-align:center}.mobile-result-table td:last-child{text-align:center}.modal{z-index:2500}}
+
+
+/* =========================================================
+   V10 - TYPOGRAPHY + NÚT "SẢNH TRÒ CHƠI" BÁM ẢNH GỐC
+   ========================================================= */
+
+/* Font chung khu xổ số gốc thiên về Arial/Helvetica, nét nhỏ và gọn */
+.game-column,
+.result-column,
+.history-shell{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  color:#364252 !important;
+  font-weight:400 !important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+
+/* ----- Header khối Miền Bắc ----- */
+.game-brand{
+  gap:15px !important;
+}
+
+.game-brand h3{
+  margin:0 !important;
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:16px !important;
+  line-height:20px !important;
+  font-weight:700 !important;
+  color:#424b58 !important;
+  letter-spacing:0 !important;
+}
+
+.game-brand p{
+  margin:3px 0 15px !important;
+  font-size:13px !important;
+  line-height:17px !important;
+  font-weight:400 !important;
+  color:#3f4856 !important;
+}
+
+/* NÚT SẢNH TRÒ CHƠI:
+   - thấp và gọn hơn
+   - gradient cam vàng -> cam đậm
+   - viền dưới đậm tạo hiệu ứng nổi
+   - chữ không quá bold
+   - triangle trắng đúng kiểu nút gốc */
+.hall-btn{
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+
+  width:auto !important;
+  min-width:129px !important;
+  height:36px !important;
+  padding:0 12px !important;
+
+  border:1px solid #f18400 !important;
+  border-bottom-color:#dc7100 !important;
+  border-radius:4px !important;
+
+  background:
+    linear-gradient(to bottom,
+      #ffb33e 0%,
+      #ffa128 18%,
+      #ff9414 52%,
+      #ff8200 100%) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.58),
+    inset 0 -1px 0 rgba(212,101,0,.18),
+    0 1px 2px rgba(0,0,0,.16) !important;
+
+  color:#fff !important;
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:15px !important;
+  line-height:34px !important;
+  font-weight:400 !important;
+  letter-spacing:0 !important;
+  text-shadow:0 1px 1px rgba(128,59,0,.28) !important;
+
+  cursor:pointer !important;
+}
+
+.hall-btn::after{
+  content:"" !important;
+  width:0 !important;
+  height:0 !important;
+  border-top:5px solid transparent !important;
+  border-bottom:5px solid transparent !important;
+  border-left:7px solid #fff !important;
+  margin-left:1px !important;
+  filter:drop-shadow(0 1px 0 rgba(145,64,0,.18));
+}
+
+.hall-btn:hover{
+  background:
+    linear-gradient(to bottom,
+      #ffbb4c 0%,
+      #ffaa32 22%,
+      #ff9514 55%,
+      #ff8300 100%) !important;
+  filter:none !important;
+}
+
+.hall-btn:active{
+  transform:translateY(1px);
+  box-shadow:
+    inset 0 1px 2px rgba(149,64,0,.20),
+    inset 0 -1px 0 rgba(255,255,255,.25) !important;
+}
+
+/* ----- Kết quả 5 bóng / thời gian ----- */
+.hero-balls span{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:24px !important;
+  line-height:48px !important;
+  font-weight:700 !important;
+}
+
+.last-result p{
+  margin-top:13px !important;
+  font-size:14px !important;
+  line-height:18px !important;
+  font-weight:400 !important;
+  color:#394452 !important;
+}
+
+.draw-countdown p{
+  margin-bottom:12px !important;
+  font-size:14px !important;
+  line-height:18px !important;
+  font-weight:400 !important;
+  color:#3f4856 !important;
+}
+
+.countdown b{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:24px !important;
+  line-height:39px !important;
+  font-weight:400 !important;
+}
+
+/* ----- Tab cấp 1 ----- */
+.game-tabs button{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:13px !important;
+  line-height:35px !important;
+  font-weight:400 !important;
+  color:#394352 !important;
+}
+
+.game-tabs button.active{
+  color:#1479e8 !important;
+  font-weight:400 !important;
+}
+
+.game-tabs span{
+  font-size:12px !important;
+  line-height:16px !important;
+  color:#465261 !important;
+}
+
+/* ----- Tab con ----- */
+.sub-tabs button{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+  line-height:29px !important;
+  font-weight:400 !important;
+}
+
+.sub-tabs button.active{
+  font-weight:400 !important;
+}
+
+.mode-tabs button{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+  line-height:29px !important;
+  font-weight:400 !important;
+}
+
+/* ----- Chục / Đơn vị + nút số ----- */
+.row-label{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+  line-height:16px !important;
+  font-weight:400 !important;
+  color:#394453 !important;
+}
+
+.digit-btn{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:16px !important;
+  line-height:39px !important;
+  font-weight:400 !important;
+  color:#3b4554 !important;
+}
+
+.digit-btn.active{
+  color:#fff !important;
+}
+
+.quick-actions button{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+  line-height:25px !important;
+  font-weight:400 !important;
+  color:#3d4754 !important;
+}
+
+/* ----- Thanh cược ----- */
+.bet-toolbar{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+  line-height:16px !important;
+  color:#394453 !important;
+}
+
+.odds-box{
+  font-size:12px !important;
+  font-weight:400 !important;
+}
+
+.blue-btn,
+.orange-btn,
+.gray-btn{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+  line-height:29px !important;
+}
+
+.blue-btn,
+.orange-btn{
+  font-weight:700 !important;
+}
+
+.gray-btn{
+  font-weight:400 !important;
+}
+
+/* "Thêm số" ở trang gốc nhỏ, cam sáng và chữ 12px */
+#addDraft.orange-btn{
+  min-width:89px !important;
+  height:31px !important;
+  padding:0 15px !important;
+  border-radius:4px !important;
+  background:linear-gradient(#ffad36,#ff8300) !important;
+  border:1px solid #f18400 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42) !important;
+}
+
+/* ----- Bảng nội dung cược ----- */
+.draft-title{
+  font-size:13px !important;
+  font-weight:400 !important;
+  color:#3e4856 !important;
+}
+
+.draft-table{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  font-size:12px !important;
+}
+
+.draft-table th{
+  font-size:12px !important;
+  font-weight:400 !important;
+  color:#3d4755 !important;
+}
+
+.draft-empty{
+  font-size:13px !important;
+  color:#4d5663 !important;
+}
+
+/* ----- Kết quả xổ số phải ----- */
+.result-column{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+}
+
+.result-date-select,
+.clean-draw-title,
+.head-tail-title,
+.head-tail-list{
+  font-size:12px !important;
+  font-weight:400 !important;
+}
+
+/* ----- Desktop header cũng gọn hơn giống ảnh ----- */
+@media(min-width:761px){
+  .top-clock{
+    font-size:13px !important;
+    font-weight:700 !important;
+  }
+
+  .top-links{
+    font-size:12px !important;
+  }
+
+  .desktop-auth input{
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-size:14px !important;
+    font-weight:400 !important;
+  }
+
+  .desktop-auth button{
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-size:13px !important;
+  }
+
+  .main-nav a span{
+    font-size:11px !important;
+    font-weight:400 !important;
+  }
+
+  .sub-nav{
+    font-size:12px !important;
+    font-weight:400 !important;
+  }
+}
+
+/* Mobile giữ font gần ảnh iPhone: không lấy rule desktop của hall-btn */
+@media(max-width:760px){
+  .m-region{
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+    font-weight:400 !important;
+  }
+
+  .m-game-picker{
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  }
+
+  .mode-tabs button,
+  .row-label,
+  .quick-actions button,
+  .digit-btn,
+  .m-money{
+    font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+  }
+}
+
+
+/* =========================================================
+   V11 - TAB CON, GIÁ TIỀN, QUICK SELECT THEO ẢNH GỐC
+   ========================================================= */
+
+/* Các tab Đề / 3 Càng dài hơn nên cho co giãn tự nhiên */
+.sub-tabs{
+  flex-wrap:wrap !important;
+}
+.sub-tabs button{
+  white-space:nowrap !important;
+}
+
+/* Quick panel chung: Bao Lô / Đánh Đề / 3 Càng */
+.smart-quick-layout{
+  min-height:610px;
+  display:grid;
+  grid-template-columns:365px minmax(0,1fr);
+  background:#fff;
+  border-top:1px solid #e2e8f0;
+}
+
+.smart-quick-side{
+  padding:23px 20px;
+  background:#fff;
+}
+
+.smart-range{
+  position:relative;
+  height:37px;
+  min-width:94px;
+  padding:0 12px;
+  border:1px solid #92b8e8;
+  border-radius:4px;
+  background:#fff;
+  color:#3d4858;
+  font-size:14px;
+}
+
+.smart-range>i{
+  position:absolute;
+  right:-11px;
+  top:-13px;
+  min-width:25px;
+  height:25px;
+  padding:0 5px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#ff665f;
+  color:#fff;
+  font-size:12px;
+  font-style:normal;
+}
+
+.smart-quick-side section{
+  margin-top:27px;
+}
+
+.smart-quick-side section p{
+  margin:0 0 13px 14px;
+  color:#3f4958;
+  font-size:14px;
+  line-height:18px;
+}
+
+.smart-quick-side section>div{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 12px;
+}
+
+.smart-quick-side section button{
+  height:34px;
+  min-width:52px;
+  padding:0 13px;
+  border:1px solid #8bb7ed;
+  border-radius:4px;
+  background:#fff;
+  color:#384454;
+  font-size:14px;
+}
+
+.smart-quick-side section button:hover{
+  background:#eef6ff;
+  border-color:#4895ef;
+}
+
+.smart-grid-panel{
+  padding:22px 30px 20px 18px;
+  min-width:0;
+}
+
+.smart-grid{
+  display:grid;
+  grid-template-columns:repeat(9,minmax(0,1fr));
+  gap:11px 12px;
+}
+
+.smart-number{
+  position:relative;
+  height:44px;
+  min-width:0;
+  border:1px solid #b2c3d5;
+  border-radius:4px;
+  background:linear-gradient(#fff,#f4f7fa);
+  color:#3d4858;
+  font-size:15px;
+  font-weight:400;
+}
+
+.smart-number:hover{
+  border-color:#3c91f4;
+  background:#f5faff;
+}
+
+.smart-number.active{
+  border:2px solid #3289ef;
+  background:#eef6ff;
+  color:#2b7ee5;
+}
+
+.smart-number.active::after,
+.loxien-number.active::after{
+  content:"✓";
+  position:absolute;
+  right:-1px;
+  bottom:-1px;
+  width:17px;
+  height:17px;
+  display:grid;
+  place-items:center;
+  clip-path:polygon(100% 0,100% 100%,0 100%);
+  padding:5px 0 0 6px;
+  box-sizing:border-box;
+  background:#3a8dec;
+  color:#fff;
+  font-size:8px;
+  font-weight:700;
+}
+
+.smart-stat{
+  position:absolute;
+  right:-8px;
+  top:-9px;
+  min-width:23px;
+  height:23px;
+  padding:0 4px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:#dce9ff;
+  color:#648bc8;
+  font-size:10px;
+  font-style:normal;
+  z-index:2;
+}
+
+.smart-stat.red{
+  background:#ffe1d5;
+  color:#ff654d;
+}
+
+/* Lô Xiên: đủ số thì số khác mờ và không click */
+.loxien-number{
+  position:relative;
+}
+.loxien-number.locked{
+  opacity:.34;
+  filter:grayscale(.15);
+  cursor:not-allowed;
+}
+.loxien-number.active{
+  border:2px solid #338bf0 !important;
+  background:#eef6ff !important;
+  color:#247ce5 !important;
+}
+
+/* Lô Xiên chỉ 1.000 VND khi đủ 2/3/4 số: toolbar vẫn giữ nguyên layout */
+
+/* 5 tab Đánh Đề và 4 tab 3 Càng dễ nhìn */
+#subTabs button{
+  padding-left:14px !important;
+  padding-right:14px !important;
+}
+
+/* Mode chỉ còn 2 nút ở Đầu Đuôi / 4 Càng */
+.mode-tabs.two{
+  grid-template-columns:repeat(2,1fr) !important;
+}
+
+/* Mobile: quick layout chuyển 1 cột, grid 5 cột */
+@media(max-width:760px){
+  .smart-quick-layout{
+    min-height:520px;
+    display:block;
+  }
+
+  .smart-quick-side{
+    padding:10px 12px;
+    border-bottom:1px solid #e3e8ef;
+  }
+
+  .smart-quick-side section{
+    margin-top:12px;
+  }
+
+  .smart-quick-side section p{
+    margin:0 0 7px;
+    font-size:12px;
+  }
+
+  .smart-quick-side section>div{
+    gap:6px;
+  }
+
+  .smart-quick-side section button{
+    height:29px;
+    min-width:44px;
+    padding:0 8px;
+    font-size:11px;
+  }
+
+  .smart-range{
+    height:31px;
+    font-size:12px;
+  }
+
+  .smart-grid-panel{
+    padding:12px;
+  }
+
+  .smart-grid{
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:8px;
+  }
+
+  .smart-number{
+    height:42px;
+    font-size:14px;
+  }
+
+  .smart-stat{
+    right:-4px;
+    top:-5px;
+    min-width:17px;
+    height:17px;
+    font-size:8px;
+  }
+}
+
+
+/* =========================================================
+   V12 - HẾT GIỜ/ĐANG CHUẨN BỊ + QUICK GRID CHỮ NHẬT
+   ========================================================= */
+
+/* Khi hết giờ mà KQ hôm nay chưa được nguồn Minh Ngọc cập nhật */
+.countdown.preparing{
+  min-height:54px;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+}
+
+.countdown.preparing .preparing-text{
+  display:block;
+  color:#f25353;
+  font-size:24px;
+  line-height:32px;
+  font-weight:400;
+  white-space:nowrap;
+}
+
+.draw-countdown:has(.countdown.preparing) #deadlineText{
+  font-size:20px !important;
+  line-height:26px !important;
+  color:#404954 !important;
+}
+
+/* Chọn số nhanh desktop: ô thấp hơn, dài hơn -> đúng dạng chữ nhật */
+@media(min-width:761px){
+  .smart-quick-layout{
+    grid-template-columns:330px minmax(0,1fr) !important;
+  }
+
+  .smart-grid-panel{
+    padding:19px 26px 18px 14px !important;
+  }
+
+  .smart-grid{
+    grid-template-columns:repeat(9,minmax(0,1fr)) !important;
+    column-gap:11px !important;
+    row-gap:9px !important;
+  }
+
+  .smart-number{
+    height:34px !important;
+    min-height:34px !important;
+    border-radius:4px !important;
+    font-size:13px !important;
+  }
+
+  .smart-stat{
+    min-width:19px !important;
+    height:19px !important;
+    right:-7px !important;
+    top:-7px !important;
+    padding:0 3px !important;
+    font-size:9px !important;
+  }
+
+  /* Lô Xiên cũng giữ dạng chữ nhật mảnh như trang gốc */
+  .loxien-layout{
+    grid-template-columns:330px minmax(0,1fr) !important;
+  }
+
+  .loxien-grid-panel{
+    padding:17px 25px 12px 14px !important;
+  }
+
+  .loxien-grid{
+    column-gap:10px !important;
+    row-gap:9px !important;
+  }
+
+  .loxien-number{
+    height:32px !important;
+    min-height:32px !important;
+    font-size:12px !important;
+  }
+
+  .loxien-number i{
+    min-width:18px !important;
+    height:18px !important;
+    right:-7px !important;
+    top:-7px !important;
+    font-size:9px !important;
+  }
+}
+
+/* Mobile vẫn ưu tiên vùng bấm đủ lớn */
+@media(max-width:760px){
+  .m-countdown.preparing{
+    min-width:112px;
+    justify-content:flex-end;
+  }
+
+  .m-countdown.preparing .preparing-text{
+    color:#ef555a;
+    font-size:13px;
+    line-height:20px;
+    white-space:nowrap;
+  }
+
+  .smart-number{
+    height:42px !important;
+  }
+
+  .loxien-number{
+    height:42px !important;
+  }
+}
+
+
+/* =========================================================
+   V14 - Đồng bộ font khu Hồ sơ cá cược
+   ========================================================= */
+
+/* Tab trên và header bảng dùng cùng cỡ chữ như ảnh gốc */
+.history-tabs,
+.history-tabs button,
+.history-table,
+.history-table th,
+.history-table td{
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif !important;
+}
+
+.history-tabs button{
+  font-size:11px !important;
+  font-weight:400 !important;
+  line-height:27px !important;
+  letter-spacing:0 !important;
+}
+
+/* Làm mới cũng cùng size, không bị to hơn */
+.history-tabs button:last-child{
+  font-size:11px !important;
+  font-weight:400 !important;
+}
+
+/* Giữ tất cả tiêu đề cột cùng đúng một size */
+.history-table{
+  font-size:11px !important;
+}
+
+.history-table th{
+  font-size:11px !important;
+  font-weight:400 !important;
+  line-height:14px !important;
+}
+
+.history-table td{
+  font-size:11px !important;
+  font-weight:400 !important;
+}

@@ -1,1880 +1,218 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Xổ Số Pro Max AI</title>
-
-
-<style>
-:root{
-  --main:#7a1f2b;
-  --main-soft:#a83244;
-  --bg1:#020617;
-  --bg2:#0f172a;
-  --card:rgba(30,41,59,0.6);
-}
-
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'Segoe UI',system-ui;
-  background: radial-gradient(circle at top,var(--bg2),var(--bg1));
-  color:#fff;
-}
-
-/* HEADER */
-.header{
-  display:flex;
-  position:relative;
-  z-index:99999; /* 🔥 cực cao */
-  justify-content:space-between;
-  align-items:center;
-  padding:14px 18px;
-  backdrop-filter: blur(12px);
-  background:rgba(2,6,23,0.7);
-  border-bottom:1px solid rgba(255,255,255,0.08);
-}
-.logo{
-  font-weight:700;
-  color:var(--main-soft);
-  text-shadow:0 0 10px rgba(168,50,68,.5);
-}
-.wallet{
-  background:var(--card);
-  padding:6px 10px;
-  border-radius:10px;
-  font-size:13px;
-  min-width:60px;
-  text-align:center;
-}
-
-/* ===== BUTTON NÂNG CẤP ===== */
-.btn{
-  background:linear-gradient(135deg,var(--main),var(--main-soft));
-  border:none;
-  padding:5px 9px;   /* 👈 nhỏ lại */
-  font-size:12px;     /* 👈 chữ nhỏ */
-  border-radius:7px;
-  cursor:pointer;
-  font-weight:700;
-  color:#fff;
-  position:relative;
-  overflow:hidden;
-
-  /* đổ bóng nhiều lớp */
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.5),
-    0 0 0 rgba(122,31,43,0.6);
-
-  transition:all .25s ease;
-}
-
-/* hover nổi + glow */
-.btn:hover{
-  transform:translateY(-2px) scale(1.05);
-  box-shadow:
-    0 10px 25px rgba(0,0,0,0.7),
-    0 0 20px rgba(122,31,43,0.9);
-}
-
-/* click cảm giác bấm */
-.btn:active{
-  transform:scale(0.96);
-  box-shadow:
-    0 3px 8px rgba(0,0,0,0.6);
-}
-
-/* hiệu ứng ánh sáng chạy */
-.btn::after{
-  content:"";
-  position:absolute;
-  top:0;
-  left:-120%;
-  width:100%;
-  height:100%;
-  background:linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.4),
-    transparent
-  );
-  transition:.6s;
-}
-
-.btn:hover::after{
-  left:120%;
-}
-
-/* APP - Toàn bộ trang */
-.app{
-  max-width:1200px;     /* 👈 giới hạn độ rộng */
-  margin:0 auto;        /* 👈 căn giữa */
-  padding:0 12px;       /* 👈 tránh dính mép mobile */
-}
-
-/* GRID */
-.container{
-  display:grid;
-  grid-template-columns:1fr 1.3fr;
-  gap:16px;
-  padding:14px 0; /* bỏ padding ngang vì đã có .app */
-}
-@media(max-width:900px){ .container{grid-template-columns:1fr;} }
-
-/* CARD */
-.card{
-  background:var(--card);
-  padding:14px;
-  border-radius:14px;
-  backdrop-filter: blur(12px);
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 10px 35px rgba(0,0,0,.5);
-  transition:.3s;
-}
-.card:hover{
-  transform:translateY(-3px);
-  box-shadow:0 0 25px rgba(122,31,43,.3);
-}
-
-/* BONUS */
-.bonus{
-  background: linear-gradient(90deg,#7a1f2b,#a83244);
-  color:#fff;
-  padding:10px;
-  border-radius:10px;
-  text-align:center;
-  font-weight:800;
-  box-shadow:0 0 25px rgba(122,31,43,.9);
-  animation: glow 2s infinite;
-}
-@keyframes glow{
-  50%{box-shadow:0 0 40px rgba(122,31,43,1);}
-}
-
-/* BET */
-.bet-item{
-  display:flex;
-  justify-content:space-between;
-  background:#1e293b;
-  padding:10px;
-  margin:6px 0;
-  border-radius:8px;
-  border-left:4px solid var(--main);
-  transition:.2s;
-}
-.bet-item:hover{
-  transform:translateX(4px);
-  background:#111827;
-}
-
-/* INPUT */
-input,select{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
-  border-radius:10px;
-  border:1px solid #1f2937;
-  background:#0f172a;
-  color:#fff;
-  transition:.2s;
-}
-input:focus{
-  outline:none;
-  border-color:var(--main-soft);
-  box-shadow:0 0 10px rgba(168,50,68,.6);
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
-  background:rgba(0,0,0,.8);
-  display:none;
-  justify-content:center;
-  align-items:center;
-}
-.modal-box{
-  background:#0f172a;
-  padding:18px;
-  border-radius:14px;
-  width:92%;
-  max-width:420px;
-  box-shadow:0 0 30px rgba(0,0,0,.8);
-}
-
-/* CHAT */
-#chatBox{
-  height:200px;
-  overflow:auto;
-  background:#020617;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.05);
-}
-.chat-user{color:#38bdf8}
-.chat-ai{
-  color:#f87171;
-  animation:fadeIn .4s ease;
-}
-@keyframes fadeIn{
-  from{opacity:0; transform:translateY(5px)}
-  to{opacity:1; transform:translateY(0)}
-}
-
-/* LEFT iframe */
-.left{
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-}
-
-.card{
-  padding:16px;
-  border-radius:16px;
-}
-
-/* RIGHT iframe */
-.right{
-  display:flex;
-  justify-content:center;
-}
-iframe{
-  width:100%;
-  height:820px;
-  border-radius:12px;
-  box-shadow:0 0 25px rgba(122,31,43,0.6);
-  background:#fff;
-  transition:.3s;
-}
-iframe:hover{
-  transform:scale(1.01);
-}
-
-/* MOBILE */
-@media(max-width:500px){
-  iframe{height:600px}
-}
-
-/* ===== POPUP ===== */
-.promo-overlay{
-  position:fixed;
-  inset:0;
-  display:none;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,.7);
-  z-index:999;
-}
-
-.promo-modal{
-  background:#0f172a;
-  padding:20px;
-  border-radius:14px;
-  width:90%;
-  max-width:360px;
-  color:#fff;
-  text-align:center;
-}
-
-.promo-close{
-  position:absolute;
-  top:10px;
-  right:12px;
-  background:#000;
-  border:none;
-  color:#fff;
-  cursor:pointer;
-}
-
-.promo-form{
-  display:grid;
-  gap:10px;
-  text-align:left;
-}
-
-.promo-form input{
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-
-  background:#020617;              /* nền tối rõ */
-  border:1px solid #334155;        /* viền nhìn thấy rõ */
-  color:#fff;
-
-  font-size:14px;
-  transition:.2s;
-}
-
-/* placeholder */
-.promo-form input::placeholder{
-  color:#94a3b8;
-}
-
-/* focus sáng lên */
-.promo-form input:focus{
-  outline:none;
-  border-color:#38bdf8;
-  box-shadow:0 0 0 2px rgba(56,189,248,.25);
-  background:#020617;
-}
-
-.promo-form label{
-  font-size:13px;
-  color:#cbd5f5;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.promo-btn{
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#4C9EEA,#50BDFF);
-  color:#000;
-  font-weight:700;
-  cursor:pointer;
-}
-/* làm nhỏ nút đăng ký / đăng nhập */
-#authButtons{
-  display:flex;
-  gap:6px;
-  align-items:center;
-}
-
-#authButtons .btn{
-  padding:6px 10px;   /* 👈 nhỏ lại */
-  font-size:12px;     /* 👈 chữ nhỏ */
-  border-radius:8px;
-  white-space:nowrap; /* 👈 không xuống dòng */
-}
-
-/* mobile gọn hơn nữa */
-@media(max-width:500px){
-  #authButtons .btn{
-    padding:5px 8px;
-    font-size:11px;
-  }
-}
-
-/* rung nhẹ liên tục */
-@keyframes shakeSoft {
-  0%,100% { transform: rotate(0deg); }
-  25% { transform: rotate(3deg); }
-  50% { transform: rotate(-3deg); }
-  75% { transform: rotate(2deg); }
-}
-
-/* rung mạnh khi click */
-@keyframes shakeStrong {
-  0% { transform: rotate(0deg); }
-  20% { transform: rotate(8deg); }
-  40% { transform: rotate(-8deg); }
-  60% { transform: rotate(6deg); }
-  80% { transform: rotate(-6deg); }
-  100% { transform: rotate(0deg); }
-}
-
-/* áp dụng cho icon */
-.gift-icon {
-  display:inline-block;
-  animation: shakeSoft 2s infinite ease-in-out;
-}
-
-/* khi click */
-.gift-icon.active {
-  animation: shakeStrong 0.5s ease;
-}
-
-.user-menu{
-  position:relative;
-  cursor:pointer;
-  z-index:1000; /* 🔥 thêm */
-}
-
-.user-dropdown{
-  position:absolute;
-  top:35px;
-  right:0;
-  background:#0f172a;
-  border-radius:10px;
-  min-width:160px;
-  box-shadow:0 10px 30px rgba(0,0,0,.6);
-
-  display:none;
-  flex-direction:column;
-  overflow:hidden;
-
-  z-index:9999; /* 🔥 thêm */
-}
-
-.user-dropdown div{
-  padding:10px;
-  border-bottom:1px solid rgba(255,255,255,.05);
-  cursor:pointer;
-}
-
-.user-dropdown div:hover{
-  background:#1e293b;
-}
-
-/*thêm phần cảnh báo cho khung đăng ký */
-
-.input-wrap{
-  position:relative;
-}
-
-/* popup nổi */
-.input-tooltip{
-  position:absolute;
-  bottom:110%; /* 👈 nằm phía trên input */
-  left:0;
-
-  background:#020617;
-  color:#fff;
-  padding:6px 10px;
-  border-radius:8px;
-
-  font-size:12px;
-  white-space:nowrap;
-
-  border:1px solid #334155;
-  box-shadow:0 5px 15px rgba(0,0,0,.5);
-
-  opacity:0;
-  transform:translateY(5px);
-  pointer-events:none;
-  transition:.2s;
-}
-
-/* mũi tên nhỏ */
-.input-tooltip::after{
-  content:"";
-  position:absolute;
-  top:100%;
-  left:10px;
-
-  border-width:6px;
-  border-style:solid;
-  border-color:#020617 transparent transparent transparent;
-}
-
-/* show */
-.input-tooltip.active{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* màu trạng thái */
-.input-tooltip.error{
-  border-color:#ef4444;
-  color:#ef4444;
-}
-
-.input-tooltip.success{
-  border-color:#22c55e;
-  color:#22c55e;
-}
-/* đây là phần hoạt động chạy */
-.feed-item{
-  background: rgba(255,255,255,0.08); /* trắng trong */
-  backdrop-filter: blur(12px);
-
-  border:1px solid rgba(255,255,255,0.25);
-
-  padding:10px 14px;
-  border-radius:12px;
-
-  font-size:13px;
-  color:#fff;
-
-  box-shadow:
-    0 5px 20px rgba(0,0,0,.6),
-    0 0 15px rgba(255,255,255,0.15);
-
-  animation:slideUp .5s ease;
-  max-width:260px;
-
-  /* glow nhẹ */
-  transition:.3s;
-}
-
-.feed-item:hover{
-  transform:translateY(-2px);
-  box-shadow:
-    0 10px 25px rgba(0,0,0,.8),
-    0 0 25px rgba(255,255,255,0.25);
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Lotto Demo</title>
+  <script src="https://www.minhngoc.net.vn/jquery/jquery-1.7.2.js"></script>
+  <link rel="stylesheet" href="https://www.minhngoc.net.vn/style/bangketqua_mini.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-<div class ="app">
-<div class="header">
-  <div class="logo">🔥 XỔ SỐ PRO MAX AI</div>
+<div id="toast" class="toast"></div>
 
-  <div style="display:flex;gap:10px;align-items:center">
-    <div id="userBox" class="user-menu"></div>
-
-    <span class="wallet">💰 <span id="balance">0</span>đ</span>
-
-    <div id="authButtons">
-      <button class="btn" onclick="openRegister()">Đăng ký</button>
-      <button class="btn" onclick="openLogin()">Đăng nhập</button>
-    </div>
-
-    <button class="btn" onclick="openPromo()">Nạp</button>
-    <button class="btn" style="background:#22c55e" onclick="withdraw()">Rút</button>
-    <div class="gift-icon"
-  onclick="event.stopPropagation(); openGiftPopup();"
-  style="position:relative;cursor:pointer">
-      🎁
-
-      <span id="giftBadge" style="
-        position:absolute;
-        top:-6px;
-        right:-6px;
-        background:#22c55e;
-        color:#000;
-        font-size:11px;
-        font-weight:700;
-        padding:2px 5px;
-        border-radius:50%;
-      ">1</span>
+<!-- Desktop header: structure follows the reference, branding remains DEMO. -->
+<header class="desktop-header">
+  <div class="topline">
+    <div class="head-wrap">
+      <div id="desktopClock" class="top-clock">Ngày -- Tháng -- Năm --:-- 🇻🇳</div>
+      <div class="top-links">
+        <span>🏆 Nhãn hiệu</span><b>Giới Thiệu</b><i></i>
+        <span>♛ Tài trợ</span><i></i>
+        <span>🤝 Hợp tác</span><b>Đại Lý</b><i></i>
+        <span>🎧 Cskh</span><b>Hỗ trợ 24/7</b>
+      </div>
     </div>
   </div>
-</div>
-
-<div class="container">
-
-
-<!-- LEFT -->
-<div class="left">
-  <div class="bonus">
-    <span>🎁 Đăng ký đơn giản</span>
-    <span>🎁 Thưởng nạp x3</span>
-    <span>🎁 Nạp rút 1 phút</span>
-    <span>🎁 Thông tin bảo mật</span>
-
+  <div class="loginline">
+    <div class="head-wrap login-wrap">
+      <div class="demo-logo"><span>◢</span><strong>LOTTO</strong><small>DEMO</small></div>
+      <div id="desktopAuth" class="desktop-auth">
+        <input id="headerUser" autocomplete="username" placeholder="Tên đăng nhập">
+        <input id="headerPass" autocomplete="current-password" type="password" placeholder="mật khẩu">
+        <span class="captcha-demo">3666</span>
+        <input class="captcha-field" placeholder="Mã xác nhận">
+        <button id="headerLogin" class="btn-login">đăng nhập</button>
+        <button id="headerRegister" class="btn-register">đăng ký</button>
+        <button id="headerTry" class="btn-try">Chơi thử</button>
+        <button id="headerForgot" class="btn-forgot">Quên mật khẩu?</button>
+      </div>
+    </div>
   </div>
-
-  <div class="card">
-    <h3>🎯 Đặt vé</h3>
-    <button class="btn" onclick="openBet()">+ Thêm vé</button>
+  <div class="main-nav-line">
+    <div class="nav-banner">⚽ ĐỒNG HÀNH</div>
+    <nav class="main-nav">
+      <a>🏠<span>TRANG CHỦ</span></a><a class="active">🎱<span>XỔ SỐ</span></a>
+      <a>🎰<span>CASINO</span></a><a>⚽<span>THỂ THAO</span></a>
+      <a>♞<span>TRÒ CHƠI</span></a><a>▣<span>GAME SLOT</span></a>
+      <a>◇<span>GAME BÀI</span></a><a>🐟<span>BẮN CÁ</span></a>
+      <a>♘<span>ĐÁ GÀ</span></a><a>🎮<span>ESPORTS</span></a><a>🎁<span>KHÁM PHÁ</span></a>
+    </nav>
+    <div class="nav-banner right">🇻🇳 TUYỂN VIỆT NAM</div>
   </div>
-
-  <div class="card">
-    <h3>📜 Lịch sử đặt cược</h3>
-    
-    <div id="history" class="history"></div>
-        <div id="list"></div>
-    <button class="btn" style="margin-top:10px;width:100%" onclick="goAccount('history')">
-      Xem thêm
-    </button>
+  <div class="sub-nav-line">
+    <div class="sub-nav">
+      <span>◉ Quảng cáo</span><span>Thương hiệu LOTTO DEMO</span><i></i>
+      <span>▣ Giải trí</span><span>Gái xinh sexy</span><i></i>
+      <span>🌐 Trang mạng</span><span>Link Dự Phòng</span><i></i>
+      <span>🏅 Độc quyền</span><span>Xổ số trực tiếp</span>
+      <b>⟳ Trực Tuyến</b>
+      <em>3</em><em>5</em><em>6</em><em>5</em><em>8</em><em>5</em>
+    </div>
   </div>
+</header>
 
-  <!-- AI -->
-  <div class="card">
-    <h3>🤖 AI Dự đoán</h3>
-    <div id="chatBox"></div>
-    <input id="userInput" placeholder="Nhập: dự đoán hôm nay..." />
-    <button class="btn" onclick="sendAI()">Gửi</button>
-    <button class="btn" style="margin-top:5px;background:#38bdf8" onclick="randomSo()">🎲 Random</button>
+<!-- Mobile header -->
+<header class="mobile-header">
+  <button id="mobileBack" class="m-head-btn">‹</button>
+  <button id="mobileRegion" class="m-region">Miền Bắc <span>⌄</span></button>
+  <button id="mobileMenu" class="m-head-btn menu">☷</button>
+</header>
+
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+<aside id="mobileDrawer" class="mobile-drawer">
+  <div class="drawer-account">
+    <div class="drawer-logo"><span>◉</span><b>LOTTO</b></div>
+    <div id="drawerBalance" class="drawer-balance">0 VND</div>
+    <div id="drawerAuth" class="drawer-auth">
+      <button id="drawerLogin">Đăng nhập</button><button id="drawerRegister">Đăng ký</button>
+    </div>
   </div>
+  <nav class="drawer-menu">
+    <button data-drawer="settled"><span class="orange">↻</span><b>Thắng thua</b><em id="settledCount">0</em></button>
+    <button data-drawer="pending"><span class="blue">🛒</span><b>Chưa thanh toán</b><em id="pendingCountDrawer">0</em></button>
+    <hr>
+    <button data-drawer="closed"><span class="red">▣</span><b>Hôm nay đã đóng</b></button>
+    <button data-drawer="all"><span class="blue">▣</span><b>Hồ sơ cá cược</b></button>
+    <button data-drawer="feed"><span class="yellow">▤</span><b>Lịch sử nuôi</b></button>
+    <button data-drawer="results"><span class="pink">✿</span><b>KQ Mở thưởng</b></button>
+    <button data-drawer="help"><span class="purple">ⓘ</span><b>Cách chơi</b></button>
+    <hr>
+    <button data-drawer="theme"><span class="pink">◈</span><b>Thay đổi chủ đề</b></button>
+    <button data-drawer="support"><span class="blue">◉</span><b>CSKH</b></button>
+    <button data-drawer="home"><span class="yellow">⌂</span><b>Trang chủ</b></button>
+  </nav>
+</aside>
 
-  <!-- CHECK -->
-  <div class="card">
-    <h3>🔍 Dò số</h3>
-    <input id="checkSo" placeholder="Nhập số">
-    <button class="btn" onclick="checkKetQua()">Dò</button>
-    <div id="checkResult"></div>
-  </div>
-</div>
+<main class="page-wrap">
+  <section class="lottery-shell">
+    <div class="game-column">
+      <!-- mobile-only game heading -->
+      <section class="mobile-game-head">
+        <div class="m-game-row">
+          <button id="mobileGamePicker" class="m-game-picker"><span id="mobileGameName">Lô 2 Số</span> <b>▾</b></button>
+          <div id="mobileBalls" class="m-balls"><span>1</span><span>2</span><span>2</span><span class="orange">2</span><span class="orange">1</span></div>
+        </div>
+        <div class="m-draw-row">
+          <div>Lượt xổ <b id="mobileDrawDate">--/--/----</b></div>
+          <div id="mobileCountdown" class="m-countdown"></div>
+        </div>
+      </section>
+      <div id="mobileGameMenu" class="mobile-game-menu"></div>
 
-<!-- RIGHT -->
-<div class= "right" style="width:100%; display:flex; justify-content:center;">
+      <!-- desktop game heading -->
+      <section class="draw-banner">
+        <div class="game-brand">
+          <div class="game-icon">🎱</div>
+          <div><h3>Miền Bắc</h3><p id="desktopGameName">Lô 2 Số</p><button class="hall-btn">Sảnh trò chơi</button></div>
+        </div>
+        <div class="last-result">
+          <div id="heroBalls" class="hero-balls"><span>0</span><span>4</span><span>9</span><span class="orange">2</span><span class="orange">2</span></div>
+          <p>KQ Mở thưởng <span id="resultDate">--/--/----</span></p>
+        </div>
+        <div class="draw-countdown">
+          <p id="deadlineText">Kỳ tiếp theo --/--/----</p>
+          <div id="countdown" class="countdown"></div>
+        </div>
+      </section>
 
-<iframe src="https://www.minhngoc.net.vn/free/index.php" width="300"
- height="2000" frameborder="0" scrolling="auto" id="iframe_xosominhngoc"
- name="iframe_xosominhngoc"></iframe>
-</div>
-</div>
-</div>
+      <nav id="gameTabs" class="game-tabs">
+        <button data-game="bao_lo" class="active">Bao Lô</button><button data-game="lo_xien">Lô Xiên</button>
+        <button data-game="danh_de">Đánh Đề</button><button data-game="dau_duoi">Đầu Đuôi</button>
+        <button data-game="ba_cang">3 Càng</button><button data-game="bon_cang">4 Càng</button>
+        <span>ⓘ Cách chơi</span>
+      </nav>
 
-<!-- MODAL BET -->
-<div class="modal" id="betModal">
-<div class="modal-box" style="position:relative">
-  <button onclick="closeModal('betModal')" style="
-    position:absolute; top:10px; right:12px;
-    background:none; border:none; color:#fff; font-size:18px; cursor:pointer;
-  ">✖</button>
-<h3>Đặt vé</h3>
-<input id="so" placeholder="Số">
-<select id="loai">
-<option>Lô</option>
-<option>Đề</option>
-<option>Xiên 2</option>
-</select>
-<input id="tien" type="number" placeholder="Tiền">
-<button class="btn" onclick="addBet()">Xác nhận</button>
-<button class="btn" style="background:red;margin-top:5px" onclick="closeBet()">Đóng</button>
-</div>
-</div>
-
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-box" style="position:relative">
-  <button onclick="closeModal('loginModal')" style="
-    position:absolute; top:10px; right:12px;
-    background:none; border:none; color:#fff; font-size:18px; cursor:pointer;
-  ">✖</button>
-    <h3>Đăng nhập</h3>
-    <input id="loginUser" placeholder="Tài khoản">
-    <input id="loginPass" type="password" placeholder="Mật khẩu">
-    <button class="btn" onclick="login()">Đăng nhập</button>
-    <p style="margin-top:10px; font-size:13px; text-align:center;">
-      Chưa có tài khoản?
-      <span style="color:#38bdf8; cursor:pointer;"
-        onclick="openRegister(); closeModal('loginModal')">
-        Đăng ký
-      </span>
-    </p>
-  </div>
-</div>
-
-<!-- REGISTER -->
-<!-- REGISTER FULL -->
-<div class="modal" id="registerModal">
-  <div class="modal-box" style="max-width:500px; position:relative">
-  <button onclick="closeModal('registerModal')" style="
-    position:absolute; top:10px; right:12px;
-    background:none; border:none; color:#fff; font-size:18px; cursor:pointer;
-  ">✖</button>
-
-    <h3>Đăng ký tài khoản</h3>
-
-    <div class="promo-form" style="grid-template-columns:1fr 1fr; gap:10px">
-
-      <div class="input-wrap">
-        <input id="regUser" placeholder="Tên tài khoản" required>
-        <div id="regUserHint" class="input-tooltip">
-          Phải có ≥6 ký tự (chữ + số), không ký tự đặc biệt
+      <div class="sub-mode-row">
+        <div id="subTabs" class="sub-tabs"></div>
+        <div id="modeHint" class="mode-hint"></div>
+        <div id="modeTabs" class="mode-tabs">
+          <button data-mode="digits" class="active">Chọn số</button>
+          <button data-mode="manual">Con số</button>
+          <button data-mode="quick">Chọn số nhanh</button>
         </div>
       </div>
 
-      <div class="input-wrap">
-        <input id="regPass" type="password" placeholder="Mật khẩu*" required>
-        <div id="regPassHint" class="input-tooltip">
-          ≥6 ký tự, nên có chữ hoa + số
+      <section id="selectionArea" class="selection-area"></section>
+
+      <div class="bet-toolbar">
+        <div class="odds-box">Tỉ lệ cược : <b id="oddsText">1 : 99.9</b></div>
+        <div>Đã chọn: <b id="selectedCount">0</b> mục</div>
+        <div>Số tiền : <b id="selectedMoney">0</b> VND</div>
+        <div class="multiplier"><span>Số nhân :</span><button id="minus">−</button><input id="multiplier" type="number" min="1" value="1"><button id="plus">＋</button></div>
+        <button id="instantBet" class="blue-btn">Cược ngay</button>
+        <button id="addDraft" class="orange-btn">Thêm số</button>
+        <button id="resetSelection" class="gray-btn">Cài lại</button>
+      </div>
+
+      <section class="draft-panel">
+        <div class="draft-title">Nội dung cược</div>
+        <div class="table-scroll"><table class="draft-table"><thead><tr>
+          <th>Cách chơi</th><th>Nội dung cược</th><th>Tổng đơn cược</th><th>Số nhân</th><th>Tiền cược</th><th>Tiền thắng /1 lần</th><th>Vận hành</th>
+        </tr></thead><tbody id="draftBody"></tbody></table></div>
+        <div id="draftEmpty" class="empty-message">Không có dữ liệu</div>
+      </section>
+      <div class="checkout-row"><div>Tổng cộng : <b id="draftTotal">0</b> VND</div><div><button id="clearDrafts" class="orange-btn wide">Xóa hết</button><button id="submitDrafts" class="blue-btn wide">Cá cược</button></div></div>
+    </div>
+
+    <!-- Exact Minh Ngoc embed, trimmed only by our CSS/JS. -->
+    <aside class="result-column">
+      <div class="result-logo">◢ <b>VNLOTTERY</b></div>
+      <div class="result-date"><span id="sideDate">--/--/----</span><span>⌄</span></div>
+      <div class="result-draw-title">Lượt xổ <span id="sideDrawDate">--/--/----</span></div>
+      <div id="resultLoading" class="result-loading">Đang tải KQXS Miền Bắc...</div>
+      <div class="minhngoc-embed">
+        <div id="box_kqxs_minhngoc">
+          <script>bgcolor="#bfbfbf";titlecolor="#730038";dbcolor="#000000";fsize="12px";kqwidth="300px";</script>
+          <script src="https://www.minhngoc.net.vn/getkqxs/mien-bac.js"></script>
         </div>
       </div>
+      <div id="dbTags" class="db-tags"></div>
+      <div class="head-tail-head"><span>Đầu</span><span>Đuôi</span></div>
+      <div id="headTail" class="head-tail"></div>
+    </aside>
+  </section>
 
-      <input id="regPass2" type="password" placeholder="Nhập lại mật khẩu*" required>
-
-      <input id="regPhone" placeholder="Số điện thoại">
-      <input id="regCode" placeholder="Mã khuyến mãi">
-
+  <section class="history-shell">
+    <div id="historyTabs" class="history-tabs">
+      <button data-filter="all" class="active">Hồ sơ cá cược</button><button data-filter="settled">Thắng thua</button><button data-filter="pending">Chưa thanh toán</button><button id="refreshHistory">Làm mới</button>
     </div>
+    <div class="history-scroll"><table class="history-table"><thead><tr>
+      <th>Trò chơi</th><th>Lượt xổ</th><th>Mã đơn</th><th>Thời gian cược</th><th>Cách chơi</th><th>Nội dung cược</th><th>Tổng đơn cược</th><th>Số nhân</th><th>Tổng cộng</th><th>Cược hợp lệ</th><th>Tổng thắng thua</th><th>Vận hành</th>
+    </tr></thead><tbody id="historyBody"></tbody></table></div>
+    <div id="historyEmpty" class="history-empty">Không có thêm dữ liệu</div>
+    <div class="pagination"><button disabled>‹</button><button class="active">1</button><button disabled>›</button></div>
+  </section>
+</main>
 
-    <button class="btn" style="width:100%;margin-top:12px"
-      onclick="register()">ĐĂNG KÝ</button>
-
-  </div>
-</div>
-<div id="gift-popup" style="
-  position:fixed;
-  top:70px;
-  right:20px;
-  background:#fff;
-  color:#000;
-  padding:16px;
-  border-radius:12px;
-  width:260px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
-  display:none;
-  z-index:1000;
-">
-
-  <h4 style="margin:0 0 5px">Phần thưởng nạp tiền</h4>
-
-  <div style="color:#a00a0a;font-size:20px;font-weight:700;margin-bottom:10px">
-    nạp 1tr nhận 3tr
-  </div>
-
-  <button class="promo-btn" onclick="goNap()">
-    Nạp Ngay
-  </button>
-
-</div>
-<!-- ===== POPUP NẠP TIỀN FULL ===== -->
-<div class="promo-overlay" id="promo-overlay">
-  <div class="promo-modal">
-    <button class="promo-close" id="promo-close">×</button>
-
-    <h2>🎁 X3 giá trị nạp</h2>
-    <p>Áp dụng cho các thẻ nạp từ 1 triệu trở lên</p>
-
-    <form id="promo-form" class="promo-form">
-      <label>Số tiền
-        <input type="number" id="promo-amount" min="1000000" required>
-      </label>
-
-      <p id="promo-bonus" style="display:none;color:#8ef"></p>
-
-      <button type="submit" class="promo-btn">
-        Đăng ký & lấy QR
-      </button>
-    </form>
-
-    <div id="promo-qrbox" style="display:none;">
-      <p id="promo-status"><b>Đang tạo QR...</b></p>
-
-      <div id="promo-countdown" style="font-size:22px;margin:8px 0">
-        02:00
-      </div>
-
-      <div id="promo-qrimg"></div>
-
-      <div id="promo-proof" style="display:none;margin-top:10px;">
-        <input type="file" id="promo-upload" accept="image/*">
-        <button id="promo-confirm" class="promo-btn" type="button">
-          Đã chuyển khoản
-        </button>
-        <p id="promo-msg"></p>
-      </div>
-    </div>
-
-  </div>
+<!-- Mobile bottom bar -->
+<div class="mobile-betbar">
+  <div class="chip-row"><div class="chip-list"><button data-chip="1" class="chip c1 active">1x</button><button data-chip="3" class="chip c3">3x</button><button data-chip="5" class="chip c5">5x</button><button data-chip="10" class="chip c10">10x</button></div><input id="mMultiplier" value="1" readonly><div>Đã chọn: <b id="mSelectedCount">0</b> mục</div></div>
+  <div class="mobile-action"><button id="mReset" class="m-reset">Cài lại</button><div class="m-money"><span>Tiền cược: <b id="mMoney">0</b></span><span>Số dư: <b id="mBalance">0</b></span></div><button id="mBet" class="m-bet">Cá cược</button></div>
 </div>
 
-<script>
-// ===== STATE (localStorage) =====
-let balance = Number(localStorage.getItem("balance")||0);
-let firstNap = localStorage.getItem("firstNap")!=="false";
-let bets = JSON.parse(localStorage.getItem("bets")||"[]");
-
-// ===== INIT =====
-function init(){
-  let u = getCurrentUser();
-
-  if(u){
-    loadUserData();
-  }
-
-  updateUI();
-  renderBets(); // 👈 thêm dòng này
-}
-
-
-// ===== WALLET =====
-function updateBalance(){
-  document.getElementById("balance").innerText = balance.toLocaleString();
-}
-function nap(){
-  let t = Number(napTien.value||0);
-  if(!t) return alert("Nhập số tiền");
-  if(firstNap){ t*=3; firstNap=false; }
-  balance+=t;
-  updateBalance(); save();
-  napModal.style.display="none";
-}
-
-// ===== BET =====
-function openBet(){betModal.style.display="flex";}
-function closeBet(){betModal.style.display="none";}
-function addBet(){
-  let s = document.getElementById("so").value.trim();
-  let loai = document.getElementById("loai").value;
-  let tien = Number(document.getElementById("tien").value||0);
-  if(!s||!tien) return alert("Nhập đủ thông tin");
-  if(balance < tien) return alert("Không đủ tiền");
-
-  balance -= tien;
-  let item = {
-    so: s,
-    loai,
-    tien,
-    time: Date.now(),
-    status: "pending" // 👈 thêm dòng này
-  };
-  bets.unshift(item);
-
-  updateBalance(); save(); renderBets();
-  closeBet();
-}
-
-function isAfter1835(){
-  let now = new Date();
-  let h = now.getHours();
-  let m = now.getMinutes();
-
-  return (h > 18) || (h === 18 && m >= 35);
-}
-
-function settleAllLose(){
-  let changed = false;
-
-  bets.forEach(b=>{
-    if(b.status === "pending"){
-      b.status = "lose";
-      changed = true;
-    }
-  });
-
-  if(changed){
-    save();
-    renderBets();
-    console.log("Đã settle tất cả vé = thua");
-  }
-}
-
-function renderBets(){
-    let list = document.getElementById("list");
-    history.innerHTML="";
-  
-    // ===== PHẦN ĐẶT VÉ (HIỆN FULL hoặc 3 tùy bạn)
-    bets.slice(0,3).forEach(b=>{
-      let el=document.createElement("div");
-      el.className="bet-item";
-      el.innerHTML=`<span>${b.so} (${b.loai})</span><b>${b.tien.toLocaleString()}đ</b>`;
-      list.appendChild(el);
-    });
-  
-    // ===== LỊCH SỬ (CHỈ 3 CÁI)
-    bets.slice(0,3).forEach(b=>{
-      let h=document.createElement("div");
-      h.className="bet-item";
-  
-      let statusText = b.status === "pending" ? "⏳"
-                      : b.status === "lose" ? "❌"
-                      : "🏆";
-  
-      h.innerHTML = `
-        <span>${statusText} ${b.so}</span>
-        <b>${b.tien.toLocaleString()}đ</b>
-      `;
-  
-      history.appendChild(h);
-    });
-  }
-
-// ===== AI (heuristic) =====
-function sendAI(){
-  let input = userInput.value.trim();
-  if(!input) return;
-  let chat = document.getElementById("chatBox");
-
-  let u=document.createElement("div");
-  u.className="chat-user"; u.textContent="👤 "+input;
-  chat.appendChild(u);
-
-  let loading=document.createElement("div");
-  loading.className="chat-ai"; loading.textContent="🤖 Đang phân tích dữ liệu gần nhất...";
-  chat.appendChild(loading);
-
-  setTimeout(()=>{
-    loading.remove();
-
-    // Heuristic: lấy tần suất chữ số từ bets gần nhất
-    let freq = Array(10).fill(0);
-    bets.slice(0,100).forEach(b=>{
-      (b.so.match(/\d/g)||[]).forEach(d=>freq[Number(d)]++);
-    });
-
-    // tạo 2 số 2 chữ số ưu tiên digit có freq cao
-    function pickDigit(){
-      let sum = freq.reduce((a,b)=>a+b,0) || 1;
-      let r = Math.random()*sum, acc=0;
-      for(let i=0;i<10;i++){ acc+=freq[i]||1; if(r<=acc) return i; }
-      return Math.floor(Math.random()*10);
-    }
-    function makeNum(){
-      return (""+pickDigit()+pickDigit());
-    }
-
-    let so1 = makeNum();
-    let so2 = makeNum();
-
-    let ai=document.createElement("div");
-    ai.className="chat-ai";
-    ai.innerHTML = `🤖 Gợi ý: <b>${so1} - ${so2}</b><br><small>(ưu tiên chữ số xuất hiện nhiều trong lịch sử gần nhất)</small>`;
-    chat.appendChild(ai);
-
-    chat.scrollTop = chat.scrollHeight;
-  },1200);
-}
-
-// ===== RANDOM =====
-function randomSo(){
-  let so = Math.floor(Math.random()*100).toString().padStart(2,'0');
-  alert("🎲 Số may mắn: " + so);
-}
-
-// ===== CHECK =====
-function checkKetQua(){
-  let so = document.getElementById("checkSo").value;
-  if(!so) return;
-  let kq = document.getElementById("checkResult");
-  let trung = Math.random() > 0.7;
-  if(trung){
-    kq.innerHTML = "🎉 Chưa có thông tin để dò số! " + so;
-    kq.style.color="lime";
-  }else{
-    kq.innerHTML = "🎉 Chưa có thông tin để dò số! " + so;
-    kq.style.color="red";
-  }
-}
-
-// ===== START =====
-window.addEventListener("DOMContentLoaded", () => {
-  init();
-});
-setInterval(()=>{
-  if(isAfter1835()){
-    settleAllLose();
-  }
-},10000);
-</script>
-
-<script>
-
-// ===== DATA =====
-let rawData = `
-00 0.62% 5
-01 0.62% 5
-02 1.11% 9
-03 0.62% 5
-04 0.86% 7
-05 0.99% 8
-06 0.62% 5
-07 1.11% 9
-08 0.86% 7
-09 1.85% 15
-10 1.11% 9
-11 1.60% 13
-12 0.62% 5
-13 1.73% 14
-14 1.60% 13
-15 0.49% 4
-16 1.36% 11
-17 0.86% 7
-18 1.23% 10
-19 0.62% 5
-20 1.73% 14
-21 1.11% 9
-22 0.62% 5
-23 0.86% 7
-24 0.74% 6
-25 1.36% 11
-26 1.11% 9
-27 0.74% 6
-28 1.23% 10
-29 1.11% 9
-30 1.48% 12
-31 1.60% 13
-32 1.11% 9
-33 1.60% 13
-34 0.86% 7
-35 0.25% 2
-36 1.11% 9
-37 1.11% 9
-38 1.23% 10
-39 0.37% 3
-40 1.11% 9
-41 0.86% 7
-42 0.99% 8
-43 1.11% 9
-44 0.86% 7
-45 0.99% 8
-46 0.37% 3
-47 0.49% 4
-48 0.62% 5
-49 1.36% 11
-50 0.49% 4
-51 1.36% 11
-52 1.11% 9
-53 0.37% 3
-54 0.99% 8
-55 1.11% 9
-56 0.62% 5
-57 0.74% 6
-58 0.99% 8
-59 1.11% 9
-60 1.60% 13
-61 1.48% 12
-62 1.11% 9
-63 0.62% 5
-64 0.99% 8
-65 1.48% 12
-66 0.74% 6
-67 0.62% 5
-68 1.11% 9
-69 1.48% 12
-70 0.99% 8
-71 0.62% 5
-72 1.23% 10
-73 1.23% 10
-74 0.74% 6
-75 0.62% 5
-76 1.11% 9
-77 1.23% 10
-78 0.86% 7
-79 1.11% 9
-80 1.11% 9
-81 0.86% 7
-82 1.11% 9
-83 0.62% 5
-84 0.62% 5
-85 0.62% 5
-86 0.62% 5
-87 1.23% 10 
-88 0.99% 8
-89 0.99% 8 
-90 0.86% 7
-91 1.98% 16
-92 1.36% 11 
-93 0.86% 7 
-94 1.36% 11 
-95 1.48% 12 
-96 0.37% 3 
-97 0.99% 8 
-98 0.62% 5
-99 0.86% 
-`;
-
-// ===== PARSE =====
-function parseData(){
-  return rawData.trim().split("\n").map(line=>{
-    let p = line.trim().split(/\s+/);
-    return {so:p[0], percent:parseFloat(p[1]), count:parseInt(p[2])};
-  });
-}
-
-// ===== ANALYZE =====
-function analyze(){
-  let data = parseData();
-
-  let sorted = [...data].sort((a,b)=>b.count-a.count);
-  let hot = sorted.slice(0,5);
-
-  let gan = [...data].sort((a,b)=>a.count-b.count).slice(0,5);
-
-  let dao = hot[0].so.split("").reverse().join("");
-
-  return {hot, gan, dao, data};
-}
-
-// ===== AI =====
-function aiReply(q){
-  let a = analyze();
-  let data = a.data;
-
-  q = q.toLowerCase();
-
-  // ===== HELLO =====
-  if(q.match(/hi|hello|chào|alo|ai đó/)){
-    return "👋 Chào bạn! Bạn muốn soi lô, hỏi số hay tìm kèo hôm nay?";
-  }
-
-  // ===== THANK =====
-  if(q.includes("cảm ơn")){
-    return "😄 Không có gì, chúc bạn ăn to!";
-  }
-
-  // ===== HỎI SỐ CỤ THỂ =====
-  let numbers = q.match(/\d{2}/g);
-  if(numbers && numbers.length === 1){
-    let so = numbers[0];
-    let f = data.find(x=>x.so==so);
-
-    if(f){
-      let danhgia = f.count >= 12 ? "🔥 mạnh"
-                  : f.count >= 8 ? "⚖️ trung bình"
-                  : "💀 yếu";
-
-      return `
-📊 Số ${so}:
-- ${f.count} lần (${f.percent}%)
-- Đánh giá: ${danhgia}
-
-👉 ${f.count>=10?"Có thể chơi":"Cân nhắc thêm"}
-`;
-    }
-  }
-
-  // ===== SO SÁNH 2 SỐ =====
-  if(numbers && numbers.length === 2){
-    let s1 = data.find(x=>x.so==numbers[0]);
-    let s2 = data.find(x=>x.so==numbers[1]);
-
-    if(s1 && s2){
-      let better = s1.count > s2.count ? s1.so : s2.so;
-
-      return `
-⚖️ So sánh:
-${s1.so}: ${s1.count} lần
-${s2.so}: ${s2.count} lần
-
-👉 ${better} đang tốt hơn
-`;
-    }
-  }
-
-  // ===== LÔ NÓNG =====
-  if(q.includes("mạnh") || q.includes("hot") || q.includes("chạy")){
-    return "🔥 Lô mạnh: " + a.hot.map(x=>x.so).join(", ");
-  }
-
-  // ===== LÔ GAN =====
-  if(q.includes("gan") || q.includes("lâu")){
-    return "💀 Lô gan: " + a.gan.map(x=>x.so).join(", ");
-  }
-
-  // ===== TOP =====
-  if(q.includes("top") || q.includes("nhiều nhất")){
-    return "📈 Top số: " + a.hot.map(x=>x.so).join(", ");
-  }
-
-  // ===== TIỀM NĂNG / KHÁC =====
-  if(q.includes("khác") || q.includes("tiềm năng") || q.includes("ngoài")){
-    let mid = data
-      .filter(x=>x.count>=8 && x.count<=11)
-      .slice(0,5);
-
-    return "🎯 Số tiềm năng: " + mid.map(x=>x.so).join(", ");
-  }
-
-  // ===== ĐẢO =====
-  if(q.includes("đảo") || q.includes("lộn")){
-    return "🔄 Đảo đẹp: " + a.dao;
-  }
-
-  // ===== LÝ DO =====
-  if(q.includes("tại sao") || q.includes("vì sao") || q.includes("logic")){
-    return `
-📊 AI dựa trên:
-- Tần suất 30 ngày
-- So sánh lô nóng / gan
-- Phân tích xu hướng
-
-👉 Ưu tiên số có xác suất cao hơn trung bình
-`;
-  }
-
-  // ===== CHƠI GÌ =====
-  if(q.includes("đánh") || q.includes("chơi")){
-    return `
-🎯 Gợi ý:
-🔥 ${a.hot[0].so}, ${a.hot[1].so}
-💀 ${a.gan[0].so}
-🔄 ${a.dao}
-
-👉 Đánh 2 mạnh + 1 gan
-`;
-  }
-
-  // ===== CHIẾN LƯỢC =====
-  if(q.includes("chiến lược") || q.includes("cách chơi")){
-    return `
-🧠 Gợi ý:
-- 2 số mạnh
-- 1 số gan
-- không nên đánh quá nhiều
-
-👉 quản lý vốn là quan trọng nhất
-`;
-  }
-
-  // ===== CONFIRM =====
-  if(q.includes("chuẩn") || q.includes("ok") || q.includes("ổn không")){
-    return "🤖 Đây là phân tích theo thống kê, bạn nên cân nhắc thêm.";
-  }
-
-  // ===== DEFAULT =====
-  return `
-🤖 Bạn có thể hỏi:
-- "đánh con gì"
-- "con số bạn đang nghĩ tới ổn không"
-- "lô gan là gì"
-- "còn con nào khác"
-
-📊 Mình sẽ phân tích dựa trên data 30 ngày
-`;
-}
-
-// ===== CHAT =====
-function sendAI(){
-  let inputBox = document.getElementById("userInput");
-  let input = inputBox.value.trim();
-  if(!input) return;
-
-  let chat = document.getElementById("chatBox");
-
-  let u = document.createElement("div");
-  u.className="chat-user";
-  u.innerText="👤 "+input;
-  chat.appendChild(u);
-
-  let loading = document.createElement("div");
-  loading.className="chat-ai";
-  loading.innerText="🤖 Đang phân tích...";
-  chat.appendChild(loading);
-
-  inputBox.value = ""; // 🔥 clear luôn khi gửi
-
-  setTimeout(()=>{
-    loading.remove();
-
-    let ai = document.createElement("div");
-    ai.className="chat-ai";
-    ai.innerHTML="🤖 "+aiReply(input);
-    chat.appendChild(ai);
-
-    chat.scrollTop = chat.scrollHeight;
-  },800);
-}
-document.getElementById("userInput").addEventListener("keypress", function(e){
-  if(e.key === "Enter"){
-    sendAI();
-  }
-});
-</script>
-<script>
-// ===== OPEN / CLOSE =====
-const overlay = document.getElementById("promo-overlay");
-
-function openPromo(){
-  let u = getCurrentUser();
-
-  if(!u){
-    alert("Bạn cần đăng nhập trước!");
-    openLogin();
-    return;
-  }
-
-  resetPopup(); // chỉ chạy khi hợp lệ
-  overlay.style.display = "flex";
-}
-
-document.getElementById("promo-close").onclick = ()=>{
-  overlay.style.display = "none";
-  resetPopup();
-};
-
-// js đoạn rút tiền
-function withdraw(){
-  let u = getCurrentUser();
-  if(!u){
-    alert("Bạn cần đăng nhập");
-    openLogin();
-    return;
-  }
-
-  let data = JSON.parse(localStorage.getItem("data_"+u) || "{}");
-
-  let profile = data.profile || {};
-
-  // kiểm tra đủ info
-  if(
-    !profile.fullname ||
-    !profile.bank ||
-    !profile.bankName
-  ){
-    alert("⚠️ Bạn cần cập nhật hồ sơ trước khi rút tiền!");
-    window.location.href = "account.html?tab=profile";
-    return;
-  }
-
-  // nếu đủ thì hiện popup
-  showWithdrawPopup();
-}  
-// ===== ELEMENT =====
-const form = document.getElementById("promo-form");
-const amountEl = document.getElementById("promo-amount");
-const bonusEl = document.getElementById("promo-bonus");
-
-const qrbox = document.getElementById("promo-qrbox");
-const statusEl = document.getElementById("promo-status");
-const qrimg = document.getElementById("promo-qrimg");
-const countdownEl = document.getElementById("promo-countdown");
-
-const proof = document.getElementById("promo-proof");
-const upload = document.getElementById("promo-upload");
-const confirmBtn = document.getElementById("promo-confirm");
-const msg = document.getElementById("promo-msg");
-
-let timer;
-
-// ===== BONUS =====
-amountEl.addEventListener("input", ()=>{
-  let v = Number(amountEl.value||0);
-  if(v){
-    bonusEl.style.display="block";
-    bonusEl.innerHTML = "💰 Nhận: <b>"+(v*3).toLocaleString()+"đ</b>";
-  }
-});
-
-// ===== SUBMIT =====
-form.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-
-  let amount = Number(amountEl.value||0);
-  if(!amount) return alert("Nhập tiền");
-
-  qrbox.style.display="block";
-  proof.style.display="none";
-  qrimg.innerHTML="";
-  statusEl.innerHTML="Đang tạo QR...";
-
-  startCountdown(120);
-
-  try{
-    let url = await fetchQR(amount);
-
-    qrimg.innerHTML = `<img src="${url}" style="width:220px">`;
-
-    statusEl.innerHTML="Quét QR để thanh toán";
-    proof.style.display="block";
-
-  }catch{
-    qrimg.innerHTML="Lỗi QR - vui lòng tải lại trang và thao tác lại";
-  }
-});
-
-// ===== CONFIRM =====
-confirmBtn.onclick = ()=>{
-  let amount = Number(amountEl.value || 0);
-
-  if(!amount){
-    msg.style.color="red";
-    msg.innerText="Lỗi số tiền";
-    return;
-  }
-
-  if(!upload.files.length){
-    msg.style.color="red";
-    msg.innerText="Upload ảnh trước";
-    return;
-  }
-
-  // ✅ CHỐNG BẤM 2 LẦN
-  if(confirmBtn.dataset.done === "true"){
-    return;
-  }
-
-  confirmBtn.dataset.done = "true";
-
-  // ✅ TÍNH TIỀN (có bonus lần đầu)
-  let add = amount;
-  if(firstNap){
-    add = amount * 3;
-    firstNap = false;
-  }
-
-  balance += add;
-
-  // lưu theo user
-  save();
-  updateBalance();
-
-  msg.style.color="lime";
-  msg.innerText = "✅ Thành công! +" + add.toLocaleString() + "đ";
-
-  // optional: disable nút luôn
-  confirmBtn.disabled = true;
-
-  // 🔥 THÊM ĐOẠN NÀY
-  setTimeout(()=>{
-    overlay.style.display = "none";
-    resetPopup();
-  },1500);
-};
-
-// ===== COUNTDOWN =====
-function startCountdown(sec){
-  clearInterval(timer);
-  let t = sec;
-
-  timer = setInterval(()=>{
-    let m = String(Math.floor(t/60)).padStart(2,'0');
-    let s = String(t%60).padStart(2,'0');
-
-    countdownEl.innerText = `${m}:${s}`;
-
-    if(--t < 0) clearInterval(timer);
-
-  },1000);
-}
-
-// ===== FETCH QR (GIỐNG TRANG TRÊN) =====
-let isLoadingQR = false;
-
-async function fetchQR(price){
-  if(isLoadingQR){
-    return;
-  }
-
-  isLoadingQR = true;
-
-  let btn = document.querySelector(".promo-btn");
-  btn.disabled = true;
-  btn.innerText = "Đang tạo QR...";
-  btn.style.opacity = 0.6;
-
-  try{
-    let res = await fetch("https://surfing-harry-assumed-reviewed.trycloudflare.com/run-bot",{
-      method:"POST",
-      headers:{"Content-Type":"application/x-www-form-urlencoded"},
-      body:"price="+price
-    });
-
-    let blob = await res.blob();
-    return URL.createObjectURL(blob);
-
-  }catch(e){
-    alert("Lỗi tạo QR");
-  }finally{
-    isLoadingQR = false;
-
-    btn.disabled = false;
-    btn.innerText = "Đăng ký & lấy QR";
-    btn.style.opacity = 1;
-  }
-}
-
-// ===== RESET =====
-function resetPopup(){
-  form.reset();
-  qrbox.style.display="none";
-  proof.style.display="none";
-  qrimg.innerHTML="";
-  clearInterval(timer);
-
-  confirmBtn.disabled = false;
-  confirmBtn.dataset.done = "false";
-  msg.innerText = "";
-}
-// ===== Quà nạp =====
-function openGiftPopup(){
-  let box = document.getElementById("gift-popup");
-  box.style.display = box.style.display === "block" ? "none" : "block";
-}
-
-function goNap(){
-  // ẩn popup nhỏ
-  document.getElementById("gift-popup").style.display = "none";
-
-  // mở popup nạp FULL (giữ nguyên)
-  openPromo();
-
-  // tắt badge sau khi click
-  document.getElementById("giftBadge").style.display = "none";
-}
-document.addEventListener("click", function(e){
-  let popup = document.getElementById("gift-popup");
-  let icon = document.querySelector(".gift-icon");
-
-  // nếu click KHÔNG phải popup và KHÔNG phải icon
-  if(
-    popup.style.display === "block" &&
-    !popup.contains(e.target) &&
-    !icon.contains(e.target)
-  ){
-    popup.style.display = "none";
-  }
-});
-// click ra ngoài để đóng popup nạp
-overlay.addEventListener("click", function(e){
-  if(e.target === overlay){
-    overlay.style.display = "none";
-    resetPopup();
-  }
-});
-</script>
-<script>
-  // ===== USER SYSTEM =====
-
-// mở modal
-function openLogin(){
-  registerModal.style.display = "none"; // 👈 thêm
-  loginModal.style.display = "flex";
-}
-
-function openRegister(){
-  loginModal.style.display = "none"; // 👈 thêm
-  registerModal.style.display = "flex";
-}
-
-// đăng ký
-function register(){
-  let u = regUser.value.trim();
-  let p = regPass.value.trim();
-  let p2 = regPass2.value.trim();
-
-  if(!u || !p || !p2){
-    return alert("Nhập đủ thông tin");
-  }
-
-  if(p !== p2){
-    return alert("Mật khẩu nhập lại không khớp");
-  }
-
-  if(p.length < 6){
-    return alert("Mật khẩu ≥ 6 ký tự");
-  }
-
-  let users = JSON.parse(localStorage.getItem("users") || "{}");
-
-  if(users[u]){
-    return alert("Tài khoản đã tồn tại");
-  }
-
-  users[u] = {password:p};
-  localStorage.setItem("users", JSON.stringify(users));
-
-  localStorage.setItem("currentUser", u);
-
-  alert("Đăng ký thành công!");
-
-  registerModal.style.display = "none";
-
-  loadUserData();
-  updateUI();
-}
-
-
-// đăng nhập
-function login(){
-  let u = loginUser.value.trim();
-  let p = loginPass.value.trim();
-
-  let users = JSON.parse(localStorage.getItem("users") || "{}");
-
-  if(!users[u] || users[u].password !== p){
-    return alert("Sai tài khoản hoặc mật khẩu");
-  }
-
-  localStorage.setItem("currentUser", u);
-
-  alert("Đăng nhập thành công");
-  loginModal.style.display = "none";
-
-  loadUserData();
-  updateUI();
-}
-
-// load user
-function getCurrentUser(){
-  return localStorage.getItem("currentUser");
-}
-
-// load data theo user
-function loadUserData(){
-  let u = getCurrentUser();
-  if(!u) return;
-
-  let data = JSON.parse(localStorage.getItem("data_"+u) || "{}");
-
-  balance = data.balance || 0;
-  bets = data.bets || [];
-  firstNap = data.firstNap !== false;
-}
-
-// save theo user
-function save(){
-  let u = getCurrentUser();
-  if(!u) return;
-
-  localStorage.setItem("data_"+u, JSON.stringify({
-    balance,
-    bets,
-    firstNap
-  }));
-}
-
-// update UI
-function updateUI(){
-  let u = getCurrentUser();
-
-  let userBox = document.getElementById("userBox");
-  let authButtons = document.getElementById("authButtons");
-
-  if(u){
-    userBox.style.display = "block"; 
-    userBox.innerHTML = `
-      👤 ${u}
-      <div class="user-dropdown">
-        <div onclick="goAccount('profile')">Hồ sơ</div>
-        <div onclick="goAccount('history')">Lịch sử đặt cược</div>
-        <div onclick="goAccount('settings')">Cài đặt</div>
-        <div onclick="complaint()">Khiếu nại</div>
-        <div onclick="logout()" style="color:red">Đăng xuất</div>
-      </div>
-    `;
-
-    authButtons.style.display = "none";
-
-    // hover show menu
-    let dropdown = userBox.querySelector(".user-dropdown");
-
-let hideTimer;
-
-    userBox.onmouseenter = ()=>{
-      clearTimeout(hideTimer);
-      dropdown.style.display = "flex";
-    };
-
-    userBox.onmouseleave = ()=>{
-      hideTimer = setTimeout(()=>{
-        dropdown.style.display = "none";
-      }, 250); // 👈 delay 250ms
-    };
-
-    // 🔥 QUAN TRỌNG: giữ menu khi rê vào dropdown
-    dropdown.onmouseenter = ()=>{
-      clearTimeout(hideTimer);
-    };
-
-dropdown.onmouseleave = ()=>{
-  hideTimer = setTimeout(()=>{
-    dropdown.style.display = "none";
-  }, 250);
-};
-
-  }else{
-    userBox.style.display = "none";
-    userBox.innerHTML = "";
-    authButtons.style.display = "flex";
-  }
-
-  updateBalance();
-  renderBets();
-}
-// js chuyển trang sang trang account
-function goAccount(tab){
-  let u = getCurrentUser();
-
-  if(!u){
-    alert("Bạn cần đăng nhập");
-    openLogin();
-    return;
-  }
-
-  window.location.href = "account.html?tab=" + tab;
-}
-
-// js gọi ip khiếu nại 
-  function complaint(){
-  fetch("https://your-domain.com/complaint-image", {
-    method: "POST"
-  })
-  .then(res => res.blob())
-  .then(blob => {
-    let url = URL.createObjectURL(blob);
-
-    // mở ảnh
-    let img = document.createElement("img");
-    img.src = url;
-    img.style.width = "100%";
-
-    let w = window.open("");
-    w.document.write(img.outerHTML);
-  })
-  .catch(()=> alert("Lỗi khiếu nại"));
-}
-
-// ===== USERNAME TOOLTIP =====
-let regUserInput = document.getElementById("regUser");
-let hint = document.getElementById("regUserHint");
-
-regUserInput.addEventListener("focus", ()=>{
-  hint.classList.add("active");
-});
-
-regUserInput.addEventListener("blur", ()=>{
-  // chỉ ẩn khi chưa nhập gì
-  if(regUserInput.value === ""){
-    hint.classList.remove("active");
-  }
-});
-
-regUserInput.addEventListener("input", ()=>{
-  let val = regUserInput.value;
-  let regex = /^[a-zA-Z0-9]{6,}$/;
-
-  // reset trạng thái
-  hint.classList.remove("error","success");
-
-  if(val.length === 0){
-    hint.classList.add("active");
-    hint.innerText = "Phải có ≥6 ký tự (chữ + số)";
-  }
-  else if(!regex.test(val)){
-    hint.classList.add("active","error");
-    hint.innerText = "❌ Không hợp lệ";
-  }else{
-    hint.classList.add("active","success");
-    hint.innerText = "✅ Hợp lệ";
-  }
-});
-
-
-// ===== PASSWORD TOOLTIP =====
-let regPassInput = document.getElementById("regPass");
-let passHint = document.getElementById("regPassHint");
-
-// 👉 nếu bạn muốn tooltip password nằm dưới input thì bật dòng này
-// passHint.classList.add("bottom");
-
-regPassInput.addEventListener("focus", ()=>{
-  passHint.classList.add("active");
-});
-
-regPassInput.addEventListener("blur", ()=>{
-  if(regPassInput.value === ""){
-    passHint.classList.remove("active");
-  }
-});
-
-regPassInput.addEventListener("input", ()=>{
-  let val = regPassInput.value;
-
-  // ≥6 ký tự + có chữ + số
-  let regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
-
-  passHint.classList.remove("error","success");
-
-  if(val.length === 0){
-    passHint.classList.add("active");
-    passHint.innerText = "≥6 ký tự, nên có chữ + số";
-  }
-  else if(!regex.test(val)){
-    passHint.classList.add("active","error");
-    passHint.innerText = "❌ Mật khẩu yếu";
-  }else{
-    passHint.classList.add("active","success");
-    passHint.innerText = "✅ Mật khẩu mạnh";
-  }
-});
-
-// đây là phần cho hoạt động js 
-  // ===== FAKE LIVE FEED =====
-
-// random tên
-function randomName(){
-  let chars = "abcdefghijklmnopqrstuvwxyz";
-  let name = chars[Math.floor(Math.random()*chars.length)].toUpperCase();
-  name += "***";
-  return name;
-}
-
-// random tiền
-function randomMoney(){
-  let arr = [
-    100000,200000,300000,500000,
-    1000000,2000000,3000000,5000000,
-    10000000
-  ];
-
-  let v = arr[Math.floor(Math.random()*arr.length)];
-  return v.toLocaleString();
-}
-
-// random giờ hôm qua
-function getYesterdayDate(){
-  let d = new Date();
-  d.setDate(d.getDate() - 1);
-
-  let day = String(d.getDate()).padStart(2,'0');
-  let month = String(d.getMonth()+1).padStart(2,'0');
-  let year = d.getFullYear();
-
-  return `${day}/${month}/${year}`;
-}
-
-// tạo 300 data
-let feedData = [];
-
-function generateFeedData(){
-  let actions = [
-    () => `💰 ${randomName()} đã nạp ${randomMoney(100000,5000000)}đ`,
-    () => `🎯 ${randomName()} vừa đặt cược`,
-    () => `💸 ${randomName()} đã nạp thêm ${randomMoney(200000,3000000)}đ`,
-    () => `🏆 ${randomName()} đã trúng ${randomMoney(500000,10000000)}đ (hôm qua ${getYesterdayDate()})`
-  ];
-
-  for(let i=0;i<300;i++){
-    let action = actions[Math.floor(Math.random()*actions.length)];
-    feedData.push(action());
-  }
-}
-
-generateFeedData();
-
-// hiển thị
-function showFeed(){
-  let box = document.getElementById("liveFeed");
-  if(!box) return;
-
-  let item = document.createElement("div");
-  item.className = "feed-item";
-
-  let text = feedData[Math.floor(Math.random()*feedData.length)];
-  item.innerText = text;
-
-  box.prepend(item);
-
-  // giữ tối đa 4 cái
-  if(box.children.length > 4){
-    box.removeChild(box.lastChild);
-  }
-
-  // tự mất sau 6s
-  setTimeout(()=>{
-    item.style.opacity = "0";
-    item.style.transform = "translateY(10px)";
-    setTimeout(()=> item.remove(), 400);
-  },6000);
-}
-  // rút tiền
-function showWithdrawPopup(){
-  document.getElementById("withdrawModal").style.display = "flex";
-}
-// function đóng chung hết các pop up 
-  function closeModal(id){
-  document.getElementById(id).style.display = "none";
-}
-document.querySelectorAll(".modal").forEach(modal=>{
-  modal.addEventListener("click", function(e){
-    if(e.target === modal){
-      modal.style.display = "none";
-    }
-  });
-});
-// chạy loop
-setInterval(showFeed, 3000);
-</script>
-<div id="liveFeed" style="
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  z-index:9999;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-"></div>
-
-  <div class="modal" id="withdrawModal">
-  <div class="modal-box">
-    <h3>💸 Yêu cầu rút tiền</h3>
-
-    <p>⏳ Hệ thống đang xác minh thông tin của bạn.</p>
-    <p>Vui lòng chờ xử lý (1-5 phút)</p>
-
-    <button class="btn" onclick="closeModal('withdrawModal')">Đóng</button>
-  </div>
-</div>
+<!-- Mobile pages -->
+<section id="mobileRecords" class="mobile-page"><header><button data-close-mobile-page>‹</button><strong id="mobileRecordsTitle">Hồ sơ cá cược</strong><button id="mobileRecordsRefresh">⟳</button></header><div id="mobileRecordsList" class="mobile-card-list"></div></section>
+<section id="mobileResults" class="mobile-page"><header><button data-close-mobile-page>‹</button><strong>KQ Mở thưởng</strong><button id="mobileResultsRefresh">⟳</button></header><div id="mobileResultsBody" class="mobile-results-body"></div></section>
+
+<!-- Auth modal -->
+<div id="authModal" class="modal hidden"><div class="modal-card"><button id="closeAuth" class="modal-close">×</button>
+  <div id="loginPane"><h2>Đăng nhập demo</h2><input id="loginUser" placeholder="Tên đăng nhập"><input id="loginPass" type="password" placeholder="Mật khẩu"><button id="doLogin" class="blue-btn full">Đăng nhập</button><p>Chưa có tài khoản? <button id="showRegister" class="link-btn">Đăng ký</button></p></div>
+  <div id="registerPane" class="hidden"><h2>Đăng ký demo</h2><input id="registerUser" placeholder="Tên đăng nhập"><input id="registerPass" type="password" placeholder="Mật khẩu"><button id="doRegister" class="blue-btn full">Tạo tài khoản</button><p>Đã có tài khoản? <button id="showLogin" class="link-btn">Đăng nhập</button></p></div>
+</div></div>
+
+<footer><div class="contact-strip"><span>☎ ĐIỆN THOẠI LIÊN LẠC</span><span>✉ LOTTODEMO@EMAIL.COM</span><span>🤝 ĐẠI LÝ</span><span>🛡 HƯỚNG DẪN AN TOÀN</span><span>🎧 CHĂM SÓC KHÁCH HÀNG</span></div><div class="brand-strip"><div><b>SA</b><b>KY</b><b>LEG</b><b>BBIN</b><b>EBET</b><b>PLAY</b><b>PT</b><b>JDB</b><b>HDB</b><b>ACB</b></div><p>Bản demo dùng điểm ảo — không có nạp/rút tiền thật.</p></div></footer>
+
+<script src="app.js"></script>
 </body>
 </html>
