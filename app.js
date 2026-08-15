@@ -624,12 +624,28 @@ function openDrawer(){el('mobileDrawer').classList.add('open');el('drawerBackdro
 function closeDrawer(){el('mobileDrawer').classList.remove('open');el('drawerBackdrop').classList.remove('open')}
 function renderMobileGameMenu(){
   const menu=el('mobileGameMenu');
-  menu.innerHTML=Object.entries(GAME).flatMap(([key,g])=>
-    g.subs.map((s,i)=>`<button data-mgame="${key}" data-msub="${i}"
-      class="${state.game===key&&state.sub===i?'active':''}">${s.label}</button>`)
-  ).join('');
 
-  menu.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  const order=['bao_lo','lo_xien','danh_de','dau_duoi','ba_cang','bon_cang'];
+  const sections=order.map(key=>{
+    const g=GAME[key];
+    if(!g)return '';
+    const items=g.subs.map((s,i)=>`<button data-mgame="${key}" data-msub="${i}" class="mobile-game-option ${state.game===key&&state.sub===i?'active':''}">${s.label}</button>`).join('');
+    return `<section class="mobile-game-group">
+      <h3>${g.title}</h3>
+      <div class="mobile-game-option-grid">${items}</div>
+    </section>`;
+  }).join('');
+
+  menu.innerHTML=`<div class="mobile-game-dialog" role="dialog" aria-modal="true" aria-label="Danh sách trò chơi">
+    <div class="mobile-game-dialog-title">Danh sách trò chơi</div>
+    <div class="mobile-game-dialog-body">
+      <aside class="mobile-game-category"><span>Cổ điển</span></aside>
+      <div class="mobile-game-groups">${sections}</div>
+    </div>
+    <button type="button" class="mobile-game-close" data-close-game-menu aria-label="Đóng">×</button>
+  </div>`;
+
+  menu.querySelectorAll('[data-mgame]').forEach(b=>b.onclick=()=>{
     state.game=b.dataset.mgame;
     state.sub=Number(b.dataset.msub);
     state.mode=defaultModeForGame(state.game);
@@ -644,6 +660,9 @@ function renderMobileGameMenu(){
     renderMeta();
     resetSelections();
   });
+
+  menu.querySelector('[data-close-game-menu]')?.addEventListener('click',()=>menu.classList.remove('open'));
+  menu.onclick=e=>{if(e.target===menu)menu.classList.remove('open')};
 }
 function clockTick(){
   const n=new Date();

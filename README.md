@@ -112,3 +112,8 @@ KQXS Minh Ngọc vẫn được đọc/xét vé ngay khi có dữ liệu. Chỉ 
 - toàn bộ tiêu đề cột bảng
 
 Tất cả dùng cùng font-size 11px và font-weight 400.
+
+
+## V15
+- Mobile chọn game chuyển thành modal giống ảnh gốc: nền mờ, tiêu đề, cột Cổ điển, nhóm game, nút đóng tròn.
+- Giảm kích thước mode tabs, nút số và bottom bar mobile để không bị phóng quá to.
