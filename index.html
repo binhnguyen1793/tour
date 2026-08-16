@@ -26,7 +26,15 @@
   </div>
   <div class="loginline">
     <div class="head-wrap login-wrap">
-      <div class="demo-logo"><span>◢</span><strong>LOTTO</strong><small>DEMO</small></div>
+      <a class="demo-logo logo-image-link" href="#" aria-label="Trang chủ">
+        <!-- THAY LINK ẢNH GITHUB CỦA BẠN Ở src BÊN DƯỚI -->
+        <img
+          id="siteLogoImage"
+          class="site-logo-image"
+          src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/logo-234.png"
+          alt="234"
+        >
+      </a>
       <div id="desktopAuth" class="desktop-auth">
         <input id="headerUser" autocomplete="username" placeholder="Tên đăng nhập">
         <input id="headerPass" autocomplete="current-password" type="password" placeholder="mật khẩu">
@@ -72,7 +80,9 @@
 <div id="drawerBackdrop" class="drawer-backdrop"></div>
 <aside id="mobileDrawer" class="mobile-drawer">
   <div class="drawer-account">
-    <div class="drawer-logo"><span>◉</span><b>LOTTO</b></div>
+    <div class="drawer-logo drawer-logo-image">
+      <img src="https://raw.githubusercontent.com/USERNAME/REPOSITORY/main/logo-234.png" alt="234">
+    </div>
     <div id="drawerBalance" class="drawer-balance">0 VND</div>
     <div id="drawerAuth" class="drawer-auth">
       <button id="drawerLogin">Đăng nhập</button><button id="drawerRegister">Đăng ký</button>
@@ -130,7 +140,7 @@
         <button data-game="bao_lo" class="active">Bao Lô</button><button data-game="lo_xien">Lô Xiên</button>
         <button data-game="danh_de">Đánh Đề</button><button data-game="dau_duoi">Đầu Đuôi</button>
         <button data-game="ba_cang">3 Càng</button><button data-game="bon_cang">4 Càng</button>
-        <span>ⓘ Cách chơi</span>
+        <button id="playHelpBtn" class="game-help-btn" type="button">ⓘ Cách chơi</button>
       </nav>
 
       <div class="sub-mode-row">
@@ -204,6 +214,229 @@
 <!-- Mobile pages -->
 <section id="mobileRecords" class="mobile-page"><header><button data-close-mobile-page>‹</button><strong id="mobileRecordsTitle">Hồ sơ cá cược</strong><button id="mobileRecordsRefresh">⟳</button></header><div id="mobileRecordsList" class="mobile-card-list"></div></section>
 <section id="mobileResults" class="mobile-page"><header><button data-close-mobile-page>‹</button><strong>KQ Mở thưởng</strong><button id="mobileResultsRefresh">⟳</button></header><div id="mobileResultsBody" class="mobile-results-body"></div></section>
+
+
+<!-- =========================================================
+     POPUP DÙNG CHUNG
+     ========================================================= -->
+<div id="helpModal" class="help-modal hidden" aria-hidden="true">
+  <div class="help-modal-card" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+    <div class="help-modal-head">
+      <h2 id="helpModalTitle">Hướng dẫn chơi</h2>
+      <button id="helpModalClose" class="help-modal-close" type="button" aria-label="Đóng">×</button>
+    </div>
+    <div id="helpModalBody" class="help-modal-body"></div>
+  </div>
+</div>
+
+<!-- =========================================================
+     NỘI DUNG POPUP - BẠN CÓ THỂ TỰ SỬA NGAY TRONG HTML
+     JS chỉ lấy nội dung các template này để hiển thị.
+     ========================================================= -->
+
+<!-- HƯỚNG DẪN - dùng khi đang ở "Chọn số nhanh" -->
+<template id="helpQuickTemplate">
+  <p>Ngẫu Nhiên: chọn ngẫu nhiên các số đánh.</p>
+  <p>Đặc biệt: gợi ý chọn nhanh các số kép bằng, chẵn, lẻ, lớn, bé.</p>
+  <p>Ít Xuất Hiện: chọn ra các số ít xuất hiện nhất dựa theo kết quả 50 kỳ xổ gần nhất.</p>
+  <p>Số mũ trên mỗi số đánh là thống kê số lần không xuất hiện liên tiếp lâu nhất trong 50 kỳ xổ. Trong đó:</p>
+  <p>- Màu xanh là những số đánh có số lần từ 10 trở lên đối với loại đánh đề, 3 càng, 4 càng, đầu đuôi và từ 5 trở lên đối với lô, xiên.</p>
+  <p>- Màu đỏ là những số đánh có số lần xuất hiện từ 1 trở xuống.</p>
+  <p>- Màu xám là những số đánh còn lại.</p>
+</template>
+
+<!-- NÓNG/LẠNH - dùng ở Chọn số của Đánh Đề / 3 Càng / 4 Càng -->
+<template id="helpHotColdTemplate">
+  <p>Thống kê số lần không xuất hiện liên tiếp trong 50 kỳ xổ.</p>
+  <p>Trong đó:</p>
+  <p>- Màu xanh là những số đánh có số lần từ 10 trở lên đối với loại đánh đề, 3 càng, 4 càng, đầu đuôi và từ 5 trở lên đối với lô, xiên.</p>
+  <p>- Màu đỏ là những số đánh có số lần xuất hiện từ 1 trở xuống.</p>
+  <p>- Màu xám là những số đánh còn lại.</p>
+</template>
+
+<!-- CÁCH CHƠI - MỖI TAB CON MỘT TEMPLATE RIÊNG -->
+
+  <template data-help-type="play" data-game="bao_lo" data-sub="lo2">
+    <!-- =====================================================
+         CÁCH CHƠI: Lô 2 Số
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Lô 2 Số</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Lô 2 Số</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="bao_lo" data-sub="lo2dau">
+    <!-- =====================================================
+         CÁCH CHƠI: Lô 2 Số Đầu
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Lô 2 Số Đầu</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Lô 2 Số Đầu</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="bao_lo" data-sub="lo2_1k">
+    <!-- =====================================================
+         CÁCH CHƠI: Lô 2 Số 1K
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Lô 2 Số 1K</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Lô 2 Số 1K</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="bao_lo" data-sub="lo3">
+    <!-- =====================================================
+         CÁCH CHƠI: Lô 3 Số
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Lô 3 Số</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Lô 3 Số</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="bao_lo" data-sub="lo4">
+    <!-- =====================================================
+         CÁCH CHƠI: Lô 4 Số
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Lô 4 Số</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Lô 4 Số</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="lo_xien" data-sub="xien2">
+    <!-- =====================================================
+         CÁCH CHƠI: Xiên 2
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Xiên 2</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Xiên 2</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="lo_xien" data-sub="xien3">
+    <!-- =====================================================
+         CÁCH CHƠI: Xiên 3
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Xiên 3</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Xiên 3</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="lo_xien" data-sub="xien4">
+    <!-- =====================================================
+         CÁCH CHƠI: Xiên 4
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Xiên 4</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Xiên 4</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="danh_de" data-sub="de_db">
+    <!-- =====================================================
+         CÁCH CHƠI: Đề đặc biệt
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đề đặc biệt</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đề đặc biệt</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="danh_de" data-sub="de_dau_db">
+    <!-- =====================================================
+         CÁCH CHƠI: Đề đầu đặc biệt
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đề đầu đặc biệt</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đề đầu đặc biệt</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="danh_de" data-sub="de_giai7">
+    <!-- =====================================================
+         CÁCH CHƠI: Đề Giải 7
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đề Giải 7</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đề Giải 7</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="danh_de" data-sub="de_giai1">
+    <!-- =====================================================
+         CÁCH CHƠI: Đề Giải Nhất
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đề Giải Nhất</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đề Giải Nhất</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="danh_de" data-sub="de_dau_giai1">
+    <!-- =====================================================
+         CÁCH CHƠI: Đề đầu giải nhất
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đề đầu giải nhất</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đề đầu giải nhất</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="dau_duoi" data-sub="dau">
+    <!-- =====================================================
+         CÁCH CHƠI: Đầu
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đầu</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đầu</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="dau_duoi" data-sub="duoi">
+    <!-- =====================================================
+         CÁCH CHƠI: Đuôi
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>Đuôi</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>Đuôi</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="ba_cang" data-sub="3c_db">
+    <!-- =====================================================
+         CÁCH CHƠI: 3 Càng Đặc Biệt
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>3 Càng Đặc Biệt</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>3 Càng Đặc Biệt</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="ba_cang" data-sub="3c_giai1">
+    <!-- =====================================================
+         CÁCH CHƠI: 3 Càng Giải Nhất
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>3 Càng Giải Nhất</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>3 Càng Giải Nhất</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="ba_cang" data-sub="3c_dau_duoi">
+    <!-- =====================================================
+         CÁCH CHƠI: 3 Càng Đầu Đuôi
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>3 Càng Đầu Đuôi</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>3 Càng Đầu Đuôi</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="ba_cang" data-sub="3c_dau">
+    <!-- =====================================================
+         CÁCH CHƠI: 3 Càng Đầu
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>3 Càng Đầu</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>3 Càng Đầu</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+  <template data-help-type="play" data-game="bon_cang" data-sub="4cang">
+    <!-- =====================================================
+         CÁCH CHƠI: 4 Càng
+         BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
+         ===================================================== -->
+    <p><b>4 Càng</b></p>
+    <p>Nhập nội dung hướng dẫn cách chơi của tab <b>4 Càng</b> tại đây.</p>
+    <p>Bạn có thể thêm nhiều dòng <code>&lt;p&gt;...&lt;/p&gt;</code> tùy ý.</p>
+  </template>
+
 
 <!-- Auth modal -->
 <div id="authModal" class="modal hidden"><div class="modal-card"><button id="closeAuth" class="modal-close">×</button>

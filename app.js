@@ -3,15 +3,15 @@ const SESSION_KEY='lotto_demo_v9_session';
 const GAME={
   bao_lo:{title:'Bao Lô',quickProfile:'bao',subs:[
     {id:'lo2',label:'Lô 2 Số',digits:2,odds:'1 : 99.9',unitStake:27000},
-    {id:'lo2dau',label:'Lô 2 Số Đầu',digits:2,odds:'1 : 95',unitStake:23000},
-    {id:'lo2_1k',label:'Lô 2 Số 1K',digits:2,odds:'1 : 90',unitStake:1000},
-    {id:'lo3',label:'Lô 3 Số',digits:3,odds:'1 : 900',unitStake:23000},
-    {id:'lo4',label:'Lô 4 Số',digits:4,odds:'1 : 9000',unitStake:20000}
+    {id:'lo2dau',label:'Lô 2 Số Đầu',digits:2,odds:'1 : 99.9',unitStake:23000},
+    {id:'lo2_1k',label:'Lô 2 Số 1K',digits:2,odds:'1 : 3.7',unitStake:1000},
+    {id:'lo3',label:'Lô 3 Số',digits:3,odds:'1 : 980',unitStake:23000},
+    {id:'lo4',label:'Lô 4 Số',digits:4,odds:'1 : 8880',unitStake:20000}
   ]},
   lo_xien:{title:'Lô Xiên',quickProfile:'xien',subs:[
     {id:'xien2',label:'Xiên 2',pick:2,odds:'1 : 16',ticketStake:1000},
-    {id:'xien3',label:'Xiên 3',pick:3,odds:'1 : 45',ticketStake:1000},
-    {id:'xien4',label:'Xiên 4',pick:4,odds:'1 : 120',ticketStake:1000}
+    {id:'xien3',label:'Xiên 3',pick:3,odds:'1 : 65',ticketStake:1000},
+    {id:'xien4',label:'Xiên 4',pick:4,odds:'1 : 180',ticketStake:1000}
   ]},
   danh_de:{title:'Đánh Đề',quickProfile:'de',subs:[
     {id:'de_db',label:'Đề đặc biệt',digits:2,odds:'1 : 99.5',unitStake:1000},
@@ -21,8 +21,8 @@ const GAME={
     {id:'de_dau_giai1',label:'Đề đầu giải nhất',digits:2,odds:'1 : 99.5',unitStake:1000}
   ]},
   dau_duoi:{title:'Đầu Đuôi',quickProfile:null,subs:[
-    {id:'dau',label:'Đầu',digits:1,odds:'1 : 9',unitStake:1000},
-    {id:'duoi',label:'Đuôi',digits:1,odds:'1 : 9',unitStake:1000}
+    {id:'dau',label:'Đầu',digits:1,odds:'1 : 9.95',unitStake:1000},
+    {id:'duoi',label:'Đuôi',digits:1,odds:'1 : 9.95',unitStake:1000}
   ]},
   ba_cang:{title:'3 Càng',quickProfile:'3cang',subs:[
     {id:'3c_db',label:'3 Càng Đặc Biệt',digits:3,odds:'1 : 980',unitStake:1000},
@@ -31,7 +31,7 @@ const GAME={
     {id:'3c_dau',label:'3 Càng Đầu',digits:3,odds:'1 : 980',unitStake:3000}
   ]},
   bon_cang:{title:'4 Càng',quickProfile:null,subs:[
-    {id:'4cang',label:'4 Càng',digits:4,odds:'1 : 5500',unitStake:1000}
+    {id:'4cang',label:'4 Càng',digits:4,odds:'1 : 8880',unitStake:1000}
   ]}
 };
 const DIGIT_LABELS={1:['Đơn Vị'],2:['Chục','Đơn Vị'],3:['Trăm','Chục','Đơn Vị'],4:['Nghìn','Trăm','Chục','Đơn Vị']};
@@ -74,7 +74,7 @@ function unitStake(){
   return Number(cfg().unitStake || cfg().ticketStake || 1000);
 }
 function defaultModeForGame(game=state.game){
-  if(game==='lo_xien')return 'quick';
+  if(game==='lo_xien') return 'quick';
   return 'digits';
 }
 function modeAllowed(mode,game=state.game){
@@ -189,14 +189,13 @@ function renderSubTabs(){
 
   el('subTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
     state.sub=Number(b.dataset.sub);
-    normalizeMode();
-    state.rows=rowLabels().map(()=>[]);
-    state.numbers=[];
+    state.mode=defaultModeForGame(state.game);
     state.quickPage=0;
+    state.rows=[];
+    state.numbers=[];
     renderSubTabs();
     renderMeta();
-    renderSelection();
-    updateSummary();
+    resetSelections();
   });
 }
 function syncModes(){
@@ -204,6 +203,7 @@ function syncModes(){
   const digits=box.querySelector('[data-mode="digits"]');
   const manual=box.querySelector('[data-mode="manual"]');
   const quick=box.querySelector('[data-mode="quick"]');
+  const hint=el('modeHint');
 
   normalizeMode();
 
@@ -213,14 +213,77 @@ function syncModes(){
   const visible=[digits,manual,quick].filter(b=>b.style.display!=='none');
   box.classList.toggle('two',visible.length===2);
 
-  if(['bao_lo','lo_xien','danh_de','ba_cang'].includes(state.game)){
-    el('modeHint').innerHTML='<span class="help-dot">?</span> Hướng dẫn';
+  hint.classList.remove('clickable');
+  hint.removeAttribute('data-popup');
+
+  if(state.mode==='quick' && ['bao_lo','lo_xien','danh_de','ba_cang'].includes(state.game)){
+    hint.innerHTML='<span class="help-dot">?</span> Hướng dẫn';
+    hint.dataset.popup='quick';
+    hint.classList.add('clickable');
+
+  }else if(
+    state.mode==='digits' &&
+    ['danh_de','ba_cang','bon_cang'].includes(state.game)
+  ){
+    hint.innerHTML='<span class="hotcold-dot">?</span> Nóng/Lạnh';
+    hint.dataset.popup='hotcold';
+    hint.classList.add('clickable');
+
   }else{
-    el('modeHint').textContent='';
+    hint.textContent='';
   }
 
-  [digits,manual,quick].forEach(b=>b.classList.toggle('active',b.dataset.mode===state.mode));
+  [digits,manual,quick].forEach(b=>
+    b.classList.toggle('active',b.dataset.mode===state.mode)
+  );
 }
+
+function helpTemplateHtml(type){
+  if(type==='quick'){
+    return document.getElementById('helpQuickTemplate')?.innerHTML || '';
+  }
+
+  if(type==='hotcold'){
+    return document.getElementById('helpHotColdTemplate')?.innerHTML || '';
+  }
+
+  if(type==='play'){
+    const sub=cfg().id;
+    const template=document.querySelector(
+      `template[data-help-type="play"][data-game="${state.game}"][data-sub="${sub}"]`
+    );
+    return template?.innerHTML || '<p>Chưa có nội dung cách chơi cho mục này.</p>';
+  }
+
+  return '';
+}
+
+function openHelpModal(type){
+  const modal=el('helpModal');
+  const title=el('helpModalTitle');
+  const body=el('helpModalBody');
+
+  const titles={
+    quick:'Hướng dẫn chơi',
+    hotcold:'Hướng dẫn chơi',
+    play:'Cách chơi'
+  };
+
+  title.textContent=titles[type] || 'Hướng dẫn chơi';
+  body.innerHTML=helpTemplateHtml(type);
+
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('popup-open');
+}
+
+function closeHelpModal(){
+  const modal=el('helpModal');
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('popup-open');
+}
+
 function renderMeta(){const c=cfg();el('desktopGameName').textContent=c.label;el('mobileGameName').textContent=c.label;el('oddsText').textContent=c.odds;el('selectionArea').dataset.mobileOdds=`Tỉ lệ cược ${c.odds}  ⓘ`;syncModes();renderMobileGameMenu()}
 
 function quickProfileConfig(){
@@ -300,7 +363,84 @@ function smartPick(action){
   updateSummary();
 }
 
-function digitRowsHtml(){return rowLabels().map((label,r)=>`<div class="digit-row"><div class="row-label">${label}</div><div class="digit-list">${Array.from({length:10},(_,d)=>`<button class="digit-btn ${state.rows[r]?.includes(d)?'active':''}" data-digit="${d}" data-row="${r}">${d}</button>`).join('')}</div><div class="quick-actions">${[['all','Toàn bộ'],['tai','Tài'],['xiu','Xỉu'],['odd','Lẻ'],['even','Chẵn'],['clear','Xóa']].map(x=>`<button data-q="${x[0]}" data-row="${r}">${x[1]}</button>`).join('')}</div></div>`).join('')}
+
+function showDigitHotColdStats(){
+  return state.mode==='digits' &&
+    ['danh_de','ba_cang','bon_cang'].includes(state.game);
+}
+
+function digitHotColdStat(row,digit){
+  // Demo thống kê "số lần không xuất hiện liên tiếp trong 50 kỳ".
+  // Ổn định trong cùng ngày và khác nhau theo game / hàng / chữ số.
+  const now=new Date();
+  const gameSalt={
+    danh_de:17,
+    ba_cang:31,
+    bon_cang:47
+  }[state.game] || 7;
+
+  const seed=Math.abs(
+    gameSalt*97 +
+    (row+1)*53 +
+    digit*29 +
+    now.getDate()*11 +
+    (now.getMonth()+1)*17 +
+    now.getFullYear()*3
+  );
+
+  // 0..49, phù hợp ý nghĩa "trong 50 kỳ".
+  // Cố tình tạo một số 0/1 để có điểm đỏ như ảnh gốc.
+  if(seed%13===0)return 0;
+  if(seed%17===0)return 1;
+  return 2 + ((seed*7 + row*digit*3) % 48);
+}
+
+function digitStatClass(value){
+  if(value<=1)return 'red';
+  if(value>=10)return 'blue';
+  return 'gray';
+}
+
+function digitRowsHtml(){
+  const withStats=showDigitHotColdStats();
+
+  return rowLabels().map((label,r)=>`
+    <div class="digit-row ${withStats?'has-hotcold-stats':''}">
+      <div class="row-label">${label}</div>
+
+      <div class="digit-list">
+        ${Array.from({length:10},(_,d)=>{
+          const stat=withStats?digitHotColdStat(r,d):null;
+          return `
+            <div class="digit-cell">
+              <button
+                class="digit-btn ${state.rows[r]?.includes(d)?'active':''}"
+                data-digit="${d}"
+                data-row="${r}">
+                ${d}
+              </button>
+              ${withStats
+                ? `<span class="digit-hotcold-stat ${digitStatClass(stat)}">${stat}</span>`
+                : ''}
+            </div>`;
+        }).join('')}
+      </div>
+
+      <div class="quick-actions">
+        ${[
+          ['all','Toàn bộ'],
+          ['tai','Tài'],
+          ['xiu','Xỉu'],
+          ['odd','Lẻ'],
+          ['even','Chẵn'],
+          ['clear','Xóa']
+        ].map(x=>`
+          <button data-q="${x[0]}" data-row="${r}">${x[1]}</button>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
 function numberGridHtml(className=''){return`<div class="number-grid-wrap ${className}"><div class="number-grid">${Array.from({length:100},(_,i)=>{const n=String(i).padStart(2,'0');return`<button data-number="${n}" class="${state.numbers.includes(n)?'active':''}">${n}</button>`}).join('')}</div>${state.game==='lo_xien'?`<div class="selection-note">Chọn đúng ${cfg().pick} số cho ${cfg().label}.</div>`:''}</div>`}
 function loXienHtml(){
   const full=state.numbers.length>=cfg().pick;
@@ -636,11 +776,13 @@ function renderMobileGameMenu(){
     </section>`;
   }).join('');
 
-  menu.innerHTML=`<div class="mobile-game-dialog" role="dialog" aria-modal="true" aria-label="Danh sách trò chơi">
-    <div class="mobile-game-dialog-title">Danh sách trò chơi</div>
-    <div class="mobile-game-dialog-body">
-      <aside class="mobile-game-category"><span>Cổ điển</span></aside>
-      <div class="mobile-game-groups">${sections}</div>
+  menu.innerHTML=`<div class="mobile-game-shell">
+    <div class="mobile-game-dialog" role="dialog" aria-modal="true" aria-label="Danh sách trò chơi">
+      <div class="mobile-game-dialog-title">Danh sách trò chơi</div>
+      <div class="mobile-game-dialog-body">
+        <aside class="mobile-game-category"><span>Cổ điển</span></aside>
+        <div class="mobile-game-groups">${sections}</div>
+      </div>
     </div>
     <button type="button" class="mobile-game-close" data-close-game-menu aria-label="Đóng">×</button>
   </div>`;
@@ -650,6 +792,8 @@ function renderMobileGameMenu(){
     state.sub=Number(b.dataset.msub);
     state.mode=defaultModeForGame(state.game);
     state.quickPage=0;
+    state.rows=[];
+    state.numbers=[];
 
     document.querySelectorAll('#gameTabs [data-game]').forEach(x=>
       x.classList.toggle('active',x.dataset.game===state.game)
@@ -767,8 +911,38 @@ function clockTick(){
 }
 function renderAll(){renderAccount();renderSubTabs();renderMeta();renderSelection();renderDrafts();renderHistory();updateSummary();renderDrawerCounts()}
 
-function bind(){document.querySelectorAll('#gameTabs [data-game]').forEach(b=>b.onclick=()=>{state.game=b.dataset.game;state.sub=0;state.mode=defaultModeForGame(state.game);state.quickPage=0;document.querySelectorAll('#gameTabs [data-game]').forEach(x=>x.classList.toggle('active',x===b));renderSubTabs();renderMeta();resetSelections()});el('modeTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!modeAllowed(b.dataset.mode))return;state.mode=b.dataset.mode;state.quickPage=0;syncModes();resetSelections()});el('minus').onclick=()=>{el('multiplier').value=Math.max(1,multiplier()-1);updateSummary()};el('plus').onclick=()=>{el('multiplier').value=multiplier()+1;updateSummary()};el('multiplier').oninput=updateSummary;el('addDraft').onclick=addDraft;el('instantBet').onclick=instantBet;el('resetSelection').onclick=resetSelections;el('clearDrafts').onclick=()=>{state.drafts=[];renderDrafts()};el('submitDrafts').onclick=submitDrafts;el('historyTabs').querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{state.historyFilter=b.dataset.filter;el('historyTabs').querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderHistory()});el('refreshHistory').onclick=renderHistory;
-  el('mobileMenu').onclick=openDrawer;el('drawerBackdrop').onclick=closeDrawer;el('mobileBack').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});el('mobileGamePicker').onclick=()=>el('mobileGameMenu').classList.toggle('open');document.querySelectorAll('[data-chip]').forEach(b=>b.onclick=()=>{el('multiplier').value=b.dataset.chip;updateSummary()});el('mReset').onclick=resetSelections;el('mBet').onclick=()=>{if(state.drafts.length)submitDrafts();else instantBet()};document.querySelectorAll('[data-drawer]').forEach(b=>b.onclick=()=>{const a=b.dataset.drawer;closeDrawer();if(a==='all')return renderMobileRecords('all','Hồ sơ cá cược');if(a==='pending')return renderMobileRecords('pending','Chưa thanh toán');if(a==='settled')return renderMobileRecords('settled','Thắng thua');if(a==='feed')return renderMobileRecords('all','Lịch sử nuôi');if(a==='results'){renderMobileResults();return el('mobileResults').classList.add('open')}if(a==='help')return toast('Chọn cách chơi → chọn số → chọn số nhân → Cá cược.');if(a==='home')return window.scrollTo({top:0,behavior:'smooth'});if(a==='closed')return toast('Mục mô phỏng kỳ đã đóng.');if(a==='theme')return toast('Bản demo hiện dùng một chủ đề.');if(a==='support')return toast('CSKH demo.')});document.querySelectorAll('[data-close-mobile-page]').forEach(b=>b.onclick=()=>b.closest('.mobile-page').classList.remove('open'));el('mobileRecordsRefresh').onclick=()=>renderMobileRecords(state.mobileFilter||'all',el('mobileRecordsTitle').textContent||'Hồ sơ cá cược');el('mobileResultsRefresh').onclick=renderMobileResults;
+function bind(){
+  el('playHelpBtn').onclick=()=>openHelpModal('play');
+
+  el('modeHint').onclick=()=>{
+    const type=el('modeHint').dataset.popup;
+    if(type)openHelpModal(type);
+  };
+
+  el('helpModalClose').onclick=closeHelpModal;
+  el('helpModal').onclick=e=>{
+    if(e.target===el('helpModal'))closeHelpModal();
+  };
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!el('helpModal').classList.contains('hidden')){
+      closeHelpModal();
+    }
+  });
+
+document.querySelectorAll('#gameTabs [data-game]').forEach(b=>b.onclick=()=>{
+    state.game=b.dataset.game;
+    state.sub=0;
+    state.mode=defaultModeForGame(state.game);
+    state.quickPage=0;
+    state.rows=[];
+    state.numbers=[];
+    document.querySelectorAll('#gameTabs [data-game]').forEach(x=>x.classList.toggle('active',x===b));
+    renderSubTabs();
+    renderMeta();
+    resetSelections();
+  });el('modeTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!modeAllowed(b.dataset.mode))return;state.mode=b.dataset.mode;state.quickPage=0;syncModes();resetSelections()});el('minus').onclick=()=>{el('multiplier').value=Math.max(1,multiplier()-1);updateSummary()};el('plus').onclick=()=>{el('multiplier').value=multiplier()+1;updateSummary()};el('multiplier').oninput=updateSummary;el('addDraft').onclick=addDraft;el('instantBet').onclick=instantBet;el('resetSelection').onclick=resetSelections;el('clearDrafts').onclick=()=>{state.drafts=[];renderDrafts()};el('submitDrafts').onclick=submitDrafts;el('historyTabs').querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{state.historyFilter=b.dataset.filter;el('historyTabs').querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderHistory()});el('refreshHistory').onclick=renderHistory;
+  el('mobileMenu').onclick=openDrawer;el('drawerBackdrop').onclick=closeDrawer;el('mobileBack').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});el('mobileGamePicker').onclick=()=>el('mobileGameMenu').classList.toggle('open');document.querySelectorAll('[data-chip]').forEach(b=>b.onclick=()=>{el('multiplier').value=b.dataset.chip;updateSummary()});el('mReset').onclick=resetSelections;el('mBet').onclick=()=>{if(state.drafts.length)submitDrafts();else instantBet()};document.querySelectorAll('[data-drawer]').forEach(b=>b.onclick=()=>{const a=b.dataset.drawer;closeDrawer();if(a==='all')return renderMobileRecords('all','Hồ sơ cá cược');if(a==='pending')return renderMobileRecords('pending','Chưa thanh toán');if(a==='settled')return renderMobileRecords('settled','Thắng thua');if(a==='feed')return renderMobileRecords('all','Lịch sử nuôi');if(a==='results'){renderMobileResults();return el('mobileResults').classList.add('open')}if(a==='help')return openHelpModal('play');if(a==='home')return window.scrollTo({top:0,behavior:'smooth'});if(a==='closed')return toast('Mục mô phỏng kỳ đã đóng.');if(a==='theme')return toast('Bản demo hiện dùng một chủ đề.');if(a==='support')return toast('CSKH demo.')});document.querySelectorAll('[data-close-mobile-page]').forEach(b=>b.onclick=()=>b.closest('.mobile-page').classList.remove('open'));el('mobileRecordsRefresh').onclick=()=>renderMobileRecords(state.mobileFilter||'all',el('mobileRecordsTitle').textContent||'Hồ sơ cá cược');el('mobileResultsRefresh').onclick=renderMobileResults;
   el('closeAuth').onclick=closeAuth;el('showRegister').onclick=()=>openAuth('register');el('showLogin').onclick=()=>openAuth('login');el('doLogin').onclick=()=>doLogin(el('loginUser').value.trim().toLowerCase(),el('loginPass').value);el('doRegister').onclick=()=>doRegister(el('registerUser').value,el('registerPass').value);el('authModal').onclick=e=>{if(e.target===el('authModal'))closeAuth()};bindDesktopAuth()}
 
 function init(){bind();renderAll();clockTick();setInterval(clockTick,1000);installResultObserver()}

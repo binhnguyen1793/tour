@@ -1304,3 +1304,733 @@
     font-size:29px !important;
   }
 }
+
+
+/* =========================================================
+   V19 - FIX THẬT: Popup Danh sách trò chơi bo đủ 4 góc
+   ========================================================= */
+@media (max-width:760px){
+
+  .mobile-game-shell{
+    position:relative !important;
+    width:calc(100vw - 24px) !important;
+    max-width:392px !important;
+    overflow:visible !important;
+  }
+
+  .mobile-game-dialog{
+    width:100% !important;
+    max-width:none !important;
+    background:#fff !important;
+
+    border-radius:14px !important;
+    overflow:hidden !important;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.12) !important;
+  }
+
+  .mobile-game-dialog-title{
+    border-radius:14px 14px 0 0 !important;
+    overflow:hidden !important;
+  }
+
+  .mobile-game-dialog-body{
+    overflow-y:auto !important;
+    overflow-x:hidden !important;
+    -webkit-overflow-scrolling:touch !important;
+
+    background:#fff !important;
+    border-radius:0 0 14px 14px !important;
+  }
+
+  /* Bắt cả 2 cột bên trong không phủ mất radius phía dưới */
+  .mobile-game-category,
+  .mobile-game-groups{
+    min-height:100% !important;
+  }
+
+  .mobile-game-groups{
+    background:#fff !important;
+    padding-bottom:18px !important;
+  }
+
+  .mobile-game-group:last-child{
+    margin-bottom:0 !important;
+    padding-bottom:12px !important;
+  }
+
+  /* Nút đóng nằm ngoài dialog nên không bị overflow:hidden cắt */
+  .mobile-game-close{
+    position:absolute !important;
+    left:50% !important;
+    bottom:-54px !important;
+    transform:translateX(-50%) !important;
+    z-index:5 !important;
+  }
+}
+
+@media (max-width:430px){
+  .mobile-game-shell{
+    width:calc(100vw - 26px) !important;
+    max-width:none !important;
+  }
+
+  .mobile-game-dialog{
+    border-radius:13px !important;
+  }
+
+  .mobile-game-dialog-title{
+    border-radius:13px 13px 0 0 !important;
+  }
+
+  .mobile-game-dialog-body{
+    border-radius:0 0 13px 13px !important;
+  }
+
+  .mobile-game-close{
+    bottom:-51px !important;
+  }
+}
+
+
+/* =========================================================
+   V20 - DESKTOP KHÔNG CO GIÃN KHI THU HẸP CỬA SỔ
+   ========================================================= */
+
+/*
+  Trang tham chiếu giữ desktop canvas cố định.
+  Khi viewport desktop hẹp lại, phần bên phải bị che/cắt,
+  không co font / nút / grid.
+  Chỉ <= 760px mới chuyển sang giao diện mobile.
+*/
+@media (min-width:761px){
+
+  html{
+    min-width:1500px !important;
+    overflow-x:hidden !important;
+  }
+
+  body{
+    min-width:1500px !important;
+    overflow-x:hidden !important;
+  }
+
+  /* Header desktop giữ nguyên kích thước */
+  .desktop-top-inner,
+  .desktop-auth-inner,
+  .desktop-sub-inner{
+    width:1280px !important;
+    max-width:none !important;
+    min-width:1280px !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  .desktop-nav{
+    min-width:1500px !important;
+    width:1500px !important;
+    max-width:none !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  /* Khu game cố định đúng tỷ lệ desktop */
+  .page-wrap{
+    width:1404px !important;
+    min-width:1404px !important;
+    max-width:none !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  .lottery-shell{
+    width:1404px !important;
+    min-width:1404px !important;
+    max-width:none !important;
+    grid-template-columns:1090px 300px !important;
+    gap:10px !important;
+  }
+
+  .game-column{
+    width:1090px !important;
+    min-width:1090px !important;
+    max-width:1090px !important;
+  }
+
+  .result-column{
+    width:300px !important;
+    min-width:300px !important;
+    max-width:300px !important;
+  }
+
+  /* Không cho grid/tab tự bóp khi cửa sổ desktop hẹp */
+  .game-tabs,
+  .sub-tabs-row,
+  .selection-area,
+  .bet-toolbar,
+  .draft-panel,
+  .checkout-row{
+    min-width:1090px !important;
+  }
+
+  .history-shell{
+    width:1404px !important;
+    min-width:1404px !important;
+    max-width:1404px !important;
+  }
+
+  .history-table{
+    min-width:1404px !important;
+  }
+
+  /* Các grid chọn số giữ nguyên kích thước desktop */
+  .smart-quick-layout,
+  .loxien-layout{
+    min-width:1090px !important;
+    width:1090px !important;
+  }
+
+  .smart-grid,
+  .loxien-grid{
+    min-width:0 !important;
+  }
+
+  /* Không scale font/nút theo viewport desktop */
+  .digit-btn,
+  .quick-actions button,
+  .smart-number,
+  .loxien-number,
+  .mode-tabs button,
+  .sub-tabs button,
+  .game-tabs button{
+    flex-shrink:0 !important;
+  }
+
+  /* Footer cũng giữ desktop canvas */
+  footer{
+    min-width:1500px !important;
+  }
+
+  .contact-strip,
+  .brand-strip{
+    min-width:1500px !important;
+  }
+}
+
+/* Chỉ mobile mới responsive thật */
+@media (max-width:760px){
+  html,
+  body{
+    min-width:0 !important;
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+  }
+}
+
+
+/* =========================================================
+   V21 - Thu nhỏ thêm ô Chọn số nhanh desktop
+   ========================================================= */
+@media (min-width:761px){
+
+  /* Bao Lô / Đánh Đề / 3 Càng */
+  .smart-grid{
+    column-gap:10px !important;
+    row-gap:8px !important;
+  }
+
+  .smart-number{
+    height:30px !important;
+    min-height:30px !important;
+    border-radius:3px !important;
+    font-size:12px !important;
+    line-height:28px !important;
+  }
+
+  .smart-stat{
+    min-width:17px !important;
+    height:17px !important;
+    right:-6px !important;
+    top:-6px !important;
+    padding:0 3px !important;
+    font-size:8px !important;
+  }
+
+  /* Lô Xiên */
+  .loxien-grid{
+    column-gap:9px !important;
+    row-gap:8px !important;
+  }
+
+  .loxien-number{
+    height:29px !important;
+    min-height:29px !important;
+    border-radius:3px !important;
+    font-size:11px !important;
+    line-height:27px !important;
+  }
+
+  .loxien-number i{
+    min-width:16px !important;
+    height:16px !important;
+    right:-6px !important;
+    top:-6px !important;
+    font-size:8px !important;
+  }
+
+  /* Giữ tick active nhỏ theo ô mới */
+  .smart-number.active::after,
+  .loxien-number.active::after{
+    width:14px !important;
+    height:14px !important;
+    font-size:7px !important;
+    padding:4px 0 0 5px !important;
+  }
+}
+
+
+/* =========================================================
+   V22 - Quick select: nhóm nút bên trái luôn nằm 1 hàng
+   ========================================================= */
+@media (min-width:761px){
+
+  /* Nới cột điều khiển bên trái giống ảnh gốc */
+  .smart-quick-layout{
+    grid-template-columns:375px minmax(0,1fr) !important;
+  }
+
+  .smart-quick-side{
+    padding:18px 14px 18px 20px !important;
+  }
+
+  /* Từng nhóm nút không được xuống dòng */
+  .smart-quick-side section>div{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    align-items:center !important;
+    gap:7px !important;
+    width:100% !important;
+    min-width:0 !important;
+  }
+
+  /* Thu nhẹ nút để 5 nút vừa đúng một hàng */
+  .smart-quick-side section button{
+    height:29px !important;
+    min-width:0 !important;
+    padding:0 10px !important;
+    border-radius:3px !important;
+
+    font-size:12px !important;
+    line-height:27px !important;
+    white-space:nowrap !important;
+
+    flex:0 0 auto !important;
+  }
+
+  /* Nhóm random */
+  .smart-quick-side section:nth-of-type(1) button{
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+
+  /* Cùng số / Chẵn / Lẻ / Tài / Xỉu */
+  .smart-quick-side section:nth-of-type(2) button{
+    padding-left:9px !important;
+    padding-right:9px !important;
+  }
+
+  /* Top 1 / Top 2 / Top 5 / Top 10 / Top 20 */
+  .smart-quick-side section:nth-of-type(3) button{
+    padding-left:9px !important;
+    padding-right:9px !important;
+  }
+
+  .smart-quick-side section{
+    margin-top:21px !important;
+  }
+
+  .smart-quick-side section p{
+    margin:0 0 10px 10px !important;
+    font-size:12px !important;
+  }
+
+  /* Bên phải vẫn giữ 9 cột, chỉ co nhẹ khoảng cách để bù 45px cột trái */
+  .smart-grid-panel{
+    padding-left:10px !important;
+    padding-right:22px !important;
+  }
+
+  .smart-grid{
+    column-gap:8px !important;
+    row-gap:8px !important;
+  }
+}
+
+
+/* =========================================================
+   V23 - Quick select: badge không đẩy số chính xuống
+   ========================================================= */
+@media (min-width:761px){
+  .smart-number,
+  .loxien-number{
+    position:relative !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    padding:0 !important;
+    line-height:1 !important;
+    overflow:visible !important;
+    box-sizing:border-box !important;
+  }
+
+  .smart-number > span,
+  .loxien-number > span,
+  .smart-number .smart-number-text{
+    position:static !important;
+    display:block !important;
+    margin:0 !important;
+    padding:0 !important;
+    line-height:1 !important;
+    transform:none !important;
+  }
+
+  .smart-stat,
+  .loxien-number > i,
+  .loxien-stat{
+    position:absolute !important;
+    top:-7px !important;
+    right:-6px !important;
+    margin:0 !important;
+    padding:0 3px !important;
+    min-width:17px !important;
+    height:17px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    line-height:17px !important;
+    border-radius:999px !important;
+    box-sizing:border-box !important;
+    z-index:3 !important;
+  }
+}
+
+
+/* =========================================================
+   V24 - POPUP HƯỚNG DẪN / CÁCH CHƠI / NÓNG-LẠNH
+   ========================================================= */
+
+.game-help-btn{
+  margin-left:auto;
+  height:100%;
+  padding:0 14px;
+  border:0;
+  background:transparent;
+  color:#465261;
+  font:400 12px/35px Arial,"Helvetica Neue",Helvetica,sans-serif;
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.game-help-btn:hover{
+  color:#167fe9;
+}
+
+.mode-hint.clickable{
+  cursor:pointer;
+  user-select:none;
+}
+
+.mode-hint.clickable:hover{
+  color:#287fdc;
+}
+
+.hotcold-dot,
+.help-dot{
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  display:inline-grid;
+  place-items:center;
+  margin-right:4px;
+  vertical-align:-2px;
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+}
+
+.help-dot{
+  background:#ffad31;
+}
+
+.hotcold-dot{
+  background:#e69518;
+}
+
+/* Overlay */
+.help-modal{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(0,0,0,.43);
+}
+
+.help-modal.hidden{
+  display:none !important;
+}
+
+body.popup-open{
+  overflow:hidden;
+}
+
+/* Card */
+.help-modal-card{
+  width:550px;
+  max-width:calc(100vw - 40px);
+  max-height:calc(100vh - 80px);
+  overflow:hidden;
+
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 8px 30px rgba(0,0,0,.22);
+
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  color:#50555d;
+}
+
+.help-modal-head{
+  position:relative;
+  height:58px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 20px;
+
+  border-bottom:1px solid #e1e5ea;
+}
+
+.help-modal-head h2{
+  margin:0;
+  padding:0 42px;
+
+  color:#333941;
+  font-size:18px;
+  line-height:22px;
+  font-weight:400;
+  text-align:center;
+}
+
+.help-modal-close{
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+
+  width:30px;
+  height:30px;
+  padding:0;
+  border:0;
+  background:transparent;
+
+  color:#69717b;
+  font:300 23px/30px Arial,sans-serif;
+  cursor:pointer;
+}
+
+.help-modal-close:hover{
+  color:#222;
+}
+
+.help-modal-body{
+  max-height:calc(100vh - 170px);
+  overflow-y:auto;
+  padding:13px 20px 20px;
+
+  color:#555b64;
+  font-size:13px;
+  line-height:1.62;
+}
+
+.help-modal-body p{
+  margin:0 0 2px;
+}
+
+.help-modal-body p:last-child{
+  margin-bottom:0;
+}
+
+.help-modal-body b{
+  color:#3d444d;
+}
+
+.help-modal-body code{
+  padding:1px 4px;
+  border-radius:3px;
+  background:#f2f4f7;
+  font-size:12px;
+}
+
+@media(max-width:760px){
+  .game-help-btn{
+    display:none !important;
+  }
+
+  .help-modal{
+    padding:14px;
+  }
+
+  .help-modal-card{
+    width:100%;
+    max-width:560px;
+    max-height:calc(100dvh - 70px);
+    border-radius:9px;
+  }
+
+  .help-modal-head{
+    height:54px;
+    margin:0 16px;
+  }
+
+  .help-modal-head h2{
+    font-size:17px;
+  }
+
+  .help-modal-body{
+    max-height:calc(100dvh - 150px);
+    padding:12px 16px 18px;
+    font-size:13px;
+    line-height:1.55;
+  }
+}
+
+
+/* =========================================================
+   V25 - Thống kê Nóng/Lạnh dưới số ở Chọn số
+   Chỉ: Đánh Đề / 3 Càng / 4 Càng
+   ========================================================= */
+
+.digit-cell{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  min-width:0;
+}
+
+/* Bình thường không có stat thì wrapper không làm thay đổi bố cục đáng kể */
+.digit-cell .digit-btn{
+  flex:0 0 auto;
+}
+
+.digit-hotcold-stat{
+  display:block;
+  min-width:20px;
+  height:14px;
+  margin-top:3px;
+
+  text-align:center;
+  font-family:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  font-size:9px;
+  line-height:14px;
+  font-weight:400;
+
+  pointer-events:none;
+  user-select:none;
+}
+
+.digit-hotcold-stat.red{
+  color:#ee3b3b;
+}
+
+.digit-hotcold-stat.blue{
+  color:#1678e8;
+}
+
+.digit-hotcold-stat.gray{
+  color:#7283a2;
+}
+
+/* Có thống kê thì cho hàng đủ chiều cao giống ảnh gốc */
+@media(min-width:761px){
+  .digit-row.has-hotcold-stats{
+    min-height:98px !important;
+  }
+
+  .digit-row.has-hotcold-stats .digit-list{
+    align-items:flex-start !important;
+  }
+
+  .digit-row.has-hotcold-stats .digit-cell{
+    padding-top:0;
+  }
+
+  .digit-row.has-hotcold-stats .quick-actions{
+    align-self:center !important;
+  }
+}
+
+/* Mobile: vẫn hiển thị nhỏ ngay dưới số, không làm nút to thêm */
+@media(max-width:760px){
+  .digit-hotcold-stat{
+    height:12px;
+    margin-top:2px;
+    font-size:8px;
+    line-height:12px;
+  }
+
+  .digit-row.has-hotcold-stats{
+    min-height:176px !important;
+  }
+}
+
+
+/* =========================================================
+   V26 - LOGO PNG TỪ GITHUB
+   ========================================================= */
+
+.logo-image-link{
+  width:320px !important;
+  min-width:320px !important;
+  height:78px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  padding:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  text-decoration:none !important;
+}
+
+.site-logo-image{
+  width:285px !important;
+  height:62px !important;
+  display:block !important;
+  object-fit:contain !important;
+  object-position:left center !important;
+  background:transparent !important;
+  max-width:none !important;
+}
+
+/* Nếu PNG có nền trong suốt, nền xanh của header sẽ tự xuyên qua */
+.loginline .site-logo-image{
+  filter:none !important;
+}
+
+/* Logo trong drawer mobile nếu có */
+.drawer-logo-image{
+  width:116px !important;
+  height:58px !important;
+  margin:0 auto 8px !important;
+  background:transparent !important;
+  border-radius:0 !important;
+}
+
+.drawer-logo-image img{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+}
