@@ -1980,11 +1980,25 @@ function placeDrafts(drafts){
   const database=getDb();
   const currentUser=database.users[username()];
 
-  if(
-    !currentUser||
-    currentUser.balance<total
-  ){
-    toast('Không đủ điểm demo.',true);
+  if(!currentUser){
+    openAuth('login');
+    toast('Vui lòng đăng nhập trước khi đặt cược.',true);
+    return false;
+  }
+  
+  if(Number(currentUser.balance)<=0){
+    toast('Bạn chưa có tiền. Vui lòng nạp tiền trước.',true);
+    return false;
+  }
+  
+  if(Number(currentUser.balance)<total){
+    const missing=total-Number(currentUser.balance);
+  
+    toast(
+      `Số dư không đủ. Bạn còn thiếu ${fmt(missing)} VND.`,
+      true
+    );
+  
     return false;
   }
 
