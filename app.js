@@ -2026,7 +2026,7 @@ function placeDrafts(drafts){
   renderAll();
 
   toast(
-    'Đã ghi vé vào Hồ sơ cá cược và Chưa thanh toán.'
+    'Đã ghi vé vào Hồ sơ cá cược và Chờ kết quả.'
   );
 
   return true;
@@ -2979,7 +2979,7 @@ function renderMobileRecords(
             }">
               ${
                 bet.status==='pending'
-                  ? 'Chưa thanh toán'
+                  ? 'Chờ kết quả'
                   : bet.status==='win'
                     ? 'Thắng'
                     : 'Thua'
@@ -3576,7 +3576,7 @@ function bind(){
         if(action==='pending'){
           return renderMobileRecords(
             'pending',
-            'Chưa thanh toán'
+            'Chờ kết quả'
           );
         }
 
