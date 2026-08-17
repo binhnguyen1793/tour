@@ -1,263 +1,1112 @@
 const DB_KEY='lotto_demo_v9_db';
 const SESSION_KEY='lotto_demo_v9_session';
+
 const GAME={
-  bao_lo:{title:'Bao Lô',quickProfile:'bao',subs:[
-    {id:'lo2',label:'Lô 2 Số',digits:2,odds:'1 : 99.9',unitStake:27000},
-    {id:'lo2dau',label:'Lô 2 Số Đầu',digits:2,odds:'1 : 99.9',unitStake:23000},
-    {id:'lo2_1k',label:'Lô 2 Số 1K',digits:2,odds:'1 : 3.7',unitStake:1000},
-    {id:'lo3',label:'Lô 3 Số',digits:3,odds:'1 : 980',unitStake:23000},
-    {id:'lo4',label:'Lô 4 Số',digits:4,odds:'1 : 8880',unitStake:20000}
-  ]},
-  lo_xien:{title:'Lô Xiên',quickProfile:'xien',subs:[
-    {id:'xien2',label:'Xiên 2',pick:2,odds:'1 : 16',ticketStake:1000},
-    {id:'xien3',label:'Xiên 3',pick:3,odds:'1 : 65',ticketStake:1000},
-    {id:'xien4',label:'Xiên 4',pick:4,odds:'1 : 180',ticketStake:1000}
-  ]},
-  danh_de:{title:'Đánh Đề',quickProfile:'de',subs:[
-    {id:'de_db',label:'Đề đặc biệt',digits:2,odds:'1 : 99.5',unitStake:1000},
-    {id:'de_dau_db',label:'Đề đầu đặc biệt',digits:2,odds:'1 : 99.5',unitStake:1000},
-    {id:'de_giai7',label:'Đề Giải 7',digits:2,odds:'1 : 99.5',unitStake:4000},
-    {id:'de_giai1',label:'Đề Giải Nhất',digits:2,odds:'1 : 99.5',unitStake:1000},
-    {id:'de_dau_giai1',label:'Đề đầu giải nhất',digits:2,odds:'1 : 99.5',unitStake:1000}
-  ]},
-  dau_duoi:{title:'Đầu Đuôi',quickProfile:null,subs:[
-    {id:'dau',label:'Đầu',digits:1,odds:'1 : 9.95',unitStake:1000},
-    {id:'duoi',label:'Đuôi',digits:1,odds:'1 : 9.95',unitStake:1000}
-  ]},
-  ba_cang:{title:'3 Càng',quickProfile:'3cang',subs:[
-    {id:'3c_db',label:'3 Càng Đặc Biệt',digits:3,odds:'1 : 980',unitStake:1000},
-    {id:'3c_giai1',label:'3 Càng Giải Nhất',digits:3,odds:'1 : 980',unitStake:1000},
-    {id:'3c_dau_duoi',label:'3 Càng Đầu Đuôi',digits:3,odds:'1 : 980',unitStake:4000},
-    {id:'3c_dau',label:'3 Càng Đầu',digits:3,odds:'1 : 980',unitStake:3000}
-  ]},
-  bon_cang:{title:'4 Càng',quickProfile:null,subs:[
-    {id:'4cang',label:'4 Càng',digits:4,odds:'1 : 8880',unitStake:1000}
-  ]}
+  bao_lo:{
+    title:'Bao Lô',
+    quickProfile:'bao',
+    subs:[
+      {
+        id:'lo2',
+        label:'Lô 2 Số',
+        digits:2,
+        odds:'1 : 99.9',
+        unitStake:27000
+      },
+      {
+        id:'lo2dau',
+        label:'Lô 2 Số Đầu',
+        digits:2,
+        odds:'1 : 99.9',
+        unitStake:23000
+      },
+      {
+        id:'lo2_1k',
+        label:'Lô 2 Số 1K',
+        digits:2,
+        odds:'1 : 3.7',
+        unitStake:1000
+      },
+      {
+        id:'lo3',
+        label:'Lô 3 Số',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:23000
+      },
+      {
+        id:'lo4',
+        label:'Lô 4 Số',
+        digits:4,
+        odds:'1 : 8880',
+        unitStake:20000
+      }
+    ]
+  },
+
+  lo_xien:{
+    title:'Lô Xiên',
+    quickProfile:'xien',
+    subs:[
+      {
+        id:'xien2',
+        label:'Xiên 2',
+        pick:2,
+        odds:'1 : 16',
+        ticketStake:1000
+      },
+      {
+        id:'xien3',
+        label:'Xiên 3',
+        pick:3,
+        odds:'1 : 65',
+        ticketStake:1000
+      },
+      {
+        id:'xien4',
+        label:'Xiên 4',
+        pick:4,
+        odds:'1 : 180',
+        ticketStake:1000
+      }
+    ]
+  },
+
+  danh_de:{
+    title:'Đánh Đề',
+    quickProfile:'de',
+    subs:[
+      {
+        id:'de_db',
+        label:'Đề đặc biệt',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      },
+      {
+        id:'de_dau_db',
+        label:'Đề đầu đặc biệt',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      },
+      {
+        id:'de_giai7',
+        label:'Đề Giải 7',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:4000
+      },
+      {
+        id:'de_giai1',
+        label:'Đề Giải Nhất',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      },
+      {
+        id:'de_dau_giai1',
+        label:'Đề đầu giải nhất',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      }
+    ]
+  },
+
+  dau_duoi:{
+    title:'Đầu Đuôi',
+    quickProfile:null,
+    subs:[
+      {
+        id:'dau',
+        label:'Đầu',
+        digits:1,
+        odds:'1 : 9.95',
+        unitStake:1000
+      },
+      {
+        id:'duoi',
+        label:'Đuôi',
+        digits:1,
+        odds:'1 : 9.95',
+        unitStake:1000
+      }
+    ]
+  },
+
+  ba_cang:{
+    title:'3 Càng',
+    quickProfile:'3cang',
+    subs:[
+      {
+        id:'3c_db',
+        label:'3 Càng Đặc Biệt',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:1000
+      },
+      {
+        id:'3c_giai1',
+        label:'3 Càng Giải Nhất',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:1000
+      },
+      {
+        id:'3c_dau_duoi',
+        label:'3 Càng Đầu Đuôi',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:4000
+      },
+      {
+        id:'3c_dau',
+        label:'3 Càng Đầu',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:3000
+      }
+    ]
+  },
+
+  bon_cang:{
+    title:'4 Càng',
+    quickProfile:null,
+    subs:[
+      {
+        id:'4cang',
+        label:'4 Càng',
+        digits:4,
+        odds:'1 : 8880',
+        unitStake:1000
+      }
+    ]
+  }
 };
-const DIGIT_LABELS={1:['Đơn Vị'],2:['Chục','Đơn Vị'],3:['Trăm','Chục','Đơn Vị'],4:['Nghìn','Trăm','Chục','Đơn Vị']};
-const state={game:'bao_lo',sub:0,mode:'digits',rows:[[],[]],numbers:[],quickPage:0,drafts:[],historyFilter:'all',lastResult:null};
 
-function el(id){return document.getElementById(id)}
-function fmt(n){return Number(n||0).toLocaleString('vi-VN')}
-function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-function toast(msg,error=false){const t=el('toast');t.textContent=msg;t.classList.toggle('error',error);t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2200)}
-function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
-function blankDb(){return{users:{},bets:[]}}
-function getDb(){try{return JSON.parse(localStorage.getItem(DB_KEY))||blankDb()}catch{return blankDb()}}
-function saveDb(db){localStorage.setItem(DB_KEY,JSON.stringify(db))}
-function username(){return localStorage.getItem(SESSION_KEY)}
-function user(){const u=username();return u?getDb().users[u]||null:null}
-function cfg(){return GAME[state.game].subs[state.sub]}
-function multiplier(){return Math.max(1,Math.floor(Number(el('multiplier').value)||1))}
-function localDateKey(d=new Date()){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
-function displayDate(key){const [y,m,d]=key.split('-');return `${d}/${m}/${y}`}
-function nextDrawDate(){const n=new Date();const cutoff=new Date(n);cutoff.setHours(18,15,0,0);if(n>=cutoff)n.setDate(n.getDate()+1);return localDateKey(n)}
+const DIGIT_LABELS={
+  1:['Đơn Vị'],
+  2:['Chục','Đơn Vị'],
+  3:['Trăm','Chục','Đơn Vị'],
+  4:['Nghìn','Trăm','Chục','Đơn Vị']
+};
 
-function openAuth(which='login'){el('authModal').classList.remove('hidden');el('loginPane').classList.toggle('hidden',which!=='login');el('registerPane').classList.toggle('hidden',which!=='register')}
-function closeAuth(){el('authModal').classList.add('hidden')}
-function requireLogin(){if(user())return true;openAuth('login');toast('Hãy đăng nhập hoặc đăng ký tài khoản demo trước.',true);return false}
+const state={
+  game:'bao_lo',
+  sub:0,
+  mode:'digits',
+  rows:[[],[]],
+  numbers:[],
+  quickPage:0,
+  drafts:[],
+  historyFilter:'all',
+  lastResult:null
+};
 
-function renderAccount(){const u=user();const d=el('desktopAuth');if(u){d.innerHTML=`<div class="desktop-user"><div><strong>${esc(u.username)}</strong><em>${fmt(u.balance)} điểm</em></div><button id="desktopLogout">Đăng xuất</button></div>`;el('desktopLogout').onclick=logout}else{d.innerHTML=`<input id="headerUser" autocomplete="username" placeholder="Tên đăng nhập"><input id="headerPass" autocomplete="current-password" type="password" placeholder="mật khẩu"><span class="captcha-demo">3666</span><input class="captcha-field" placeholder="Mã xác nhận"><button id="headerLogin" class="btn-login">đăng nhập</button><button id="headerRegister" class="btn-register">đăng ký</button><button id="headerTry" class="btn-try">Chơi thử</button><button id="headerForgot" class="btn-forgot">Quên mật khẩu?</button>`;bindDesktopAuth()}
-  el('drawerBalance').textContent=`${fmt(u?u.balance:0)} VND`;el('mBalance').textContent=fmt(u?u.balance:0);const a=el('drawerAuth');if(u){a.innerHTML=`<button id="drawerLogout" style="background:#2298e9;min-width:145px">Đăng xuất ${esc(u.username)}</button>`;el('drawerLogout').onclick=logout}else{a.innerHTML='<button id="drawerLogin">Đăng nhập</button><button id="drawerRegister">Đăng ký</button>';el('drawerLogin').onclick=()=>{closeDrawer();openAuth('login')};el('drawerRegister').onclick=()=>{closeDrawer();openAuth('register')}};renderDrawerCounts()}
-function logout(){localStorage.removeItem(SESSION_KEY);renderAll();closeDrawer();toast('Đã đăng xuất.')}
-function bindDesktopAuth(){el('headerLogin')?.addEventListener('click',loginFromHeader);el('headerRegister')?.addEventListener('click',()=>openAuth('register'));el('headerTry')?.addEventListener('click',()=>openAuth('register'));el('headerForgot')?.addEventListener('click',()=>toast('Bản demo không gửi email khôi phục.',true))}
-function loginFromHeader(){const name=el('headerUser').value.trim().toLowerCase(),pass=el('headerPass').value;doLogin(name,pass)}
-function doLogin(name,pass){const db=getDb(),u=db.users[name];if(!u||u.passwordHash!==hash(pass))return toast('Sai tài khoản hoặc mật khẩu.',true);localStorage.setItem(SESSION_KEY,name);closeAuth();renderAll();toast('Đăng nhập thành công.')}
-function doRegister(name,pass){name=name.trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/i.test(name)||pass.length<4)return toast('Tên đăng nhập >=3 ký tự, mật khẩu >=4 ký tự.',true);const db=getDb();if(db.users[name])return toast('Tài khoản đã tồn tại trên thiết bị này.',true);db.users[name]={username:name,passwordHash:hash(pass),balance:100000,createdAt:new Date().toISOString()};saveDb(db);localStorage.setItem(SESSION_KEY,name);closeAuth();renderAll();toast('Đã tạo tài khoản với 100.000 điểm demo.')}
+const PRIZE_COUNTS={
+  db:1,
+  g1:1,
+  g2:2,
+  g3:6,
+  g4:4,
+  g5:6,
+  g6:3,
+  g7:4
+};
 
+const PRIZE_DIGITS={
+  db:5,
+  g1:5,
+  g2:5,
+  g3:5,
+  g4:4,
+  g5:4,
+  g6:3,
+  g7:2
+};
+
+const PAYOUT_BASE_STAKE=1000;
+
+function el(id){
+  return document.getElementById(id);
+}
+
+function fmt(number){
+  return Number(number||0).toLocaleString('vi-VN');
+}
+
+function esc(value){
+  return String(value).replace(
+    /[&<>"']/g,
+    character=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[character])
+  );
+}
+
+function toast(message,error=false){
+  const box=el('toast');
+
+  box.textContent=message;
+  box.classList.toggle('error',error);
+  box.classList.add('show');
+
+  clearTimeout(toast._timer);
+
+  toast._timer=setTimeout(()=>{
+    box.classList.remove('show');
+  },2200);
+}
+
+function hash(text){
+  let value=2166136261;
+
+  for(let index=0;index<text.length;index++){
+    value^=text.charCodeAt(index);
+    value=Math.imul(value,16777619);
+  }
+
+  return(value>>>0).toString(16);
+}
+
+function blankDb(){
+  return{
+    users:{},
+    bets:[]
+  };
+}
+
+function getDb(){
+  try{
+    return(
+      JSON.parse(localStorage.getItem(DB_KEY))||
+      blankDb()
+    );
+  }catch{
+    return blankDb();
+  }
+}
+
+function saveDb(database){
+  localStorage.setItem(
+    DB_KEY,
+    JSON.stringify(database)
+  );
+}
+
+function username(){
+  return localStorage.getItem(SESSION_KEY);
+}
+
+function user(){
+  const name=username();
+
+  return name
+    ? getDb().users[name]||null
+    : null;
+}
+
+function cfg(){
+  return GAME[state.game].subs[state.sub];
+}
+
+function multiplier(){
+  return Math.max(
+    1,
+    Math.floor(
+      Number(el('multiplier').value)||1
+    )
+  );
+}
+
+function localDateKey(date=new Date()){
+  return(
+    `${date.getFullYear()}-`+
+    `${String(date.getMonth()+1).padStart(2,'0')}-`+
+    `${String(date.getDate()).padStart(2,'0')}`
+  );
+}
+
+function displayDate(key){
+  const[y,m,d]=key.split('-');
+  return`${d}/${m}/${y}`;
+}
+
+function nextDrawDate(){
+  const now=new Date();
+  const cutoff=new Date(now);
+
+  cutoff.setHours(18,15,0,0);
+
+  if(now>=cutoff){
+    now.setDate(now.getDate()+1);
+  }
+
+  return localDateKey(now);
+}
+
+function openAuth(which='login'){
+  el('authModal').classList.remove('hidden');
+
+  el('loginPane').classList.toggle(
+    'hidden',
+    which!=='login'
+  );
+
+  el('registerPane').classList.toggle(
+    'hidden',
+    which!=='register'
+  );
+}
+
+function closeAuth(){
+  el('authModal').classList.add('hidden');
+}
+
+function requireLogin(){
+  if(user()){
+    return true;
+  }
+
+  openAuth('login');
+
+  toast(
+    'Hãy đăng nhập hoặc đăng ký tài khoản demo trước.',
+    true
+  );
+
+  return false;
+}
+
+function renderAccount(){
+  const currentUser=user();
+  const desktop=el('desktopAuth');
+
+  if(currentUser){
+    desktop.innerHTML=`
+      <div class="desktop-user">
+        <div>
+          <strong>${esc(currentUser.username)}</strong>
+          <em>${fmt(currentUser.balance)} điểm</em>
+        </div>
+        <button id="desktopLogout">Đăng xuất</button>
+      </div>
+    `;
+
+    el('desktopLogout').onclick=logout;
+  }else{
+    desktop.innerHTML=`
+      <input
+        id="headerUser"
+        autocomplete="username"
+        placeholder="Tên đăng nhập"
+      >
+
+      <input
+        id="headerPass"
+        autocomplete="current-password"
+        type="password"
+        placeholder="mật khẩu"
+      >
+
+      <span class="captcha-demo">3666</span>
+
+      <input
+        class="captcha-field"
+        placeholder="Mã xác nhận"
+      >
+
+      <button id="headerLogin" class="btn-login">
+        đăng nhập
+      </button>
+
+      <button id="headerRegister" class="btn-register">
+        đăng ký
+      </button>
+
+      <button id="headerTry" class="btn-try">
+        Chơi thử
+      </button>
+
+      <button id="headerForgot" class="btn-forgot">
+        Quên mật khẩu?
+      </button>
+    `;
+
+    bindDesktopAuth();
+  }
+
+  el('drawerBalance').textContent=
+    `${fmt(currentUser?currentUser.balance:0)} VND`;
+
+  el('mBalance').textContent=
+    fmt(currentUser?currentUser.balance:0);
+
+  const drawerAuth=el('drawerAuth');
+
+  if(currentUser){
+    drawerAuth.innerHTML=`
+      <button
+        id="drawerLogout"
+        style="background:#2298e9;min-width:145px"
+      >
+        Đăng xuất ${esc(currentUser.username)}
+      </button>
+    `;
+
+    el('drawerLogout').onclick=logout;
+  }else{
+    drawerAuth.innerHTML=`
+      <button id="drawerLogin">Đăng nhập</button>
+      <button id="drawerRegister">Đăng ký</button>
+    `;
+
+    el('drawerLogin').onclick=()=>{
+      closeDrawer();
+      openAuth('login');
+    };
+
+    el('drawerRegister').onclick=()=>{
+      closeDrawer();
+      openAuth('register');
+    };
+  }
+
+  renderDrawerCounts();
+}
+
+function logout(){
+  localStorage.removeItem(SESSION_KEY);
+  renderAll();
+  closeDrawer();
+  toast('Đã đăng xuất.');
+}
+
+function bindDesktopAuth(){
+  el('headerLogin')?.addEventListener(
+    'click',
+    loginFromHeader
+  );
+
+  el('headerRegister')?.addEventListener(
+    'click',
+    ()=>openAuth('register')
+  );
+
+  el('headerTry')?.addEventListener(
+    'click',
+    ()=>openAuth('register')
+  );
+
+  el('headerForgot')?.addEventListener(
+    'click',
+    ()=>toast(
+      'Bản demo không gửi email khôi phục.',
+      true
+    )
+  );
+}
+
+function loginFromHeader(){
+  const name=
+    el('headerUser').value.trim().toLowerCase();
+
+  const password=
+    el('headerPass').value;
+
+  doLogin(name,password);
+}
+
+function doLogin(name,password){
+  const database=getDb();
+  const foundUser=database.users[name];
+
+  if(
+    !foundUser||
+    foundUser.passwordHash!==hash(password)
+  ){
+    return toast(
+      'Sai tài khoản hoặc mật khẩu.',
+      true
+    );
+  }
+
+  localStorage.setItem(
+    SESSION_KEY,
+    name
+  );
+
+  closeAuth();
+  renderAll();
+  toast('Đăng nhập thành công.');
+}
+
+function doRegister(name,password){
+  name=name.trim().toLowerCase();
+
+  if(
+    !/^[a-z0-9_]{3,20}$/i.test(name)||
+    password.length<4
+  ){
+    return toast(
+      'Tên đăng nhập >=3 ký tự, mật khẩu >=4 ký tự.',
+      true
+    );
+  }
+
+  const database=getDb();
+
+  if(database.users[name]){
+    return toast(
+      'Tài khoản đã tồn tại trên thiết bị này.',
+      true
+    );
+  }
+
+  database.users[name]={
+    username:name,
+    passwordHash:hash(password),
+    balance:100000,
+    createdAt:new Date().toISOString()
+  };
+
+  saveDb(database);
+
+  localStorage.setItem(
+    SESSION_KEY,
+    name
+  );
+
+  closeAuth();
+  renderAll();
+
+  toast(
+    'Đã tạo tài khoản với 100.000 điểm demo.'
+  );
+}
 
 function oddsRatio(value=cfg().odds){
-  const m=String(value||'').match(/:\s*([\d.]+)/);
-  return m ? Number(m[1]) : 1;
+  const match=
+    String(value||'').match(/:\s*([\d.]+)/);
+
+  return match
+    ? Number(match[1])
+    : 1;
 }
+
 function unitStake(){
-  return Number(cfg().unitStake || cfg().ticketStake || 1000);
+  return Number(
+    cfg().unitStake||
+    cfg().ticketStake||
+    1000
+  );
 }
+
 function defaultModeForGame(game=state.game){
-  if(game==='lo_xien') return 'quick';
-  return 'digits';
-}
-function modeAllowed(mode,game=state.game){
-  if(game==='lo_xien')return mode==='manual'||mode==='quick';
-  if(game==='dau_duoi'||game==='bon_cang')return mode==='digits'||mode==='manual';
-  return ['digits','manual','quick'].includes(mode);
-}
-function normalizeMode(){
-  if(!modeAllowed(state.mode))state.mode=defaultModeForGame();
-}
-function selectionCost(nums=selected()){
-  const m=multiplier();
-  if(state.game==='lo_xien'){
-    return nums.length===cfg().pick ? Number(cfg().ticketStake||1000)*m : 0;
+  if(game==='lo_xien'){
+    return'quick';
   }
-  return nums.length*unitStake()*m;
+
+  return'digits';
 }
+
+function modeAllowed(mode,game=state.game){
+  if(game==='lo_xien'){
+    return(
+      mode==='manual'||
+      mode==='quick'
+    );
+  }
+
+  if(
+    game==='dau_duoi'||
+    game==='bon_cang'
+  ){
+    return(
+      mode==='digits'||
+      mode==='manual'
+    );
+  }
+
+  return[
+    'digits',
+    'manual',
+    'quick'
+  ].includes(mode);
+}
+
+function normalizeMode(){
+  if(!modeAllowed(state.mode)){
+    state.mode=defaultModeForGame();
+  }
+}
+
+function selectionCost(numbers=selected()){
+  const multiply=multiplier();
+
+  if(state.game==='lo_xien'){
+    return numbers.length===cfg().pick
+      ? Number(cfg().ticketStake||1000)*multiply
+      : 0;
+  }
+
+  return(
+    numbers.length*
+    unitStake()*
+    multiply
+  );
+}
+
 function quickWidth(){
   return Number(cfg().digits||2);
 }
+
 function quickPageCount(){
   const width=quickWidth();
-  if(width<=2)return 1;
+
+  if(width<=2){
+    return 1;
+  }
+
   return Math.pow(10,width)/100;
 }
+
 function quickRangeValues(){
   const width=quickWidth();
   const pages=quickPageCount();
-  state.quickPage=Math.max(0,Math.min(state.quickPage,pages-1));
-  const start=state.quickPage*100;
-  const max=Math.pow(10,width);
-  const end=Math.min(start+100,max);
-  return Array.from({length:end-start},(_,i)=>String(start+i).padStart(width,'0'));
-}
-function quickRangeLabel(){
-  const values=quickRangeValues();
-  if(!values.length)return '';
-  return `${values[0]} - ${values[values.length-1]}`;
-}
-function frequencyBadge(value,profile=GAME[state.game].quickProfile){
-  const width=state.game==='lo_xien' ? 2 : quickWidth();
-  const n=Number(value);
-  const d=new Date();
 
-  // Đây là thống kê DEMO ổn định theo ngày, không phải số liệu Minh Ngọc.
-  // Giới hạn được giảm theo độ hiếm của từng loại số:
-  // 2 số: 0-20, 3 số: 0-8, 4 số: 0-3.
-  let max=20;
-  if(width===1)max=9;
-  if(width===3)max=8;
-  if(width>=4)max=3;
-
-  const seed=Math.abs(
-    n*37 +
-    d.getDate()*11 +
-    (d.getMonth()+1)*17 +
-    d.getFullYear()*3 +
-    width*29 +
-    (profile==='xien'?41:profile==='de'?23:profile==='3cang'?13:7)
+  state.quickPage=Math.max(
+    0,
+    Math.min(
+      state.quickPage,
+      pages-1
+    )
   );
 
-  // Cho một tỷ lệ số có thống kê 0 giống giao diện gốc.
-  if(seed%9===0 || seed%17===0)return 0;
+  const start=state.quickPage*100;
+  const maximum=Math.pow(10,width);
+  const end=Math.min(start+100,maximum);
 
-  return 1 + ((seed*7 + Math.floor(n/3)) % max);
+  return Array.from(
+    {length:end-start},
+    (_,index)=>
+      String(start+index).padStart(width,'0')
+  );
 }
-function randomSample(values,count){
-  const arr=[...values];
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
+
+function quickRangeLabel(){
+  const values=quickRangeValues();
+
+  if(!values.length){
+    return'';
   }
-  return arr.slice(0,Math.min(count,arr.length));
+
+  return(
+    `${values[0]} - `+
+    `${values[values.length-1]}`
+  );
 }
 
-function rowLabels(){if(state.game==='lo_xien')return[];return DIGIT_LABELS[cfg().digits]||['Đơn Vị']}
+function frequencyBadge(
+  value,
+  profile=GAME[state.game].quickProfile
+){
+  const width=
+    state.game==='lo_xien'
+      ? 2
+      : quickWidth();
+
+  const number=Number(value);
+  const today=new Date();
+
+  let maximum=20;
+
+  if(width===1){
+    maximum=9;
+  }
+
+  if(width===3){
+    maximum=8;
+  }
+
+  if(width>=4){
+    maximum=3;
+  }
+
+  const seed=Math.abs(
+    number*37+
+    today.getDate()*11+
+    (today.getMonth()+1)*17+
+    today.getFullYear()*3+
+    width*29+
+    (
+      profile==='xien'
+        ? 41
+        : profile==='de'
+          ? 23
+          : profile==='3cang'
+            ? 13
+            : 7
+    )
+  );
+
+  if(
+    seed%9===0||
+    seed%17===0
+  ){
+    return 0;
+  }
+
+  return(
+    1+
+    (
+      (
+        seed*7+
+        Math.floor(number/3)
+      )%maximum
+    )
+  );
+}
+
+function randomSample(values,count){
+  const result=[...values];
+
+  for(
+    let index=result.length-1;
+    index>0;
+    index--
+  ){
+    const randomIndex=
+      Math.floor(
+        Math.random()*(index+1)
+      );
+
+    [
+      result[index],
+      result[randomIndex]
+    ]=[
+      result[randomIndex],
+      result[index]
+    ];
+  }
+
+  return result.slice(
+    0,
+    Math.min(count,result.length)
+  );
+}
+
+function rowLabels(){
+  if(state.game==='lo_xien'){
+    return[];
+  }
+
+  return(
+    DIGIT_LABELS[cfg().digits]||
+    ['Đơn Vị']
+  );
+}
+
 function resetSelections(){
-  state.rows=rowLabels().map(()=>[]);
+  state.rows=
+    rowLabels().map(()=>[]);
+
   state.numbers=[];
   state.quickPage=0;
+
   renderSelection();
   updateSummary();
 }
-function cartesian(rows){if(!rows.length||rows.some(r=>!r.length))return[];let out=[''];for(const row of rows){const n=[];for(const prefix of out)for(const d of row)n.push(prefix+d);out=n}return out}
-function manualNumbers(){
-  const ta=el('manualInput');
-  if(!ta)return[];
 
-  const width=state.game==='lo_xien' ? 2 : (cfg().digits||2);
+function cartesian(rows){
+  if(
+    !rows.length||
+    rows.some(row=>!row.length)
+  ){
+    return[];
+  }
 
-  return [...new Set(
-    ta.value
-      .split(/[\s,;]+/)
-      .map(x=>x.trim())
-      .filter(x=>new RegExp(`^\\d{${width}}$`).test(x))
-  )];
+  let output=[''];
+
+  for(const row of rows){
+    const next=[];
+
+    for(const prefix of output){
+      for(const digit of row){
+        next.push(prefix+digit);
+      }
+    }
+
+    output=next;
+  }
+
+  return output;
 }
+
+function manualNumbers(){
+  const textarea=el('manualInput');
+
+  if(!textarea){
+    return[];
+  }
+
+  const width=
+    state.game==='lo_xien'
+      ? 2
+      : cfg().digits||2;
+
+  return[
+    ...new Set(
+      textarea.value
+        .split(/[\s,;]+/)
+        .map(value=>value.trim())
+        .filter(value=>
+          new RegExp(
+            `^\\d{${width}}$`
+          ).test(value)
+        )
+    )
+  ];
+}
+
 function selected(){
-  if(state.mode==='manual')return manualNumbers();
-  if(state.game==='lo_xien')return state.numbers.slice();
-  if(state.mode==='quick'&&state.numbers.length)return state.numbers.slice();
+  if(state.mode==='manual'){
+    return manualNumbers();
+  }
+
+  if(state.game==='lo_xien'){
+    return state.numbers.slice();
+  }
+
+  if(
+    state.mode==='quick'&&
+    state.numbers.length
+  ){
+    return state.numbers.slice();
+  }
+
   return cartesian(state.rows);
 }
-function toggleDigit(row,d){const arr=state.rows[row]||[];state.rows[row]=arr.includes(d)?arr.filter(x=>x!==d):[...arr,d].sort((a,b)=>a-b);renderSelection();updateSummary()}
-function quickRow(row,type){const map={all:[0,1,2,3,4,5,6,7,8,9],tai:[5,6,7,8,9],xiu:[0,1,2,3,4],odd:[1,3,5,7,9],even:[0,2,4,6,8],clear:[]};state.rows[row]=map[type].slice();renderSelection();updateSummary()}
-function toggleNumber(n){const limit=state.game==='lo_xien'?cfg().pick:100;if(state.numbers.includes(n))state.numbers=state.numbers.filter(x=>x!==n);else{if(state.game==='lo_xien'&&state.numbers.length>=limit)return toast(`Chỉ chọn ${limit} số cho ${cfg().label}.`,true);state.numbers.push(n)}renderSelection();updateSummary()}
-function deterministicBadge(n){const d=new Date();return(n*17+d.getDate()*3+(d.getMonth()+1)*11)%16}
-function renderSubTabs(){
-  el('subTabs').innerHTML=GAME[state.game].subs.map((s,i)=>
-    `<button data-sub="${i}" class="${i===state.sub?'active':''}">${s.label}</button>`
-  ).join('');
 
-  el('subTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    state.sub=Number(b.dataset.sub);
-    state.mode=defaultModeForGame(state.game);
-    state.quickPage=0;
-    state.rows=[];
-    state.numbers=[];
-    renderSubTabs();
-    renderMeta();
-    resetSelections();
-  });
+function toggleDigit(row,digit){
+  const values=state.rows[row]||[];
+
+  state.rows[row]=values.includes(digit)
+    ? values.filter(value=>value!==digit)
+    : [...values,digit].sort((a,b)=>a-b);
+
+  renderSelection();
+  updateSummary();
 }
+
+function quickRow(row,type){
+  const choices={
+    all:[0,1,2,3,4,5,6,7,8,9],
+    tai:[5,6,7,8,9],
+    xiu:[0,1,2,3,4],
+    odd:[1,3,5,7,9],
+    even:[0,2,4,6,8],
+    clear:[]
+  };
+
+  state.rows[row]=choices[type].slice();
+
+  renderSelection();
+  updateSummary();
+}
+
+function toggleNumber(number){
+  const limit=
+    state.game==='lo_xien'
+      ? cfg().pick
+      : 100;
+
+  if(state.numbers.includes(number)){
+    state.numbers=
+      state.numbers.filter(
+        value=>value!==number
+      );
+  }else{
+    if(
+      state.game==='lo_xien'&&
+      state.numbers.length>=limit
+    ){
+      return toast(
+        `Chỉ chọn ${limit} số cho ${cfg().label}.`,
+        true
+      );
+    }
+
+    state.numbers.push(number);
+  }
+
+  renderSelection();
+  updateSummary();
+}
+
+function renderSubTabs(){
+  el('subTabs').innerHTML=
+    GAME[state.game].subs
+      .map((sub,index)=>`
+        <button
+          data-sub="${index}"
+          class="${index===state.sub?'active':''}"
+        >
+          ${sub.label}
+        </button>
+      `)
+      .join('');
+
+  el('subTabs')
+    .querySelectorAll('button')
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.sub=
+          Number(button.dataset.sub);
+
+        state.mode=
+          defaultModeForGame(state.game);
+
+        state.quickPage=0;
+        state.rows=[];
+        state.numbers=[];
+
+        renderSubTabs();
+        renderMeta();
+        resetSelections();
+      };
+    });
+}
+
 function syncModes(){
   const box=el('modeTabs');
-  const digits=box.querySelector('[data-mode="digits"]');
-  const manual=box.querySelector('[data-mode="manual"]');
-  const quick=box.querySelector('[data-mode="quick"]');
+
+  const digits=
+    box.querySelector('[data-mode="digits"]');
+
+  const manual=
+    box.querySelector('[data-mode="manual"]');
+
+  const quick=
+    box.querySelector('[data-mode="quick"]');
+
   const hint=el('modeHint');
 
   normalizeMode();
 
-  digits.style.display=state.game==='lo_xien'?'none':'';
-  quick.style.display=(state.game==='dau_duoi'||state.game==='bon_cang')?'none':'';
+  digits.style.display=
+    state.game==='lo_xien'
+      ? 'none'
+      : '';
 
-  const visible=[digits,manual,quick].filter(b=>b.style.display!=='none');
-  box.classList.toggle('two',visible.length===2);
+  quick.style.display=
+    (
+      state.game==='dau_duoi'||
+      state.game==='bon_cang'
+    )
+      ? 'none'
+      : '';
+
+  const visible=[
+    digits,
+    manual,
+    quick
+  ].filter(button=>
+    button.style.display!=='none'
+  );
+
+  box.classList.toggle(
+    'two',
+    visible.length===2
+  );
 
   hint.classList.remove('clickable');
   hint.removeAttribute('data-popup');
 
-  if(state.mode==='quick' && ['bao_lo','lo_xien','danh_de','ba_cang'].includes(state.game)){
-    hint.innerHTML='<span class="help-dot">?</span> Hướng dẫn';
+  if(
+    state.mode==='quick'&&
+    [
+      'bao_lo',
+      'lo_xien',
+      'danh_de',
+      'ba_cang'
+    ].includes(state.game)
+  ){
+    hint.innerHTML=
+      '<span class="help-dot">?</span> Hướng dẫn';
+
     hint.dataset.popup='quick';
     hint.classList.add('clickable');
-
   }else if(
-    state.mode==='digits' &&
-    ['danh_de','ba_cang','bon_cang'].includes(state.game)
+    state.mode==='digits'&&
+    [
+      'danh_de',
+      'ba_cang',
+      'bon_cang'
+    ].includes(state.game)
   ){
-    hint.innerHTML='<span class="hotcold-dot">?</span> Nóng/Lạnh';
+    hint.innerHTML=
+      '<span class="hotcold-dot">?</span> Nóng/Lạnh';
+
     hint.dataset.popup='hotcold';
     hint.classList.add('clickable');
-
   }else{
     hint.textContent='';
   }
 
-  [digits,manual,quick].forEach(b=>
-    b.classList.toggle('active',b.dataset.mode===state.mode)
+  [
+    digits,
+    manual,
+    quick
+  ].forEach(button=>
+    button.classList.toggle(
+      'active',
+      button.dataset.mode===state.mode
+    )
   );
 }
 
 function helpTemplateHtml(type){
   if(type==='quick'){
-    return document.getElementById('helpQuickTemplate')?.innerHTML || '';
+    return(
+      document
+        .getElementById('helpQuickTemplate')
+        ?.innerHTML||
+      ''
+    );
   }
 
   if(type==='hotcold'){
-    return document.getElementById('helpHotColdTemplate')?.innerHTML || '';
+    return(
+      document
+        .getElementById('helpHotColdTemplate')
+        ?.innerHTML||
+      ''
+    );
   }
 
   if(type==='play'){
-    const sub=cfg().id;
+    const subId=cfg().id;
+
     const template=document.querySelector(
-      `template[data-help-type="play"][data-game="${state.game}"][data-sub="${sub}"]`
+      `template[data-help-type="play"]`+
+      `[data-game="${state.game}"]`+
+      `[data-sub="${subId}"]`
     );
-    return template?.innerHTML || '<p>Chưa có nội dung cách chơi cho mục này.</p>';
+
+    return(
+      template?.innerHTML||
+      '<p>Chưa có nội dung cách chơi cho mục này.</p>'
+    );
   }
 
-  return '';
+  return'';
 }
-
 function openHelpModal(type){
   const modal=el('helpModal');
   const title=el('helpModalTitle');
@@ -269,7 +1118,7 @@ function openHelpModal(type){
     play:'Cách chơi'
   };
 
-  title.textContent=titles[type] || 'Hướng dẫn chơi';
+  title.textContent=titles[type]||'Hướng dẫn chơi';
   body.innerHTML=helpTemplateHtml(type);
 
   modal.classList.remove('hidden');
@@ -279,214 +1128,551 @@ function openHelpModal(type){
 
 function closeHelpModal(){
   const modal=el('helpModal');
+
   modal.classList.add('hidden');
   modal.setAttribute('aria-hidden','true');
   document.body.classList.remove('popup-open');
 }
 
-function renderMeta(){const c=cfg();el('desktopGameName').textContent=c.label;el('mobileGameName').textContent=c.label;el('oddsText').textContent=c.odds;el('selectionArea').dataset.mobileOdds=`Tỉ lệ cược ${c.odds}  ⓘ`;syncModes();renderMobileGameMenu()}
+function renderMeta(){
+  const config=cfg();
+
+  el('desktopGameName').textContent=config.label;
+  el('mobileGameName').textContent=config.label;
+  el('oddsText').textContent=config.odds;
+
+  el('selectionArea').dataset.mobileOdds=
+    `Tỉ lệ cược ${config.odds}  ⓘ`;
+
+  syncModes();
+  renderMobileGameMenu();
+}
 
 function quickProfileConfig(){
   if(state.game==='bao_lo'){
-    return {random:[1,2,3,5,10],special:['same'],top:[1,2,5,10,20]};
+    return{
+      random:[1,2,3,5,10],
+      special:['same'],
+      top:[1,2,5,10,20]
+    };
   }
+
   if(state.game==='danh_de'){
-    return {random:[10,20,30,40,50],special:['same','even','odd','tai','xiu'],top:[1,2,5,10,20]};
+    return{
+      random:[10,20,30,40,50],
+      special:['same','even','odd','tai','xiu'],
+      top:[1,2,5,10,20]
+    };
   }
+
   if(state.game==='ba_cang'){
-    return {random:[10,20,30,40,50],special:['same'],top:[]};
+    return{
+      random:[10,20,30,40,50],
+      special:['same'],
+      top:[]
+    };
   }
-  return {random:[],special:[],top:[]};
+
+  return{
+    random:[],
+    special:[],
+    top:[]
+  };
 }
+
 function specialLabel(key){
-  return {same:'Cùng số',even:'Chẵn',odd:'Lẻ',tai:'Tài',xiu:'Xỉu'}[key]||key;
+  return{
+    same:'Cùng số',
+    even:'Chẵn',
+    odd:'Lẻ',
+    tai:'Tài',
+    xiu:'Xỉu'
+  }[key]||key;
 }
+
 function smartQuickHtml(){
   const profile=quickProfileConfig();
   const values=quickRangeValues();
   const selectedSet=new Set(state.numbers);
 
-  const randomButtons=profile.random.map(n=>`<button data-smart="random:${n}">${n} số</button>`).join('');
-  const specialButtons=profile.special.map(k=>`<button data-smart="${k}">${specialLabel(k)}</button>`).join('');
-  const topButtons=profile.top.map(n=>`<button data-smart="top:${n}">Top ${n}</button>`).join('');
+  const randomButtons=profile.random
+    .map(number=>`
+      <button data-smart="random:${number}">
+        ${number} số
+      </button>
+    `)
+    .join('');
 
-  const grid=values.map(v=>{
-    const badge=frequencyBadge(v);
-    const red=badge<=1?' red':'';
-    return `<button class="smart-number ${selectedSet.has(v)?'active':''}" data-number="${v}">
-      <span>${v}</span><i class="smart-stat${red}">${badge}</i>
-    </button>`;
-  }).join('');
+  const specialButtons=profile.special
+    .map(key=>`
+      <button data-smart="${key}">
+        ${specialLabel(key)}
+      </button>
+    `)
+    .join('');
 
-  return `<div class="smart-quick-layout">
-    <aside class="smart-quick-side">
-      <button class="smart-range" data-smart="next-range">${quickRangeLabel()}<i>${state.numbers.length}</i></button>
+  const topButtons=profile.top
+    .map(number=>`
+      <button data-smart="top:${number}">
+        Top ${number}
+      </button>
+    `)
+    .join('');
 
-      ${randomButtons?`<section><p>Ngẫu Nhiên</p><div>${randomButtons}</div></section>`:''}
-      ${specialButtons?`<section><p>Đặc biệt</p><div>${specialButtons}</div></section>`:''}
-      ${topButtons?`<section><p>Ít Xuất Hiện</p><div>${topButtons}</div></section>`:''}
-    </aside>
+  const grid=values
+    .map(value=>{
+      const badge=frequencyBadge(value);
+      const red=badge<=1?' red':'';
 
-    <div class="smart-grid-panel">
-      <div class="smart-grid">${grid}</div>
+      return`
+        <button
+          class="smart-number ${
+            selectedSet.has(value)?'active':''
+          }"
+          data-number="${value}"
+        >
+          <span>${value}</span>
+          <i class="smart-stat${red}">${badge}</i>
+        </button>
+      `;
+    })
+    .join('');
+
+  return`
+    <div class="smart-quick-layout">
+      <aside class="smart-quick-side">
+        <button
+          class="smart-range"
+          data-smart="next-range"
+        >
+          ${quickRangeLabel()}
+          <i>${state.numbers.length}</i>
+        </button>
+
+        ${
+          randomButtons
+            ? `
+              <section>
+                <p>Ngẫu Nhiên</p>
+                <div>${randomButtons}</div>
+              </section>
+            `
+            : ''
+        }
+
+        ${
+          specialButtons
+            ? `
+              <section>
+                <p>Đặc biệt</p>
+                <div>${specialButtons}</div>
+              </section>
+            `
+            : ''
+        }
+
+        ${
+          topButtons
+            ? `
+              <section>
+                <p>Ít Xuất Hiện</p>
+                <div>${topButtons}</div>
+              </section>
+            `
+            : ''
+        }
+      </aside>
+
+      <div class="smart-grid-panel">
+        <div class="smart-grid">
+          ${grid}
+        </div>
+      </div>
     </div>
-  </div>`;
+  `;
 }
+
 function smartPick(action){
   const values=quickRangeValues();
 
   if(action==='next-range'){
     if(quickPageCount()>1){
-      state.quickPage=(state.quickPage+1)%quickPageCount();
+      state.quickPage=
+        (state.quickPage+1)%quickPageCount();
+
       state.numbers=[];
     }
   }else if(action.startsWith('random:')){
-    state.numbers=randomSample(values,Number(action.split(':')[1]));
+    const count=
+      Number(action.split(':')[1]);
+
+    state.numbers=
+      randomSample(values,count);
   }else if(action==='same'){
-    state.numbers=values.filter(v=>new Set(v.split('')).size===1);
+    state.numbers=values.filter(value=>
+      new Set(value.split('')).size===1
+    );
   }else if(action==='even'){
-    state.numbers=values.filter(v=>Number(v)%2===0);
+    state.numbers=values.filter(value=>
+      Number(value)%2===0
+    );
   }else if(action==='odd'){
-    state.numbers=values.filter(v=>Number(v)%2===1);
+    state.numbers=values.filter(value=>
+      Number(value)%2===1
+    );
   }else if(action==='tai'){
-    state.numbers=values.filter(v=>Number(v)>=Math.pow(10,quickWidth())/2);
-    if(!state.numbers.length)state.numbers=values.filter((_,i)=>i>=50);
+    state.numbers=values.filter(value=>
+      Number(value)>=
+      Math.pow(10,quickWidth())/2
+    );
+
+    if(!state.numbers.length){
+      state.numbers=
+        values.filter((_,index)=>index>=50);
+    }
   }else if(action==='xiu'){
-    state.numbers=values.filter(v=>Number(v)<Math.pow(10,quickWidth())/2);
-    if(state.numbers.length===values.length&&values.length===100)state.numbers=values.slice(0,50);
+    state.numbers=values.filter(value=>
+      Number(value)<
+      Math.pow(10,quickWidth())/2
+    );
+
+    if(
+      state.numbers.length===values.length&&
+      values.length===100
+    ){
+      state.numbers=values.slice(0,50);
+    }
   }else if(action.startsWith('top:')){
-    const n=Number(action.split(':')[1]);
-    state.numbers=[...values].sort((a,b)=>frequencyBadge(a)-frequencyBadge(b)).slice(0,n);
+    const count=
+      Number(action.split(':')[1]);
+
+    state.numbers=[...values]
+      .sort((a,b)=>
+        frequencyBadge(a)-frequencyBadge(b)
+      )
+      .slice(0,count);
   }
 
   renderSelection();
   updateSummary();
 }
 
-
 function showDigitHotColdStats(){
-  return state.mode==='digits' &&
-    ['danh_de','ba_cang','bon_cang'].includes(state.game);
+  return(
+    state.mode==='digits'&&
+    [
+      'danh_de',
+      'ba_cang',
+      'bon_cang'
+    ].includes(state.game)
+  );
 }
 
 function digitHotColdStat(row,digit){
-  // Demo thống kê "số lần không xuất hiện liên tiếp trong 50 kỳ".
-  // Ổn định trong cùng ngày và khác nhau theo game / hàng / chữ số.
   const now=new Date();
+
   const gameSalt={
     danh_de:17,
     ba_cang:31,
     bon_cang:47
-  }[state.game] || 7;
+  }[state.game]||7;
 
   const seed=Math.abs(
-    gameSalt*97 +
-    (row+1)*53 +
-    digit*29 +
-    now.getDate()*11 +
-    (now.getMonth()+1)*17 +
+    gameSalt*97+
+    (row+1)*53+
+    digit*29+
+    now.getDate()*11+
+    (now.getMonth()+1)*17+
     now.getFullYear()*3
   );
 
-  // 0..49, phù hợp ý nghĩa "trong 50 kỳ".
-  // Cố tình tạo một số 0/1 để có điểm đỏ như ảnh gốc.
-  if(seed%13===0)return 0;
-  if(seed%17===0)return 1;
-  return 2 + ((seed*7 + row*digit*3) % 48);
+  if(seed%13===0){
+    return 0;
+  }
+
+  if(seed%17===0){
+    return 1;
+  }
+
+  return(
+    2+
+    (
+      (
+        seed*7+
+        row*digit*3
+      )%48
+    )
+  );
 }
 
 function digitStatClass(value){
-  if(value<=1)return 'red';
-  if(value>=10)return 'blue';
-  return 'gray';
+  if(value<=1){
+    return'red';
+  }
+
+  if(value>=10){
+    return'blue';
+  }
+
+  return'gray';
 }
 
 function digitRowsHtml(){
-  const withStats=showDigitHotColdStats();
+  const withStats=
+    showDigitHotColdStats();
 
-  return rowLabels().map((label,r)=>`
-    <div class="digit-row ${withStats?'has-hotcold-stats':''}">
-      <div class="row-label">${label}</div>
+  return rowLabels()
+    .map((label,row)=>`
+      <div class="digit-row ${
+        withStats?'has-hotcold-stats':''
+      }">
+        <div class="row-label">
+          ${label}
+        </div>
 
-      <div class="digit-list">
-        ${Array.from({length:10},(_,d)=>{
-          const stat=withStats?digitHotColdStat(r,d):null;
-          return `
-            <div class="digit-cell">
-              <button
-                class="digit-btn ${state.rows[r]?.includes(d)?'active':''}"
-                data-digit="${d}"
-                data-row="${r}">
-                ${d}
-              </button>
-              ${withStats
-                ? `<span class="digit-hotcold-stat ${digitStatClass(stat)}">${stat}</span>`
-                : ''}
-            </div>`;
-        }).join('')}
+        <div class="digit-list">
+          ${
+            Array.from(
+              {length:10},
+              (_,digit)=>{
+                const stat=
+                  withStats
+                    ? digitHotColdStat(row,digit)
+                    : null;
+
+                return`
+                  <div class="digit-cell">
+                    <button
+                      class="digit-btn ${
+                        state.rows[row]?.includes(digit)
+                          ? 'active'
+                          : ''
+                      }"
+                      data-digit="${digit}"
+                      data-row="${row}"
+                    >
+                      ${digit}
+                    </button>
+
+                    ${
+                      withStats
+                        ? `
+                          <span class="
+                            digit-hotcold-stat
+                            ${digitStatClass(stat)}
+                          ">
+                            ${stat}
+                          </span>
+                        `
+                        : ''
+                    }
+                  </div>
+                `;
+              }
+            ).join('')
+          }
+        </div>
+
+        <div class="quick-actions">
+          ${
+            [
+              ['all','Toàn bộ'],
+              ['tai','Tài'],
+              ['xiu','Xỉu'],
+              ['odd','Lẻ'],
+              ['even','Chẵn'],
+              ['clear','Xóa']
+            ]
+              .map(item=>`
+                <button
+                  data-q="${item[0]}"
+                  data-row="${row}"
+                >
+                  ${item[1]}
+                </button>
+              `)
+              .join('')
+          }
+        </div>
       </div>
-
-      <div class="quick-actions">
-        ${[
-          ['all','Toàn bộ'],
-          ['tai','Tài'],
-          ['xiu','Xỉu'],
-          ['odd','Lẻ'],
-          ['even','Chẵn'],
-          ['clear','Xóa']
-        ].map(x=>`
-          <button data-q="${x[0]}" data-row="${r}">${x[1]}</button>
-        `).join('')}
-      </div>
-    </div>
-  `).join('');
+    `)
+    .join('');
 }
-function numberGridHtml(className=''){return`<div class="number-grid-wrap ${className}"><div class="number-grid">${Array.from({length:100},(_,i)=>{const n=String(i).padStart(2,'0');return`<button data-number="${n}" class="${state.numbers.includes(n)?'active':''}">${n}</button>`}).join('')}</div>${state.game==='lo_xien'?`<div class="selection-note">Chọn đúng ${cfg().pick} số cho ${cfg().label}.</div>`:''}</div>`}
+
+function numberGridHtml(className=''){
+  return`
+    <div class="number-grid-wrap ${className}">
+      <div class="number-grid">
+        ${
+          Array.from(
+            {length:100},
+            (_,index)=>{
+              const number=
+                String(index).padStart(2,'0');
+
+              return`
+                <button
+                  data-number="${number}"
+                  class="${
+                    state.numbers.includes(number)
+                      ? 'active'
+                      : ''
+                  }"
+                >
+                  ${number}
+                </button>
+              `;
+            }
+          ).join('')
+        }
+      </div>
+
+      ${
+        state.game==='lo_xien'
+          ? `
+            <div class="selection-note">
+              Chọn đúng ${cfg().pick} số cho ${cfg().label}.
+            </div>
+          `
+          : ''
+      }
+    </div>
+  `;
+}
+
 function loXienHtml(){
-  const full=state.numbers.length>=cfg().pick;
-  return `<div class="loxien-layout">
-    <aside class="loxien-side">
-      <button class="loxien-range" data-lx="clear">00 - 99<i>${state.numbers.length}</i></button>
-      <p>Ngẫu Nhiên</p>
-      <button class="loxien-random" data-lx="random">1 số</button>
-    </aside>
-    <div class="loxien-grid-panel">
-      <div class="loxien-grid">${
-        Array.from({length:100},(_,i)=>{
-          const n=String(i).padStart(2,'0');
-          const c=frequencyBadge(n,'xien');
-          const active=state.numbers.includes(n);
-          const locked=full&&!active;
-          return `<button class="loxien-number ${active?'active':''} ${locked?'locked':''}"
-            data-number="${n}" ${locked?'disabled':''}>
-            <span>${n}</span><i class="${c<=1?'red':''}">${c}</i>
-          </button>`;
-        }).join('')
-      }</div>
+  const full=
+    state.numbers.length>=cfg().pick;
+
+  return`
+    <div class="loxien-layout">
+      <aside class="loxien-side">
+        <button
+          class="loxien-range"
+          data-lx="clear"
+        >
+          00 - 99
+          <i>${state.numbers.length}</i>
+        </button>
+
+        <p>Ngẫu Nhiên</p>
+
+        <button
+          class="loxien-random"
+          data-lx="random"
+        >
+          1 số
+        </button>
+      </aside>
+
+      <div class="loxien-grid-panel">
+        <div class="loxien-grid">
+          ${
+            Array.from(
+              {length:100},
+              (_,index)=>{
+                const number=
+                  String(index).padStart(2,'0');
+
+                const badge=
+                  frequencyBadge(number,'xien');
+
+                const active=
+                  state.numbers.includes(number);
+
+                const locked=
+                  full&&!active;
+
+                return`
+                  <button
+                    class="
+                      loxien-number
+                      ${active?'active':''}
+                      ${locked?'locked':''}
+                    "
+                    data-number="${number}"
+                    ${locked?'disabled':''}
+                  >
+                    <span>${number}</span>
+
+                    <i class="${badge<=1?'red':''}">
+                      ${badge}
+                    </i>
+                  </button>
+                `;
+              }
+            ).join('')
+          }
+        </div>
+      </div>
     </div>
-  </div>`;
+  `;
 }
+
 function quickHtml(){
-  if(state.game==='lo_xien')return loXienHtml();
-  if(['bao_lo','danh_de','ba_cang'].includes(state.game))return smartQuickHtml();
+  if(state.game==='lo_xien'){
+    return loXienHtml();
+  }
+
+  if(
+    [
+      'bao_lo',
+      'danh_de',
+      'ba_cang'
+    ].includes(state.game)
+  ){
+    return smartQuickHtml();
+  }
+
   return digitRowsHtml();
 }
+
 function renderSelection(){
   const box=el('selectionArea');
 
   if(state.mode==='manual'){
-    const width=state.game==='lo_xien' ? 2 : (cfg().digits||2);
-    const example=width===1?'1, 3, 7':width===2?'12, 34, 56':width===3?'123, 456':'1234, 5678';
+    const width=
+      state.game==='lo_xien'
+        ? 2
+        : cfg().digits||2;
 
-    box.innerHTML=`<div class="manual-box">
-      <label>Nhập ${width} chữ số, ngăn cách bằng dấu phẩy / khoảng trắng</label>
-      <textarea id="manualInput" placeholder="Ví dụ: ${example}"></textarea>
-      <div class="manual-note">
-        ${state.game==='lo_xien'
-          ? `${cfg().label} cần nhập đúng ${cfg().pick} số khác nhau, mỗi số gồm 2 chữ số.`
-          : `Chỉ các số đúng ${width} chữ số mới được tính.`}
+    const example=
+      width===1
+        ? '1, 3, 7'
+        : width===2
+          ? '12, 34, 56'
+          : width===3
+            ? '123, 456'
+            : '1234, 5678';
+
+    box.innerHTML=`
+      <div class="manual-box">
+        <label>
+          Nhập ${width} chữ số, ngăn cách bằng
+          dấu phẩy / khoảng trắng
+        </label>
+
+        <textarea
+          id="manualInput"
+          placeholder="Ví dụ: ${example}"
+        ></textarea>
+
+        <div class="manual-note">
+          ${
+            state.game==='lo_xien'
+              ? `
+                ${cfg().label} cần nhập đúng
+                ${cfg().pick} số khác nhau,
+                mỗi số gồm 2 chữ số.
+              `
+              : `
+                Chỉ các số đúng ${width}
+                chữ số mới được tính.
+              `
+          }
+        </div>
       </div>
-    </div>`;
+    `;
   }else if(state.game==='lo_xien'){
     box.innerHTML=loXienHtml();
   }else if(state.mode==='quick'){
@@ -495,455 +1681,2026 @@ function renderSelection(){
     box.innerHTML=digitRowsHtml();
   }
 
-  box.querySelectorAll('[data-digit]').forEach(b=>
-    b.onclick=()=>toggleDigit(Number(b.dataset.row),Number(b.dataset.digit))
+  box
+    .querySelectorAll('[data-digit]')
+    .forEach(button=>{
+      button.onclick=()=>toggleDigit(
+        Number(button.dataset.row),
+        Number(button.dataset.digit)
+      );
+    });
+
+  box
+    .querySelectorAll('[data-q]')
+    .forEach(button=>{
+      button.onclick=()=>quickRow(
+        Number(button.dataset.row),
+        button.dataset.q
+      );
+    });
+
+  box
+    .querySelectorAll('[data-number]')
+    .forEach(button=>{
+      button.onclick=()=>
+        toggleNumber(button.dataset.number);
+    });
+
+  box
+    .querySelectorAll('[data-lx]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        if(button.dataset.lx==='clear'){
+          state.numbers=[];
+        }else{
+          const limit=cfg().pick;
+
+          if(state.numbers.length>=limit){
+            state.numbers.shift();
+          }
+
+          let number;
+
+          do{
+            number=
+              String(
+                Math.floor(Math.random()*100)
+              ).padStart(2,'0');
+          }while(state.numbers.includes(number));
+
+          state.numbers.push(number);
+        }
+
+        renderSelection();
+        updateSummary();
+      };
+    });
+
+  box
+    .querySelectorAll('[data-smart]')
+    .forEach(button=>{
+      button.onclick=()=>
+        smartPick(button.dataset.smart);
+    });
+
+  box
+    .querySelectorAll('[data-fast]')
+    .forEach(button=>{
+      button.onclick=()=>
+        fastPick(button.dataset.fast);
+    });
+
+  el('manualInput')?.addEventListener(
+    'input',
+    updateSummary
   );
-
-  box.querySelectorAll('[data-q]').forEach(b=>
-    b.onclick=()=>quickRow(Number(b.dataset.row),b.dataset.q)
-  );
-
-  box.querySelectorAll('[data-number]').forEach(b=>
-    b.onclick=()=>toggleNumber(b.dataset.number)
-  );
-
-  box.querySelectorAll('[data-lx]').forEach(b=>b.onclick=()=>{
-    if(b.dataset.lx==='clear'){
-      state.numbers=[];
-    }else{
-      const limit=cfg().pick;
-      if(state.numbers.length>=limit)state.numbers.shift();
-
-      let n;
-      do{
-        n=String(Math.floor(Math.random()*100)).padStart(2,'0');
-      }while(state.numbers.includes(n));
-
-      state.numbers.push(n);
-    }
-
-    renderSelection();
-    updateSummary();
-  });
-
-  box.querySelectorAll('[data-smart]').forEach(b=>
-    b.onclick=()=>smartPick(b.dataset.smart)
-  );
-
-  box.querySelectorAll('[data-fast]').forEach(b=>
-    b.onclick=()=>fastPick(b.dataset.fast)
-  );
-
-  el('manualInput')?.addEventListener('input',updateSummary);
 }
-function fastPick(type){if(type==='clear'){state.numbers=[];state.rows=rowLabels().map(()=>[])}else if(type==='random'){if(state.game==='lo_xien'){state.numbers=[];while(state.numbers.length<cfg().pick){const n=String(Math.floor(Math.random()*100)).padStart(2,'0');if(!state.numbers.includes(n))state.numbers.push(n)}}else{state.rows=rowLabels().map(()=>[Math.floor(Math.random()*10)]);state.numbers=[]}}else if(/^\d\d-\d\d$/.test(type)){const[a,b]=type.split('-').map(Number);state.numbers=[];for(let i=a;i<=b;i++)state.numbers.push(String(i).padStart(2,'0'))}renderSelection();updateSummary()}
+
+function fastPick(type){
+  if(type==='clear'){
+    state.numbers=[];
+    state.rows=rowLabels().map(()=>[]);
+  }else if(type==='random'){
+    if(state.game==='lo_xien'){
+      state.numbers=[];
+
+      while(state.numbers.length<cfg().pick){
+        const number=
+          String(
+            Math.floor(Math.random()*100)
+          ).padStart(2,'0');
+
+        if(!state.numbers.includes(number)){
+          state.numbers.push(number);
+        }
+      }
+    }else{
+      state.rows=rowLabels()
+        .map(()=>[
+          Math.floor(Math.random()*10)
+        ]);
+
+      state.numbers=[];
+    }
+  }else if(/^\d\d-\d\d$/.test(type)){
+    const[start,end]=
+      type.split('-').map(Number);
+
+    state.numbers=[];
+
+    for(let number=start;number<=end;number++){
+      state.numbers.push(
+        String(number).padStart(2,'0')
+      );
+    }
+  }
+
+  renderSelection();
+  updateSummary();
+}
+
 function updateSummary(){
-  const n=selected();
-  const amount=selectionCost(n);
+  const numbers=selected();
+  const amount=selectionCost(numbers);
 
-  el('selectedCount').textContent=n.length;
-  el('selectedMoney').textContent=fmt(amount);
+  el('selectedCount').textContent=
+    numbers.length;
 
-  el('mSelectedCount').textContent=n.length;
-  el('mMoney').textContent=fmt(amount);
-  el('mMultiplier').value=multiplier();
-  el('mBalance').textContent=fmt(user()?.balance||0);
+  el('selectedMoney').textContent=
+    fmt(amount);
 
-  document.querySelectorAll('[data-chip]').forEach(b=>
-    b.classList.toggle('active',Number(b.dataset.chip)===multiplier())
-  );
+  el('mSelectedCount').textContent=
+    numbers.length;
+
+  el('mMoney').textContent=
+    fmt(amount);
+
+  el('mMultiplier').value=
+    multiplier();
+
+  el('mBalance').textContent=
+    fmt(user()?.balance||0);
+
+  document
+    .querySelectorAll('[data-chip]')
+    .forEach(button=>{
+      button.classList.toggle(
+        'active',
+        Number(button.dataset.chip)===multiplier()
+      );
+    });
 }
 
 function makeDraft(){
-  const nums=selected();
-  if(!nums.length){
+  const numbers=selected();
+
+  if(!numbers.length){
     toast('Bạn chưa chọn số.',true);
     return null;
   }
 
-  if(state.game==='lo_xien'&&nums.length!==cfg().pick){
-    toast(`${cfg().label} cần chọn đủ ${cfg().pick} số.`,true);
+  if(
+    state.game==='lo_xien'&&
+    numbers.length!==cfg().pick
+  ){
+    toast(
+      `${cfg().label} cần chọn đủ ${cfg().pick} số.`,
+      true
+    );
+
     return null;
   }
 
-  const m=multiplier();
-  const total=selectionCost(nums);
-  const stake=state.game==='lo_xien'?Number(cfg().ticketStake||1000):unitStake();
+  const multiply=multiplier();
+  const total=selectionCost(numbers);
+
+  const stake=
+    state.game==='lo_xien'
+      ? Number(cfg().ticketStake||1000)
+      : unitStake();
+
   const ratio=oddsRatio();
 
+  const payoutBaseStake=
+    Number(
+      cfg().payoutBaseStake||
+      PAYOUT_BASE_STAKE
+    );
+
   return{
-    id:`D${Date.now()}${Math.random().toString(36).slice(2,5)}`,
+    id:
+      `D${Date.now()}`+
+      `${Math.random().toString(36).slice(2,5)}`,
+
     game:state.game,
     gameTitle:GAME[state.game].title,
     subId:cfg().id,
     subTitle:cfg().label,
-    numbers:nums,
-    count:state.game==='lo_xien'?1:nums.length,
-    selectedCount:nums.length,
-    multiplier:m,
+    numbers,
+    count:state.game==='lo_xien'?1:numbers.length,
+    selectedCount:numbers.length,
+    multiplier:multiply,
     unitStake:stake,
+    payoutBaseStake,
     oddsRatio:ratio,
     total,
-    displayWin:Math.round(stake*m*ratio)
+
+    displayWin:Math.round(
+      payoutBaseStake*
+      multiply*
+      ratio
+    )
   };
 }
-function addDraft(){const d=makeDraft();if(!d)return;state.drafts.push(d);resetSelections();renderDrafts();toast('Đã thêm vào nội dung cược.')}
-function renderDrafts(){const body=el('draftBody');if(!state.drafts.length){body.innerHTML='';el('draftEmpty').style.display='grid'}else{el('draftEmpty').style.display='none';body.innerHTML=state.drafts.map((d,i)=>`<tr><td>${esc(d.subTitle)}</td><td>${esc(d.numbers.join(', '))}</td><td>${d.count}</td><td>${d.multiplier}</td><td>${fmt(d.total)}</td><td>${fmt(d.displayWin)}</td><td><button class="remove-line" data-remove="${i}">Xóa</button></td></tr>`).join('');body.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{state.drafts.splice(Number(b.dataset.remove),1);renderDrafts()})}el('draftTotal').textContent=fmt(state.drafts.reduce((s,d)=>s+d.total,0))}
+
+function addDraft(){
+  const draft=makeDraft();
+
+  if(!draft){
+    return;
+  }
+
+  state.drafts.push(draft);
+
+  resetSelections();
+  renderDrafts();
+
+  toast('Đã thêm vào nội dung cược.');
+}
+
+function renderDrafts(){
+  const body=el('draftBody');
+
+  if(!state.drafts.length){
+    body.innerHTML='';
+    el('draftEmpty').style.display='grid';
+  }else{
+    el('draftEmpty').style.display='none';
+
+    body.innerHTML=state.drafts
+      .map((draft,index)=>`
+        <tr>
+          <td>${esc(draft.subTitle)}</td>
+          <td>${esc(draft.numbers.join(', '))}</td>
+          <td>${draft.count}</td>
+          <td>${draft.multiplier}</td>
+          <td>${fmt(draft.total)}</td>
+          <td>${fmt(draft.displayWin)}</td>
+
+          <td>
+            <button
+              class="remove-line"
+              data-remove="${index}"
+            >
+              Xóa
+            </button>
+          </td>
+        </tr>
+      `)
+      .join('');
+
+    body
+      .querySelectorAll('[data-remove]')
+      .forEach(button=>{
+        button.onclick=()=>{
+          state.drafts.splice(
+            Number(button.dataset.remove),
+            1
+          );
+
+          renderDrafts();
+        };
+      });
+  }
+
+  el('draftTotal').textContent=
+    fmt(
+      state.drafts.reduce(
+        (sum,draft)=>sum+draft.total,
+        0
+      )
+    );
+}
+
 function placeDrafts(drafts){
-  if(!requireLogin())return false;
+  if(!requireLogin()){
+    return false;
+  }
+
   if(!drafts.length){
     toast('Không có nội dung cược.',true);
     return false;
   }
 
-  const total=drafts.reduce((s,d)=>s+d.total,0);
-  const db=getDb();
-  const u=db.users[username()];
+  const total=drafts.reduce(
+    (sum,draft)=>sum+draft.total,
+    0
+  );
 
-  if(!u||u.balance<total){
+  const database=getDb();
+  const currentUser=database.users[username()];
+
+  if(
+    !currentUser||
+    currentUser.balance<total
+  ){
     toast('Không đủ điểm demo.',true);
     return false;
   }
 
-  u.balance-=total;
-  const drawDate=nextDrawDate();
-  const now=new Date().toISOString();
+  currentUser.balance-=total;
 
-  for(const d of drafts){
-    db.bets.push({
-      id:`B${Date.now()}${Math.random().toString(36).slice(2,6)}`,
-      username:u.username,
+  const drawDate=nextDrawDate();
+  const createdAt=new Date().toISOString();
+
+  for(const draft of drafts){
+    database.bets.push({
+      id:
+        `B${Date.now()}`+
+        `${Math.random().toString(36).slice(2,6)}`,
+
+      username:currentUser.username,
       drawDate,
       draw:`MB-${drawDate}`,
-      createdAt:now,
-      gameKey:d.game,
-      game:d.gameTitle,
-      subId:d.subId,
-      sub:d.subTitle,
-      numbers:d.numbers,
-      count:d.count,
-      selectedCount:d.selectedCount,
-      multiplier:d.multiplier,
-      unitStake:d.unitStake,
-      oddsRatio:d.oddsRatio,
-      total:d.total,
-      valid:d.total,
+      createdAt,
+      gameKey:draft.game,
+      game:draft.gameTitle,
+      subId:draft.subId,
+      sub:draft.subTitle,
+      numbers:draft.numbers,
+      count:draft.count,
+      selectedCount:draft.selectedCount,
+      multiplier:draft.multiplier,
+      unitStake:draft.unitStake,
+      payoutBaseStake:draft.payoutBaseStake,
+      oddsRatio:draft.oddsRatio,
+      total:draft.total,
+      valid:draft.total,
       status:'pending',
       payout:0,
       result:0
     });
   }
 
-  saveDb(db);
+  saveDb(database);
   renderAll();
-  toast('Đã ghi vé vào Hồ sơ cá cược và Chưa thanh toán.');
+
+  toast(
+    'Đã ghi vé vào Hồ sơ cá cược và Chưa thanh toán.'
+  );
+
   return true;
 }
-function instantBet(){const d=makeDraft();if(d&&placeDrafts([d]))resetSelections()}
-function submitDrafts(){if(placeDrafts(state.drafts)){state.drafts=[];renderDrafts()}}
 
-function parseDateText(text){const m=String(text).match(/(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:null}
-function prizeCells(){const root=el('box_kqxs_minhngoc');if(!root)return[];return['giaidb','giai1','giai2','giai3','giai4','giai5','giai6','giai7'].map(cls=>root.querySelector(`.${cls}`)).filter(Boolean)}
-function originalText(cell){return cell?.dataset.rawResult||cell?.textContent||''}
-function numbersFrom(cell){return(originalText(cell).match(/\d{2,5}/g)||[])}
-function processMinhNgoc(){const root=el('box_kqxs_minhngoc');if(!root)return false;const cells=prizeCells();if(!cells.length)return false;root.querySelectorAll('.thu,.ngay').forEach(td=>td.closest('tr')?.classList.add('date-row-hidden'));for(const c of cells){const raw=(c.dataset.rawResult||c.textContent||'').replace(/\s+/g,' ').trim();if(!c.dataset.rawResult)c.dataset.rawResult=raw;const nums=raw.match(/\d{2,5}/g)||[];const sig=nums.join('|');if(c.dataset.renderSig!==sig){c.dataset.renderSig=sig;c.innerHTML=nums.map((n,i)=>{const p=n.length>2?n.slice(0,-2):'',tail=n.slice(-2),piece=`<span class="result-number">${p}<span class="result-tail">${tail}</span></span>`;return i===nums.length-1?piece:`${piece}<span class="result-sep">-</span>`}).join('')}}const parsedSourceDate=parseDateText(root.querySelector('.ngay')?.textContent||root.textContent);const date=parsedSourceDate||localDateKey(new Date());const db=numbersFrom(root.querySelector('.giaidb'))[0]||'';const all=cells.flatMap(numbersFrom);const last2=all.map(n=>n.slice(-2));const prizeKeys=['db','g1','g2','g3','g4','g5','g6','g7'];
-const prizes={};
-cells.forEach((cell,i)=>{prizes[prizeKeys[i]]=numbersFrom(cell)});
-state.lastResult={date,db,all,last2,prizes,sourceDateDetected:!!parsedSourceDate};el('resultDate').textContent=displayDate(date);el('sideDate').textContent=displayDate(date);el('sideDrawDate').textContent=displayDate(date);if(db){const balls=db.slice(-5).padStart(5,'0').split('').map((d,i)=>`<span class="${i>=3?'orange':''}">${d}</span>`).join('');el('heroBalls').innerHTML=balls;el('mobileBalls').innerHTML=balls;renderDbTags(db)}renderHeadTail(last2);renderMobileResults();document.querySelector('.result-column')?.classList.add('results-ready');settleWithActualResult();return true}
-function renderDbTags(db){const last2=db.slice(-2),num=Number(last2),size=Number(last2[0])<5?'Xỉu':'Tài',parity=num%2?'Lẻ':'Chẵn',z=['Tý','Sửu','Dần','Mão','Thìn','Tỵ','Ngọ','Mùi','Thân','Dậu','Tuất','Hợi'][num%12];el('dbTags').innerHTML=`<span>${size}</span><span>${parity}</span><span>${z}</span>`}
-function renderHeadTail(last2=[]){const g=Array.from({length:10},()=>[]);last2.forEach(p=>{if(/^\d{2}$/.test(p))g[Number(p[0])].push(p[1])});el('headTail').innerHTML=g.map((tails,i)=>`<div><span>${i}</span><span>${tails.length?tails.join(','):'—'}</span></div>`).join('')}
-function renderMobileResults(){const r=state.lastResult;if(!r){el('mobileResultsBody').innerHTML='<div class="mobile-card">Chưa tải được kết quả.</div>';return}const labels=['Giải ĐB','Giải nhất','Giải nhì','Giải ba','Giải tư','Giải năm','Giải sáu','Giải bảy'];const rows=prizeCells().map((c,i)=>`<tr><td>${labels[i]}</td><td>${esc(numbersFrom(c).join(' - '))}</td></tr>`).join('');el('mobileResultsBody').innerHTML=`<div class="mobile-card"><b>Miền Bắc — ${displayDate(r.date)}</b></div><table class="mobile-result-table">${rows}</table>`}
-function installResultObserver(){const root=el('box_kqxs_minhngoc');if(!root)return;let lock=false;const run=()=>{if(lock)return;lock=true;requestAnimationFrame(()=>{lock=false;processMinhNgoc()})};new MutationObserver(run).observe(root,{subtree:true,childList:true,characterData:true});let tries=0;const t=setInterval(()=>{const ok=processMinhNgoc();tries++;if(ok&&tries>10)clearInterval(t);if(tries===15&&!ok)el('resultLoading').textContent='Chưa tải được KQXS. Hãy kiểm tra Internet hoặc trình chặn script.';if(tries>120)clearInterval(t)},1000);run()}
+function instantBet(){
+  const draft=makeDraft();
 
-function demoPayout(bet,winningUnits){
-  if(!winningUnits)return 0;
-  const stake=Number(bet.unitStake||1000);
-  const ratio=Number(bet.oddsRatio||1);
-  const m=Number(bet.multiplier||1);
-  return Math.round(winningUnits*stake*m*ratio);
+  if(
+    draft&&
+    placeDrafts([draft])
+  ){
+    resetSelections();
+  }
 }
 
-function winningUnitsForBet(b,r){
-  const db=r.db||'';
-  const nums=b.numbers||[];
-  const prizes=r.prizes||{};
-  const all=r.all||[];
+function submitDrafts(){
+  if(placeDrafts(state.drafts)){
+    state.drafts=[];
+    renderDrafts();
+  }
+}
 
-  if(b.gameKey==='lo_xien'){
-    return nums.length && nums.every(n=>(r.last2||[]).includes(n)) ? 1 : 0;
+function parseDateText(text){
+  const match=String(text).match(
+    /(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/
+  );
+
+  return match
+    ? (
+      `${match[3]}-`+
+      `${match[2].padStart(2,'0')}-`+
+      `${match[1].padStart(2,'0')}`
+    )
+    : null;
+}
+
+function prizeCells(){
+  const root=el('box_kqxs_minhngoc');
+
+  if(!root){
+    return[];
   }
 
-  if(b.gameKey==='bao_lo'){
-    let targets=[];
-    if(b.subId==='lo2'||b.subId==='lo2_1k'){
-      targets=all.map(x=>x.slice(-2));
-    }else if(b.subId==='lo2dau'){
-      targets=all.map(x=>x.slice(0,2));
-    }else if(b.subId==='lo3'){
-      targets=all.map(x=>x.slice(-3));
-    }else if(b.subId==='lo4'){
-      targets=all.map(x=>x.slice(-4));
+  return[
+    'giaidb',
+    'giai1',
+    'giai2',
+    'giai3',
+    'giai4',
+    'giai5',
+    'giai6',
+    'giai7'
+  ]
+    .map(className=>
+      root.querySelector(`.${className}`)
+    )
+    .filter(Boolean);
+}
+
+function numbersFrom(cell){
+  return(
+    (cell?.textContent||'')
+      .match(/\d{2,5}/g)||
+    []
+  );
+}
+
+function isCompleteNorthernResult(prizes){
+  return Object
+    .keys(PRIZE_COUNTS)
+    .every(key=>{
+      const values=prizes?.[key]||[];
+
+      return(
+        values.length===PRIZE_COUNTS[key]&&
+        values.every(value=>
+          new RegExp(
+            `^\\d{${PRIZE_DIGITS[key]}}$`
+          ).test(value)
+        )
+      );
+    });
+}
+
+function processMinhNgoc(){
+  const root=el('box_kqxs_minhngoc');
+
+  if(!root){
+    return false;
+  }
+
+  const cells=prizeCells();
+
+  if(cells.length!==8){
+    return false;
+  }
+
+  root
+    .querySelectorAll('.thu,.ngay')
+    .forEach(cell=>{
+      cell
+        .closest('tr')
+        ?.classList.add('date-row-hidden');
+    });
+
+  for(const cell of cells){
+    const raw=(cell.textContent||'')
+      .replace(/\s+/g,' ')
+      .trim();
+
+    const numbers=
+      raw.match(/\d{2,5}/g)||[];
+
+    const signature=
+      numbers.join('|');
+
+    if(cell.dataset.renderSig!==signature){
+      cell.dataset.renderSig=signature;
+
+      cell.innerHTML=numbers
+        .map((number,index)=>{
+          const prefix=
+            number.length>2
+              ? number.slice(0,-2)
+              : '';
+
+          const tail=
+            number.slice(-2);
+
+          const piece=`
+            <span class="result-number">
+              ${prefix}
+              <span class="result-tail">
+                ${tail}
+              </span>
+            </span>
+          `;
+
+          return index===numbers.length-1
+            ? piece
+            : (
+              `${piece}`+
+              '<span class="result-sep">-</span>'
+            );
+        })
+        .join('');
     }
-    return targets.filter(t=>nums.includes(t)).length;
   }
 
-  if(b.gameKey==='danh_de'){
+  const parsedSourceDate=
+    parseDateText(
+      root.querySelector('.ngay')?.textContent||
+      root.textContent
+    );
+
+  const date=
+    parsedSourceDate||
+    localDateKey(new Date());
+
+  const db=
+    numbersFrom(
+      root.querySelector('.giaidb')
+    )[0]||'';
+
+  const all=
+    cells.flatMap(numbersFrom);
+
+  const last2=
+    all.map(number=>number.slice(-2));
+
+  const prizeKeys=[
+    'db',
+    'g1',
+    'g2',
+    'g3',
+    'g4',
+    'g5',
+    'g6',
+    'g7'
+  ];
+
+  const prizes={};
+
+  cells.forEach((cell,index)=>{
+    prizes[prizeKeys[index]]=
+      numbersFrom(cell);
+  });
+
+  state.lastResult={
+    date,
+    db,
+    all,
+    last2,
+    prizes,
+    sourceDateDetected:Boolean(parsedSourceDate)
+  };
+
+  el('resultDate').textContent=
+    displayDate(date);
+
+  el('sideDate').textContent=
+    displayDate(date);
+
+  el('sideDrawDate').textContent=
+    displayDate(date);
+
+  if(db){
+    const balls=db
+      .slice(-5)
+      .padStart(5,'0')
+      .split('')
+      .map((digit,index)=>`
+        <span class="${index>=3?'orange':''}">
+          ${digit}
+        </span>
+      `)
+      .join('');
+
+    el('heroBalls').innerHTML=balls;
+    el('mobileBalls').innerHTML=balls;
+
+    renderDbTags(db);
+  }
+
+  renderHeadTail(last2);
+  renderMobileResults();
+
+  document
+    .querySelector('.result-column')
+    ?.classList.add('results-ready');
+
+  settleWithActualResult();
+
+  return true;
+}
+
+function renderDbTags(db){
+  const last2=db.slice(-2);
+  const number=Number(last2);
+
+  const size=
+    Number(last2[0])<5
+      ? 'Xỉu'
+      : 'Tài';
+
+  const parity=
+    number%2
+      ? 'Lẻ'
+      : 'Chẵn';
+
+  const zodiac=[
+    'Tý',
+    'Sửu',
+    'Dần',
+    'Mão',
+    'Thìn',
+    'Tỵ',
+    'Ngọ',
+    'Mùi',
+    'Thân',
+    'Dậu',
+    'Tuất',
+    'Hợi'
+  ][number%12];
+
+  el('dbTags').innerHTML=`
+    <span>${size}</span>
+    <span>${parity}</span>
+    <span>${zodiac}</span>
+  `;
+}
+
+function renderHeadTail(last2=[]){
+  const groups=
+    Array.from(
+      {length:10},
+      ()=>[]
+    );
+
+  last2.forEach(pair=>{
+    if(/^\d{2}$/.test(pair)){
+      groups[Number(pair[0])]
+        .push(pair[1]);
+    }
+  });
+
+  el('headTail').innerHTML=groups
+    .map((tails,index)=>`
+      <div>
+        <span>${index}</span>
+        <span>
+          ${tails.length?tails.join(','):'—'}
+        </span>
+      </div>
+    `)
+    .join('');
+}
+
+function renderMobileResults(){
+  const result=state.lastResult;
+
+  if(!result){
+    el('mobileResultsBody').innerHTML=
+      '<div class="mobile-card">Chưa tải được kết quả.</div>';
+
+    return;
+  }
+
+  const labels=[
+    'Giải ĐB',
+    'Giải nhất',
+    'Giải nhì',
+    'Giải ba',
+    'Giải tư',
+    'Giải năm',
+    'Giải sáu',
+    'Giải bảy'
+  ];
+
+  const rows=prizeCells()
+    .map((cell,index)=>`
+      <tr>
+        <td>${labels[index]}</td>
+        <td>
+          ${esc(numbersFrom(cell).join(' - '))}
+        </td>
+      </tr>
+    `)
+    .join('');
+
+  el('mobileResultsBody').innerHTML=`
+    <div class="mobile-card">
+      <b>
+        Miền Bắc — ${displayDate(result.date)}
+      </b>
+    </div>
+
+    <table class="mobile-result-table">
+      ${rows}
+    </table>
+  `;
+}
+
+function installResultObserver(){
+  const root=el('box_kqxs_minhngoc');
+
+  if(!root){
+    return;
+  }
+
+  let lock=false;
+
+  const run=()=>{
+    if(lock){
+      return;
+    }
+
+    lock=true;
+
+    requestAnimationFrame(()=>{
+      lock=false;
+      processMinhNgoc();
+    });
+  };
+
+  new MutationObserver(run).observe(
+    root,
+    {
+      subtree:true,
+      childList:true,
+      characterData:true
+    }
+  );
+
+  let tries=0;
+
+  const timer=setInterval(()=>{
+    const loaded=processMinhNgoc();
+
+    tries++;
+
+    if(loaded&&tries>10){
+      clearInterval(timer);
+    }
+
+    if(tries===15&&!loaded){
+      el('resultLoading').textContent=
+        'Chưa tải được KQXS. Hãy kiểm tra Internet hoặc trình chặn script.';
+    }
+
+    if(tries>120){
+      clearInterval(timer);
+    }
+  },1000);
+
+  run();
+}
+function demoPayout(bet,winningUnits){
+  if(!winningUnits){
+    return 0;
+  }
+
+  /*
+   * Một điểm = 1.000đ.
+   *
+   * Ví dụ Lô 2 số:
+   * - Giá mua một điểm: 27.000đ.
+   * - Một nháy trúng: 1.000 × 99,9 = 99.900đ.
+   */
+  const payoutBaseStake=
+    Number(
+      bet.payoutBaseStake||
+      PAYOUT_BASE_STAKE
+    );
+
+  const ratio=
+    Number(bet.oddsRatio||1);
+
+  const multiply=
+    Number(bet.multiplier||1);
+
+  return Math.round(
+    winningUnits*
+    payoutBaseStake*
+    multiply*
+    ratio
+  );
+}
+
+function winningUnitsForBet(bet,result){
+  const db=result.db||'';
+
+  const selectedNumbers=
+    (bet.numbers||[]).map(String);
+
+  const prizes=result.prizes||{};
+  const all=result.all||[];
+
+  /*
+   * Lô xiên: tất cả số đã chọn phải xuất hiện.
+   */
+  if(bet.gameKey==='lo_xien'){
+    const requiredPicks={
+      xien2:2,
+      xien3:3,
+      xien4:4
+    };
+
+    const required=
+      requiredPicks[bet.subId]||
+      selectedNumbers.length;
+
+    if(selectedNumbers.length!==required){
+      return 0;
+    }
+
+    const resultSet=
+      new Set(result.last2||[]);
+
+    return selectedNumbers.every(number=>
+      resultSet.has(number)
+    )
+      ? 1
+      : 0;
+  }
+
+  /*
+   * Bao lô.
+   */
+  if(bet.gameKey==='bao_lo'){
     let targets=[];
-    if(b.subId==='de_db')targets=[db.slice(-2)];
-    if(b.subId==='de_dau_db')targets=[db.slice(0,2)];
-    if(b.subId==='de_giai7')targets=(prizes.g7||[]).map(x=>x.slice(-2));
-    if(b.subId==='de_giai1')targets=(prizes.g1||[]).slice(0,1).map(x=>x.slice(-2));
-    if(b.subId==='de_dau_giai1')targets=(prizes.g1||[]).slice(0,1).map(x=>x.slice(0,2));
-    return targets.filter(t=>nums.includes(t)).length;
+
+    /*
+     * Lô 2 số và Lô 2 số 1K:
+     * so 2 số cuối của cả 27 kết quả.
+     */
+    if(
+      bet.subId==='lo2'||
+      bet.subId==='lo2_1k'
+    ){
+      targets=all.map(number=>
+        number.slice(-2)
+      );
+    }
+
+    /*
+     * Lô 2 số đầu:
+     * so 2 số đầu của 23 kết quả,
+     * từ giải đặc biệt đến giải 6.
+     */
+    else if(bet.subId==='lo2dau'){
+      targets=[
+        ...(prizes.db||[]),
+        ...(prizes.g1||[]),
+        ...(prizes.g2||[]),
+        ...(prizes.g3||[]),
+        ...(prizes.g4||[]),
+        ...(prizes.g5||[]),
+        ...(prizes.g6||[])
+      ].map(number=>
+        number.slice(0,2)
+      );
+    }
+
+    /*
+     * Lô 3 số:
+     * so 3 số cuối của 23 kết quả.
+     */
+    else if(bet.subId==='lo3'){
+      targets=[
+        ...(prizes.db||[]),
+        ...(prizes.g1||[]),
+        ...(prizes.g2||[]),
+        ...(prizes.g3||[]),
+        ...(prizes.g4||[]),
+        ...(prizes.g5||[]),
+        ...(prizes.g6||[])
+      ].map(number=>
+        number.slice(-3)
+      );
+    }
+
+    /*
+     * Lô 4 số:
+     * so 4 số cuối của 20 kết quả,
+     * từ giải đặc biệt đến giải 5.
+     */
+    else if(bet.subId==='lo4'){
+      targets=[
+        ...(prizes.db||[]),
+        ...(prizes.g1||[]),
+        ...(prizes.g2||[]),
+        ...(prizes.g3||[]),
+        ...(prizes.g4||[]),
+        ...(prizes.g5||[])
+      ].map(number=>
+        number.slice(-4)
+      );
+    }
+
+    /*
+     * Mỗi lần xuất hiện là một nháy thắng.
+     */
+    return targets.filter(target=>
+      selectedNumbers.includes(target)
+    ).length;
   }
 
-  if(b.gameKey==='dau_duoi'){
-    const last2=db.slice(-2);
-    const target=b.subId==='dau'?last2.slice(0,1):last2.slice(-1);
-    return nums.includes(target)?1:0;
-  }
-
-  if(b.gameKey==='ba_cang'){
-    const g1=(prizes.g1||[])[0]||'';
+  /*
+   * Đánh đề.
+   */
+  if(bet.gameKey==='danh_de'){
     let targets=[];
-    if(b.subId==='3c_db')targets=[db.slice(-3)];
-    if(b.subId==='3c_giai1')targets=[g1.slice(-3)];
-    if(b.subId==='3c_dau_duoi')targets=[db.slice(-3),g1.slice(-3)].filter(Boolean);
-    if(b.subId==='3c_dau')targets=[db.slice(0,3)];
-    return targets.filter(t=>nums.includes(t)).length;
+
+    if(bet.subId==='de_db'){
+      targets=[
+        db.slice(-2)
+      ];
+    }else if(bet.subId==='de_dau_db'){
+      targets=[
+        db.slice(0,2)
+      ];
+    }else if(bet.subId==='de_giai7'){
+      targets=(prizes.g7||[])
+        .map(number=>
+          number.slice(-2)
+        );
+    }else if(bet.subId==='de_giai1'){
+      const firstPrize=
+        (prizes.g1||[])[0]||'';
+
+      targets=[
+        firstPrize.slice(-2)
+      ];
+    }else if(bet.subId==='de_dau_giai1'){
+      const firstPrize=
+        (prizes.g1||[])[0]||'';
+
+      targets=[
+        firstPrize.slice(0,2)
+      ];
+    }
+
+    return targets.filter(target=>
+      selectedNumbers.includes(target)
+    ).length;
   }
 
-  if(b.gameKey==='bon_cang'){
-    return nums.includes(db.slice(-4))?1:0;
+  /*
+   * Đầu và đuôi giải đặc biệt.
+   */
+  if(bet.gameKey==='dau_duoi'){
+    const lastTwoDigits=
+      db.slice(-2);
+
+    const target=
+      bet.subId==='dau'
+        ? lastTwoDigits.slice(0,1)
+        : lastTwoDigits.slice(-1);
+
+    return selectedNumbers.includes(target)
+      ? 1
+      : 0;
+  }
+
+  /*
+   * 3 càng.
+   */
+  if(bet.gameKey==='ba_cang'){
+    const firstPrize=
+      (prizes.g1||[])[0]||'';
+
+    let targets=[];
+
+    if(bet.subId==='3c_db'){
+      targets=[
+        db.slice(-3)
+      ];
+    }else if(bet.subId==='3c_giai1'){
+      targets=[
+        firstPrize.slice(-3)
+      ];
+    }else if(bet.subId==='3c_dau_duoi'){
+      /*
+       * So cả 3 số đầu và
+       * 3 số cuối giải đặc biệt.
+       */
+      targets=[
+        db.slice(0,3),
+        db.slice(-3)
+      ].filter(Boolean);
+    }else if(bet.subId==='3c_dau'){
+      /*
+       * So 3 số đầu giải đặc biệt.
+       */
+      targets=[
+        db.slice(0,3)
+      ];
+    }
+
+    return targets.filter(target=>
+      selectedNumbers.includes(target)
+    ).length;
+  }
+
+  /*
+   * 4 càng: so 4 số cuối giải đặc biệt.
+   */
+  if(bet.gameKey==='bon_cang'){
+    const target=
+      db.slice(-4);
+
+    return selectedNumbers.includes(target)
+      ? 1
+      : 0;
   }
 
   return 0;
 }
 
-function isWinningBet(b,r){
-  return winningUnitsForBet(b,r)>0;
+function isWinningBet(bet,result){
+  return(
+    winningUnitsForBet(bet,result)>0
+  );
 }
-function settleWithActualResult(){
-  const r=state.lastResult;
-  if(!r)return;
 
-  const db=getDb();
+function settleWithActualResult(){
+  const result=state.lastResult;
+
+  /*
+   * Không thanh toán khi chưa đọc được đúng ngày
+   * hoặc bảng chưa có đủ 27 kết quả.
+   */
+  if(
+    !result||
+    !result.sourceDateDetected||
+    !isCompleteNorthernResult(result.prizes)
+  ){
+    return;
+  }
+
+  const database=getDb();
   let changed=false;
 
-  for(const b of db.bets){
-    if(b.status!=='pending'||b.drawDate!==r.date)continue;
-
-    const units=winningUnitsForBet(b,r);
-    const win=units>0;
-
-    b.status=win?'win':'lose';
-    b.winningUnits=units;
-    b.payout=demoPayout(b,units);
-    b.result=b.payout-b.total;
-    b.settledAt=new Date().toISOString();
-
-    if(win&&db.users[b.username]){
-      db.users[b.username].balance+=b.payout;
+  for(const bet of database.bets){
+    /*
+     * Chỉ xét vé đang chờ và đúng ngày quay.
+     */
+    if(
+      bet.status!=='pending'||
+      bet.drawDate!==result.date
+    ){
+      continue;
     }
+
+    const winningUnits=
+      winningUnitsForBet(bet,result);
+
+    const won=
+      winningUnits>0;
+
+    bet.status=
+      won
+        ? 'win'
+        : 'lose';
+
+    bet.winningUnits=
+      winningUnits;
+
+    bet.payout=
+      demoPayout(
+        bet,
+        winningUnits
+      );
+
+    /*
+     * Tổng thắng thua =
+     * tiền nhận được - tiền cược đã trừ.
+     */
+    bet.result=
+      bet.payout-
+      bet.total;
+
+    bet.settledAt=
+      new Date().toISOString();
+
+    bet.settlementVersion=2;
+    bet.settlementResultDate=result.date;
+    bet.resultDb=result.db;
+
+    bet.resultSnapshot=
+      JSON.parse(
+        JSON.stringify(result.prizes)
+      );
+
+    /*
+     * Tiền cược đã bị trừ lúc đặt vé.
+     * Khi thắng, cộng tiền trả thưởng vào số dư.
+     */
+    if(
+      won&&
+      database.users[bet.username]
+    ){
+      database.users[bet.username].balance+=
+        bet.payout;
+    }
+
     changed=true;
   }
 
   if(changed){
-    saveDb(db);
+    saveDb(database);
     renderAccount();
     renderHistory();
     renderDrawerCounts();
   }
 }
 
-function renderHistory(){const u=username(),body=el('historyBody');if(!u){body.innerHTML='';el('historyEmpty').style.display='grid';return}let bets=getDb().bets.filter(b=>b.username===u);if(state.historyFilter==='pending')bets=bets.filter(b=>b.status==='pending');if(state.historyFilter==='settled')bets=bets.filter(b=>b.status!=='pending');bets.reverse();if(!bets.length){body.innerHTML='';el('historyEmpty').style.display='grid';return}el('historyEmpty').style.display='none';body.innerHTML=bets.map(b=>`<tr><td>Miền Bắc</td><td>${esc(b.draw)}</td><td>${esc(b.id)}</td><td>${new Date(b.createdAt).toLocaleString('vi-VN')}</td><td>${esc(b.sub)}</td><td>${esc(b.numbers.join(', '))}</td><td>${b.count}</td><td>${b.multiplier}</td><td>${fmt(b.total)}</td><td>${fmt(b.valid)}</td><td class="${b.status==='win'?'status-win':b.status==='lose'?'status-lose':''}">${b.status==='pending'?'—':`${b.result>=0?'+':''}${fmt(b.result)}`}</td><td class="${b.status==='pending'?'status-pending':b.status==='win'?'status-win':'status-lose'}">${b.status==='pending'?'Chờ mở thưởng':'Đã thanh toán'}</td></tr>`).join('')}
-function renderDrawerCounts(){const u=username(),bets=u?getDb().bets.filter(b=>b.username===u):[];el('pendingCountDrawer').textContent=bets.filter(b=>b.status==='pending').length;el('settledCount').textContent=bets.filter(b=>b.status!=='pending').length}
-function renderMobileRecords(filter='all',title='Hồ sơ cá cược'){state.mobileFilter=filter;const u=username();let bets=u?getDb().bets.filter(b=>b.username===u):[];if(filter==='pending')bets=bets.filter(b=>b.status==='pending');if(filter==='settled')bets=bets.filter(b=>b.status!=='pending');bets.reverse();el('mobileRecordsTitle').textContent=title;el('mobileRecordsList').innerHTML=!u?'<div class="mobile-card">Hãy đăng nhập để xem dữ liệu.</div>':!bets.length?'<div class="mobile-card">Không có dữ liệu.</div>':bets.map(b=>`<article class="mobile-card"><div class="line"><b>${esc(b.sub)}</b><span class="${b.status==='pending'?'status-pending':b.status==='win'?'status-win':'status-lose'}">${b.status==='pending'?'Chưa thanh toán':b.status==='win'?'Thắng':'Thua'}</span></div><div class="line"><span>Lượt xổ</span><b>${esc(b.draw)}</b></div><div class="line"><span>Nội dung</span><b>${esc(b.numbers.join(', '))}</b></div><div class="line"><span>Tiền cược</span><b>${fmt(b.total)} VND</b></div><div class="line"><span>Thời gian</span><span>${new Date(b.createdAt).toLocaleString('vi-VN')}</span></div></article>`).join('');el('mobileRecords').classList.add('open')}
+function renderHistory(){
+  const currentUsername=username();
+  const body=el('historyBody');
 
-function openDrawer(){el('mobileDrawer').classList.add('open');el('drawerBackdrop').classList.add('open');renderAccount()}
-function closeDrawer(){el('mobileDrawer').classList.remove('open');el('drawerBackdrop').classList.remove('open')}
+  if(!currentUsername){
+    body.innerHTML='';
+    el('historyEmpty').style.display='grid';
+    return;
+  }
+
+  let bets=getDb().bets.filter(bet=>
+    bet.username===currentUsername
+  );
+
+  if(state.historyFilter==='pending'){
+    bets=bets.filter(bet=>
+      bet.status==='pending'
+    );
+  }
+
+  if(state.historyFilter==='settled'){
+    bets=bets.filter(bet=>
+      bet.status!=='pending'
+    );
+  }
+
+  bets.reverse();
+
+  if(!bets.length){
+    body.innerHTML='';
+    el('historyEmpty').style.display='grid';
+    return;
+  }
+
+  el('historyEmpty').style.display='none';
+
+  body.innerHTML=bets
+    .map(bet=>`
+      <tr>
+        <td>Miền Bắc</td>
+
+        <td>
+          ${esc(bet.draw)}
+        </td>
+
+        <td>
+          ${esc(bet.id)}
+        </td>
+
+        <td>
+          ${
+            new Date(bet.createdAt)
+              .toLocaleString('vi-VN')
+          }
+        </td>
+
+        <td>
+          ${esc(bet.sub)}
+        </td>
+
+        <td>
+          ${esc(bet.numbers.join(', '))}
+        </td>
+
+        <td>
+          ${bet.count}
+        </td>
+
+        <td>
+          ${bet.multiplier}
+        </td>
+
+        <td>
+          ${fmt(bet.total)}
+        </td>
+
+        <td>
+          ${fmt(bet.valid)}
+        </td>
+
+        <td class="${
+          bet.status==='win'
+            ? 'status-win'
+            : bet.status==='lose'
+              ? 'status-lose'
+              : ''
+        }">
+          ${
+            bet.status==='pending'
+              ? '—'
+              : (
+                `${bet.result>=0?'+':''}`+
+                `${fmt(bet.result)}`
+              )
+          }
+        </td>
+
+        <td class="${
+          bet.status==='pending'
+            ? 'status-pending'
+            : bet.status==='win'
+              ? 'status-win'
+              : 'status-lose'
+        }">
+          ${
+            bet.status==='pending'
+              ? 'Chờ mở thưởng'
+              : 'Đã thanh toán'
+          }
+        </td>
+      </tr>
+    `)
+    .join('');
+}
+
+function renderDrawerCounts(){
+  const currentUsername=username();
+
+  const bets=currentUsername
+    ? getDb().bets.filter(bet=>
+      bet.username===currentUsername
+    )
+    : [];
+
+  el('pendingCountDrawer').textContent=
+    bets.filter(bet=>
+      bet.status==='pending'
+    ).length;
+
+  el('settledCount').textContent=
+    bets.filter(bet=>
+      bet.status!=='pending'
+    ).length;
+}
+
+function renderMobileRecords(
+  filter='all',
+  title='Hồ sơ cá cược'
+){
+  state.mobileFilter=filter;
+
+  const currentUsername=username();
+
+  let bets=currentUsername
+    ? getDb().bets.filter(bet=>
+      bet.username===currentUsername
+    )
+    : [];
+
+  if(filter==='pending'){
+    bets=bets.filter(bet=>
+      bet.status==='pending'
+    );
+  }
+
+  if(filter==='settled'){
+    bets=bets.filter(bet=>
+      bet.status!=='pending'
+    );
+  }
+
+  bets.reverse();
+
+  el('mobileRecordsTitle').textContent=title;
+
+  if(!currentUsername){
+    el('mobileRecordsList').innerHTML=`
+      <div class="mobile-card">
+        Hãy đăng nhập để xem dữ liệu.
+      </div>
+    `;
+  }else if(!bets.length){
+    el('mobileRecordsList').innerHTML=`
+      <div class="mobile-card">
+        Không có dữ liệu.
+      </div>
+    `;
+  }else{
+    el('mobileRecordsList').innerHTML=
+      bets.map(bet=>`
+        <article class="mobile-card">
+          <div class="line">
+            <b>${esc(bet.sub)}</b>
+
+            <span class="${
+              bet.status==='pending'
+                ? 'status-pending'
+                : bet.status==='win'
+                  ? 'status-win'
+                  : 'status-lose'
+            }">
+              ${
+                bet.status==='pending'
+                  ? 'Chưa thanh toán'
+                  : bet.status==='win'
+                    ? 'Thắng'
+                    : 'Thua'
+              }
+            </span>
+          </div>
+
+          <div class="line">
+            <span>Lượt xổ</span>
+            <b>${esc(bet.draw)}</b>
+          </div>
+
+          <div class="line">
+            <span>Nội dung</span>
+            <b>${esc(bet.numbers.join(', '))}</b>
+          </div>
+
+          <div class="line">
+            <span>Tiền cược</span>
+            <b>${fmt(bet.total)} VND</b>
+          </div>
+
+          ${
+            bet.status!=='pending'
+              ? `
+                <div class="line">
+                  <span>Thắng/thua</span>
+
+                  <b class="${
+                    bet.status==='win'
+                      ? 'status-win'
+                      : 'status-lose'
+                  }">
+                    ${
+                      bet.result>=0?'+':''
+                    }${fmt(bet.result)} VND
+                  </b>
+                </div>
+              `
+              : ''
+          }
+
+          <div class="line">
+            <span>Thời gian</span>
+
+            <span>
+              ${
+                new Date(bet.createdAt)
+                  .toLocaleString('vi-VN')
+              }
+            </span>
+          </div>
+        </article>
+      `).join('');
+  }
+
+  el('mobileRecords').classList.add('open');
+}
+
+function openDrawer(){
+  el('mobileDrawer').classList.add('open');
+  el('drawerBackdrop').classList.add('open');
+
+  renderAccount();
+}
+
+function closeDrawer(){
+  el('mobileDrawer').classList.remove('open');
+  el('drawerBackdrop').classList.remove('open');
+}
+
 function renderMobileGameMenu(){
   const menu=el('mobileGameMenu');
 
-  const order=['bao_lo','lo_xien','danh_de','dau_duoi','ba_cang','bon_cang'];
-  const sections=order.map(key=>{
-    const g=GAME[key];
-    if(!g)return '';
-    const items=g.subs.map((s,i)=>`<button data-mgame="${key}" data-msub="${i}" class="mobile-game-option ${state.game===key&&state.sub===i?'active':''}">${s.label}</button>`).join('');
-    return `<section class="mobile-game-group">
-      <h3>${g.title}</h3>
-      <div class="mobile-game-option-grid">${items}</div>
-    </section>`;
-  }).join('');
+  const order=[
+    'bao_lo',
+    'lo_xien',
+    'danh_de',
+    'dau_duoi',
+    'ba_cang',
+    'bon_cang'
+  ];
 
-  menu.innerHTML=`<div class="mobile-game-shell">
-    <div class="mobile-game-dialog" role="dialog" aria-modal="true" aria-label="Danh sách trò chơi">
-      <div class="mobile-game-dialog-title">Danh sách trò chơi</div>
-      <div class="mobile-game-dialog-body">
-        <aside class="mobile-game-category"><span>Cổ điển</span></aside>
-        <div class="mobile-game-groups">${sections}</div>
+  const sections=order
+    .map(gameKey=>{
+      const game=GAME[gameKey];
+
+      if(!game){
+        return'';
+      }
+
+      const items=game.subs
+        .map((sub,index)=>`
+          <button
+            data-mgame="${gameKey}"
+            data-msub="${index}"
+            class="
+              mobile-game-option
+              ${
+                state.game===gameKey&&
+                state.sub===index
+                  ? 'active'
+                  : ''
+              }
+            "
+          >
+            ${sub.label}
+          </button>
+        `)
+        .join('');
+
+      return`
+        <section class="mobile-game-group">
+          <h3>${game.title}</h3>
+
+          <div class="mobile-game-option-grid">
+            ${items}
+          </div>
+        </section>
+      `;
+    })
+    .join('');
+
+  menu.innerHTML=`
+    <div class="mobile-game-shell">
+      <div
+        class="mobile-game-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Danh sách trò chơi"
+      >
+        <div class="mobile-game-dialog-title">
+          Danh sách trò chơi
+        </div>
+
+        <div class="mobile-game-dialog-body">
+          <aside class="mobile-game-category">
+            <span>Cổ điển</span>
+          </aside>
+
+          <div class="mobile-game-groups">
+            ${sections}
+          </div>
+        </div>
       </div>
+
+      <button
+        type="button"
+        class="mobile-game-close"
+        data-close-game-menu
+        aria-label="Đóng"
+      >
+        ×
+      </button>
     </div>
-    <button type="button" class="mobile-game-close" data-close-game-menu aria-label="Đóng">×</button>
-  </div>`;
+  `;
 
-  menu.querySelectorAll('[data-mgame]').forEach(b=>b.onclick=()=>{
-    state.game=b.dataset.mgame;
-    state.sub=Number(b.dataset.msub);
-    state.mode=defaultModeForGame(state.game);
-    state.quickPage=0;
-    state.rows=[];
-    state.numbers=[];
+  menu
+    .querySelectorAll('[data-mgame]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.game=button.dataset.mgame;
+        state.sub=Number(button.dataset.msub);
 
-    document.querySelectorAll('#gameTabs [data-game]').forEach(x=>
-      x.classList.toggle('active',x.dataset.game===state.game)
+        state.mode=
+          defaultModeForGame(state.game);
+
+        state.quickPage=0;
+        state.rows=[];
+        state.numbers=[];
+
+        document
+          .querySelectorAll(
+            '#gameTabs [data-game]'
+          )
+          .forEach(tab=>{
+            tab.classList.toggle(
+              'active',
+              tab.dataset.game===state.game
+            );
+          });
+
+        menu.classList.remove('open');
+
+        renderSubTabs();
+        renderMeta();
+        resetSelections();
+      };
+    });
+
+  menu
+    .querySelector('[data-close-game-menu]')
+    ?.addEventListener(
+      'click',
+      ()=>menu.classList.remove('open')
     );
 
-    menu.classList.remove('open');
-    renderSubTabs();
-    renderMeta();
-    resetSelections();
-  });
-
-  menu.querySelector('[data-close-game-menu]')?.addEventListener('click',()=>menu.classList.remove('open'));
-  menu.onclick=e=>{if(e.target===menu)menu.classList.remove('open')};
+  menu.onclick=event=>{
+    if(event.target===menu){
+      menu.classList.remove('open');
+    }
+  };
 }
+
 function clockTick(){
-  const n=new Date();
+  const now=new Date();
+  const todayKey=localDateKey(now);
 
-  const todayKey=localDateKey(n);
-
-  // Mốc đóng cược / bắt đầu chờ KQ.
-  const todayCutoff=new Date(n);
+  const todayCutoff=new Date(now);
   todayCutoff.setHours(18,15,0,0);
 
-  // Mốc UI được phép chuyển sang countdown kỳ ngày mai.
-  // Cố định 19:30, KHÔNG phụ thuộc Minh Ngọc đã cập nhật hay chưa.
-  const nextCountdownAt=new Date(n);
+  const nextCountdownAt=new Date(now);
   nextCountdownAt.setHours(19,30,0,0);
 
-  // 1) Trước 18:15: countdown kỳ hôm nay.
-  if(n<todayCutoff){
-    const secTotal=Math.max(0,Math.floor((todayCutoff-n)/1000));
-    const h=String(Math.floor(secTotal/3600)).padStart(2,'0');
-    const m=String(Math.floor(secTotal%3600/60)).padStart(2,'0');
-    const sec=String(secTotal%60).padStart(2,'0');
-    const chars=(h+m+sec).split('');
+  if(now<todayCutoff){
+    const totalSeconds=Math.max(
+      0,
+      Math.floor(
+        (todayCutoff-now)/1000
+      )
+    );
+
+    const hours=
+      String(
+        Math.floor(totalSeconds/3600)
+      ).padStart(2,'0');
+
+    const minutes=
+      String(
+        Math.floor(
+          totalSeconds%3600/60
+        )
+      ).padStart(2,'0');
+
+    const seconds=
+      String(
+        totalSeconds%60
+      ).padStart(2,'0');
+
+    const characters=
+      (hours+minutes+seconds).split('');
 
     const html=
-      `<b>${chars[0]}</b><b>${chars[1]}</b><em>:</em>`+
-      `<b>${chars[2]}</b><b>${chars[3]}</b><em>:</em>`+
-      `<b>${chars[4]}</b><b>${chars[5]}</b>`;
+      `<b>${characters[0]}</b>`+
+      `<b>${characters[1]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[2]}</b>`+
+      `<b>${characters[3]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[4]}</b>`+
+      `<b>${characters[5]}</b>`;
 
-    el('countdown').classList.remove('preparing');
-    el('mobileCountdown').classList.remove('preparing');
+    el('countdown')
+      .classList.remove('preparing');
+
+    el('mobileCountdown')
+      .classList.remove('preparing');
 
     el('countdown').innerHTML=html;
     el('mobileCountdown').innerHTML=html;
 
-    el('deadlineText').textContent=`Kỳ tiếp theo ${displayDate(todayKey)}`;
-    el('mobileDrawDate').textContent=displayDate(todayKey);
+    el('deadlineText').textContent=
+      `Kỳ tiếp theo ${displayDate(todayKey)}`;
 
-  // 2) Từ 18:15 tới trước 19:30:
-  // LUÔN hiện "Hết giờ -- / Đang chuẩn bị".
-  // Kể cả Minh Ngọc đã cập nhật kết quả thì UI countdown vẫn đứng ở đây.
-  }else if(n<nextCountdownAt){
-    el('deadlineText').textContent='Hết giờ --';
+    el('mobileDrawDate').textContent=
+      displayDate(todayKey);
+  }else if(now<nextCountdownAt){
+    el('deadlineText').textContent=
+      'Hết giờ --';
 
-    el('countdown').classList.add('preparing');
-    el('mobileCountdown').classList.add('preparing');
+    el('countdown')
+      .classList.add('preparing');
 
-    el('countdown').innerHTML='<span class="preparing-text">Đang chuẩn bị</span>';
-    el('mobileCountdown').innerHTML='<span class="preparing-text">Đang chuẩn bị</span>';
+    el('mobileCountdown')
+      .classList.add('preparing');
 
-    el('mobileDrawDate').textContent=displayDate(todayKey);
+    el('countdown').innerHTML=
+      '<span class="preparing-text">Đang chuẩn bị</span>';
 
-  // 3) Từ 19:30 trở đi:
-  // mới bắt đầu countdown đúng tới 18:15 ngày mai.
+    el('mobileCountdown').innerHTML=
+      '<span class="preparing-text">Đang chuẩn bị</span>';
+
+    el('mobileDrawDate').textContent=
+      displayDate(todayKey);
   }else{
-    const tomorrow=new Date(n);
-    tomorrow.setDate(tomorrow.getDate()+1);
+    const tomorrow=new Date(now);
+
+    tomorrow.setDate(
+      tomorrow.getDate()+1
+    );
+
     tomorrow.setHours(18,15,0,0);
 
-    const secTotal=Math.max(0,Math.floor((tomorrow-n)/1000));
-    const h=String(Math.floor(secTotal/3600)).padStart(2,'0');
-    const m=String(Math.floor(secTotal%3600/60)).padStart(2,'0');
-    const sec=String(secTotal%60).padStart(2,'0');
-    const chars=(h+m+sec).split('');
+    const totalSeconds=Math.max(
+      0,
+      Math.floor(
+        (tomorrow-now)/1000
+      )
+    );
+
+    const hours=
+      String(
+        Math.floor(totalSeconds/3600)
+      ).padStart(2,'0');
+
+    const minutes=
+      String(
+        Math.floor(
+          totalSeconds%3600/60
+        )
+      ).padStart(2,'0');
+
+    const seconds=
+      String(
+        totalSeconds%60
+      ).padStart(2,'0');
+
+    const characters=
+      (hours+minutes+seconds).split('');
 
     const html=
-      `<b>${chars[0]}</b><b>${chars[1]}</b><em>:</em>`+
-      `<b>${chars[2]}</b><b>${chars[3]}</b><em>:</em>`+
-      `<b>${chars[4]}</b><b>${chars[5]}</b>`;
+      `<b>${characters[0]}</b>`+
+      `<b>${characters[1]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[2]}</b>`+
+      `<b>${characters[3]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[4]}</b>`+
+      `<b>${characters[5]}</b>`;
 
-    el('countdown').classList.remove('preparing');
-    el('mobileCountdown').classList.remove('preparing');
+    el('countdown')
+      .classList.remove('preparing');
+
+    el('mobileCountdown')
+      .classList.remove('preparing');
 
     el('countdown').innerHTML=html;
     el('mobileCountdown').innerHTML=html;
 
-    const tomorrowKey=localDateKey(tomorrow);
-    el('deadlineText').textContent=`Kỳ tiếp theo ${displayDate(tomorrowKey)}`;
-    el('mobileDrawDate').textContent=displayDate(tomorrowKey);
+    const tomorrowKey=
+      localDateKey(tomorrow);
+
+    el('deadlineText').textContent=
+      `Kỳ tiếp theo ${displayDate(tomorrowKey)}`;
+
+    el('mobileDrawDate').textContent=
+      displayDate(tomorrowKey);
   }
 
-  // Fallback ngày KQ gần nhất trước khi nguồn Minh Ngọc tải thành công.
-  // Phần này chỉ liên quan ngày kết quả hiển thị, không điều khiển countdown.
   if(!state.lastResult){
-    const latest=new Date(n);
-    const todayResultFallback=new Date(n);
-    todayResultFallback.setHours(18,30,0,0);
+    const latest=new Date(now);
+    const resultTime=new Date(now);
 
-    if(n<todayResultFallback)latest.setDate(latest.getDate()-1);
+    resultTime.setHours(18,30,0,0);
 
-    const latestKey=localDateKey(latest);
-    el('resultDate').textContent=displayDate(latestKey);
-    el('sideDate').textContent=displayDate(latestKey);
-    el('sideDrawDate').textContent=displayDate(latestKey);
+    if(now<resultTime){
+      latest.setDate(
+        latest.getDate()-1
+      );
+    }
+
+    const latestKey=
+      localDateKey(latest);
+
+    el('resultDate').textContent=
+      displayDate(latestKey);
+
+    el('sideDate').textContent=
+      displayDate(latestKey);
+
+    el('sideDrawDate').textContent=
+      displayDate(latestKey);
   }
 
   el('desktopClock').textContent=
-    `Ngày ${String(n.getDate()).padStart(2,'0')} `+
-    `Tháng ${String(n.getMonth()+1).padStart(2,'0')} `+
-    `Năm ${n.getFullYear()} `+
-    `${String(n.getHours()).padStart(2,'0')}:`+
-    `${String(n.getMinutes()).padStart(2,'0')} 🇻🇳`;
+    `Ngày ${String(now.getDate()).padStart(2,'0')} `+
+    `Tháng ${String(now.getMonth()+1).padStart(2,'0')} `+
+    `Năm ${now.getFullYear()} `+
+    `${String(now.getHours()).padStart(2,'0')}:`+
+    `${String(now.getMinutes()).padStart(2,'0')} 🇻🇳`;
 }
-function renderAll(){renderAccount();renderSubTabs();renderMeta();renderSelection();renderDrafts();renderHistory();updateSummary();renderDrawerCounts()}
+
+function renderAll(){
+  renderAccount();
+  renderSubTabs();
+  renderMeta();
+  renderSelection();
+  renderDrafts();
+  renderHistory();
+  updateSummary();
+  renderDrawerCounts();
+}
 
 function bind(){
-  el('playHelpBtn').onclick=()=>openHelpModal('play');
+  el('playHelpBtn').onclick=()=>
+    openHelpModal('play');
 
   el('modeHint').onclick=()=>{
-    const type=el('modeHint').dataset.popup;
-    if(type)openHelpModal(type);
+    const type=
+      el('modeHint').dataset.popup;
+
+    if(type){
+      openHelpModal(type);
+    }
   };
 
-  el('helpModalClose').onclick=closeHelpModal;
-  el('helpModal').onclick=e=>{
-    if(e.target===el('helpModal'))closeHelpModal();
-  };
+  el('helpModalClose').onclick=
+    closeHelpModal;
 
-  document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'&&!el('helpModal').classList.contains('hidden')){
+  el('helpModal').onclick=event=>{
+    if(event.target===el('helpModal')){
       closeHelpModal();
     }
-  });
+  };
 
-document.querySelectorAll('#gameTabs [data-game]').forEach(b=>b.onclick=()=>{
-    state.game=b.dataset.game;
-    state.sub=0;
-    state.mode=defaultModeForGame(state.game);
-    state.quickPage=0;
-    state.rows=[];
-    state.numbers=[];
-    document.querySelectorAll('#gameTabs [data-game]').forEach(x=>x.classList.toggle('active',x===b));
-    renderSubTabs();
-    renderMeta();
-    resetSelections();
-  });el('modeTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!modeAllowed(b.dataset.mode))return;state.mode=b.dataset.mode;state.quickPage=0;syncModes();resetSelections()});el('minus').onclick=()=>{el('multiplier').value=Math.max(1,multiplier()-1);updateSummary()};el('plus').onclick=()=>{el('multiplier').value=multiplier()+1;updateSummary()};el('multiplier').oninput=updateSummary;el('addDraft').onclick=addDraft;el('instantBet').onclick=instantBet;el('resetSelection').onclick=resetSelections;el('clearDrafts').onclick=()=>{state.drafts=[];renderDrafts()};el('submitDrafts').onclick=submitDrafts;el('historyTabs').querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{state.historyFilter=b.dataset.filter;el('historyTabs').querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));renderHistory()});el('refreshHistory').onclick=renderHistory;
-  el('mobileMenu').onclick=openDrawer;el('drawerBackdrop').onclick=closeDrawer;el('mobileBack').onclick=()=>window.scrollTo({top:0,behavior:'smooth'});el('mobileGamePicker').onclick=()=>el('mobileGameMenu').classList.toggle('open');document.querySelectorAll('[data-chip]').forEach(b=>b.onclick=()=>{el('multiplier').value=b.dataset.chip;updateSummary()});el('mReset').onclick=resetSelections;el('mBet').onclick=()=>{if(state.drafts.length)submitDrafts();else instantBet()};document.querySelectorAll('[data-drawer]').forEach(b=>b.onclick=()=>{const a=b.dataset.drawer;closeDrawer();if(a==='all')return renderMobileRecords('all','Hồ sơ cá cược');if(a==='pending')return renderMobileRecords('pending','Chưa thanh toán');if(a==='settled')return renderMobileRecords('settled','Thắng thua');if(a==='feed')return renderMobileRecords('all','Lịch sử nuôi');if(a==='results'){renderMobileResults();return el('mobileResults').classList.add('open')}if(a==='help')return openHelpModal('play');if(a==='home')return window.scrollTo({top:0,behavior:'smooth'});if(a==='closed')return toast('Mục mô phỏng kỳ đã đóng.');if(a==='theme')return toast('Bản demo hiện dùng một chủ đề.');if(a==='support')return toast('CSKH demo.')});document.querySelectorAll('[data-close-mobile-page]').forEach(b=>b.onclick=()=>b.closest('.mobile-page').classList.remove('open'));el('mobileRecordsRefresh').onclick=()=>renderMobileRecords(state.mobileFilter||'all',el('mobileRecordsTitle').textContent||'Hồ sơ cá cược');el('mobileResultsRefresh').onclick=renderMobileResults;
-  el('closeAuth').onclick=closeAuth;el('showRegister').onclick=()=>openAuth('register');el('showLogin').onclick=()=>openAuth('login');el('doLogin').onclick=()=>doLogin(el('loginUser').value.trim().toLowerCase(),el('loginPass').value);el('doRegister').onclick=()=>doRegister(el('registerUser').value,el('registerPass').value);el('authModal').onclick=e=>{if(e.target===el('authModal'))closeAuth()};bindDesktopAuth()}
+  document.addEventListener(
+    'keydown',
+    event=>{
+      if(
+        event.key==='Escape'&&
+        !el('helpModal')
+          .classList.contains('hidden')
+      ){
+        closeHelpModal();
+      }
+    }
+  );
 
-function init(){bind();renderAll();clockTick();setInterval(clockTick,1000);installResultObserver()}
+  document
+    .querySelectorAll(
+      '#gameTabs [data-game]'
+    )
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.game=button.dataset.game;
+        state.sub=0;
+
+        state.mode=
+          defaultModeForGame(state.game);
+
+        state.quickPage=0;
+        state.rows=[];
+        state.numbers=[];
+
+        document
+          .querySelectorAll(
+            '#gameTabs [data-game]'
+          )
+          .forEach(tab=>{
+            tab.classList.toggle(
+              'active',
+              tab===button
+            );
+          });
+
+        renderSubTabs();
+        renderMeta();
+        resetSelections();
+      };
+    });
+
+  el('modeTabs')
+    .querySelectorAll('button')
+    .forEach(button=>{
+      button.onclick=()=>{
+        if(!modeAllowed(button.dataset.mode)){
+          return;
+        }
+
+        state.mode=button.dataset.mode;
+        state.quickPage=0;
+
+        syncModes();
+        resetSelections();
+      };
+    });
+
+  el('minus').onclick=()=>{
+    el('multiplier').value=
+      Math.max(
+        1,
+        multiplier()-1
+      );
+
+    updateSummary();
+  };
+
+  el('plus').onclick=()=>{
+    el('multiplier').value=
+      multiplier()+1;
+
+    updateSummary();
+  };
+
+  el('multiplier').oninput=
+    updateSummary;
+
+  el('addDraft').onclick=
+    addDraft;
+
+  el('instantBet').onclick=
+    instantBet;
+
+  el('resetSelection').onclick=
+    resetSelections;
+
+  el('clearDrafts').onclick=()=>{
+    state.drafts=[];
+    renderDrafts();
+  };
+
+  el('submitDrafts').onclick=
+    submitDrafts;
+
+  el('historyTabs')
+    .querySelectorAll('[data-filter]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.historyFilter=
+          button.dataset.filter;
+
+        el('historyTabs')
+          .querySelectorAll('[data-filter]')
+          .forEach(tab=>{
+            tab.classList.toggle(
+              'active',
+              tab===button
+            );
+          });
+
+        renderHistory();
+      };
+    });
+
+  el('refreshHistory').onclick=
+    renderHistory;
+
+  el('mobileMenu').onclick=
+    openDrawer;
+
+  el('drawerBackdrop').onclick=
+    closeDrawer;
+
+  el('mobileBack').onclick=()=>{
+    window.scrollTo({
+      top:0,
+      behavior:'smooth'
+    });
+  };
+
+  el('mobileGamePicker').onclick=()=>{
+    el('mobileGameMenu')
+      .classList.toggle('open');
+  };
+
+  document
+    .querySelectorAll('[data-chip]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        el('multiplier').value=
+          button.dataset.chip;
+
+        updateSummary();
+      };
+    });
+
+  el('mReset').onclick=
+    resetSelections;
+
+  el('mBet').onclick=()=>{
+    if(state.drafts.length){
+      submitDrafts();
+    }else{
+      instantBet();
+    }
+  };
+
+  document
+    .querySelectorAll('[data-drawer]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        const action=
+          button.dataset.drawer;
+
+        closeDrawer();
+
+        if(action==='all'){
+          return renderMobileRecords(
+            'all',
+            'Hồ sơ cá cược'
+          );
+        }
+
+        if(action==='pending'){
+          return renderMobileRecords(
+            'pending',
+            'Chưa thanh toán'
+          );
+        }
+
+        if(action==='settled'){
+          return renderMobileRecords(
+            'settled',
+            'Thắng thua'
+          );
+        }
+
+        if(action==='feed'){
+          return renderMobileRecords(
+            'all',
+            'Lịch sử nuôi'
+          );
+        }
+
+        if(action==='results'){
+          renderMobileResults();
+
+          return el('mobileResults')
+            .classList.add('open');
+        }
+
+        if(action==='help'){
+          return openHelpModal('play');
+        }
+
+        if(action==='home'){
+          return window.scrollTo({
+            top:0,
+            behavior:'smooth'
+          });
+        }
+
+        if(action==='closed'){
+          return toast(
+            'Mục mô phỏng kỳ đã đóng.'
+          );
+        }
+
+        if(action==='theme'){
+          return toast(
+            'Bản demo hiện dùng một chủ đề.'
+          );
+        }
+
+        if(action==='support'){
+          return toast('CSKH demo.');
+        }
+      };
+    });
+
+  document
+    .querySelectorAll(
+      '[data-close-mobile-page]'
+    )
+    .forEach(button=>{
+      button.onclick=()=>{
+        button
+          .closest('.mobile-page')
+          .classList.remove('open');
+      };
+    });
+
+  el('mobileRecordsRefresh').onclick=()=>{
+    renderMobileRecords(
+      state.mobileFilter||'all',
+      el('mobileRecordsTitle').textContent||
+      'Hồ sơ cá cược'
+    );
+  };
+
+  el('mobileResultsRefresh').onclick=
+    renderMobileResults;
+
+  el('closeAuth').onclick=
+    closeAuth;
+
+  el('showRegister').onclick=()=>{
+    openAuth('register');
+  };
+
+  el('showLogin').onclick=()=>{
+    openAuth('login');
+  };
+
+  el('doLogin').onclick=()=>{
+    doLogin(
+      el('loginUser').value
+        .trim()
+        .toLowerCase(),
+
+      el('loginPass').value
+    );
+  };
+
+  el('doRegister').onclick=()=>{
+    doRegister(
+      el('registerUser').value,
+      el('registerPass').value
+    );
+  };
+
+  el('authModal').onclick=event=>{
+    if(event.target===el('authModal')){
+      closeAuth();
+    }
+  };
+
+  bindDesktopAuth();
+}
+
+function init(){
+  bind();
+  renderAll();
+  clockTick();
+
+  setInterval(
+    clockTick,
+    1000
+  );
+
+  installResultObserver();
+}
+
 init();
