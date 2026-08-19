@@ -443,6 +443,62 @@
   <div id="registerPane" class="hidden"><h2>Đăng ký demo</h2><input id="registerUser" placeholder="Tên đăng nhập"><input id="registerPass" type="password" placeholder="Mật khẩu"><button id="doRegister" class="blue-btn full">Tạo tài khoản</button><p>Đã có tài khoản? <button id="showLogin" class="link-btn">Đăng nhập</button></p></div>
 </div></div>
 
+<!-- Hộp quà nạp tiền -->
+<div id="walletGift" class="wallet-gift-popover hidden" role="dialog" aria-label="Phần thưởng nạp tiền">
+  <button id="closeWalletGift" class="wallet-gift-close" type="button" aria-label="Đóng">×</button>
+  <h3>Phần thưởng nạp tiền</h3>
+  <strong id="walletGiftText">Nạp 1 triệu nhận 3 triệu</strong>
+  <p>Ưu đãi áp dụng cho lần nạp đầu tiên.</p>
+  <button id="giftDepositNow" class="wallet-primary-btn" type="button">Nạp ngay</button>
+</div>
+
+<!-- Popup nạp tiền và tạo QR -->
+<div id="depositModal" class="modal hidden" aria-hidden="true">
+  <div class="modal-card wallet-modal-card" role="dialog" aria-modal="true" aria-labelledby="depositTitle">
+    <button id="closeDeposit" class="modal-close" type="button" aria-label="Đóng">×</button>
+    <h2 id="depositTitle">🎁 Nạp tiền</h2>
+    <p id="depositOfferText" class="wallet-modal-note">Lần nạp đầu được nhận x3 giá trị.</p>
+
+    <form id="depositForm" class="wallet-form">
+      <label for="depositAmount">Số tiền nạp</label>
+      <input id="depositAmount" type="number" min="1000000" step="1000" placeholder="Tối thiểu 1.000.000" required>
+      <p id="depositBonus" class="deposit-bonus">Nhập số tiền để xem giá trị nhận.</p>
+      <button id="createDepositQr" class="wallet-primary-btn" type="submit">Đăng ký &amp; lấy QR</button>
+    </form>
+
+    <section id="depositQrBox" class="deposit-qr-box hidden">
+      <p id="depositStatus"><b>Đang tạo QR...</b></p>
+      <div id="depositCountdown" class="deposit-countdown">02:00</div>
+      <div id="depositQrImage" class="deposit-qr-image"></div>
+
+      <div id="depositProof" class="deposit-proof hidden">
+        <label for="depositUpload">Ảnh xác nhận chuyển khoản</label>
+        <input id="depositUpload" type="file" accept="image/*">
+        <button id="confirmDeposit" class="wallet-primary-btn" type="button">Đã chuyển khoản</button>
+        <p id="depositMessage" class="wallet-message"></p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Popup rút tiền -->
+<div id="withdrawModal" class="modal hidden" aria-hidden="true">
+  <div class="modal-card wallet-modal-card" role="dialog" aria-modal="true" aria-labelledby="withdrawTitle">
+    <button id="closeWithdraw" class="modal-close" type="button" aria-label="Đóng">×</button>
+    <h2 id="withdrawTitle">💸 Yêu cầu rút tiền</h2>
+    <p class="wallet-modal-note">Tiền sẽ được giữ lại trong lúc chờ xác minh.</p>
+    <div class="wallet-form">
+      <label for="withdrawAmount">Số tiền muốn rút</label>
+      <input id="withdrawAmount" type="number" min="1" step="1000" placeholder="Nhập số tiền">
+      <button id="confirmWithdraw" class="wallet-primary-btn" type="button">Gửi yêu cầu</button>
+      <p id="withdrawMessage" class="wallet-message"></p>
+    </div>
+  </div>
+</div>
+
+<!-- Thông báo hoạt động mô phỏng -->
+<div id="liveFeed" class="live-feed" aria-live="polite"></div>
+
 <footer><div class="contact-strip"><span>☎ ĐIỆN THOẠI LIÊN LẠC</span><span>✉ LOTTODEMO@EMAIL.COM</span><span>🤝 ĐẠI LÝ</span><span>🛡 HƯỚNG DẪN AN TOÀN</span><span>🎧 CHĂM SÓC KHÁCH HÀNG</span></div><div class="brand-strip"><div><b>SA</b><b>KY</b><b>LEG</b><b>BBIN</b><b>EBET</b><b>PLAY</b><b>PT</b><b>JDB</b><b>HDB</b><b>ACB</b></div><p>Bản demo dùng điểm ảo — không có nạp/rút tiền thật.</p></div></footer>
 
 <script src="app.js"></script>
