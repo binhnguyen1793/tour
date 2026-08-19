@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="vi" class="account-document">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tài khoản - Lotto Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="account-page">
+  <div id="accountToast" class="account-toast"></div>
+
+  <header class="account-page-header">
+    <div class="account-page-header-inner">
+      <a class="account-page-back" href="index.html">← Về trang trò chơi</a>
+      <div id="accountPageUser" class="account-page-user"></div>
+      <button id="accountLogout" class="account-secondary" type="button">Đăng xuất</button>
+    </div>
+  </header>
+
+  <main class="account-layout">
+    <nav class="account-sidebar" aria-label="Menu tài khoản">
+      <button type="button" data-tab="profile">Hồ sơ</button>
+      <button type="button" data-tab="history">Lịch sử đặt cược</button>
+      <button type="button" data-tab="settings">Cài đặt</button>
+      <button type="button" data-tab="support">Khiếu nại</button>
+    </nav>
+
+    <section id="accountPanel" class="account-panel"></section>
+  </main>
+
+  <script>
+  (()=>{
+    const DB_KEY='lotto_demo_v9_db';
+    const SESSION_KEY='lotto_demo_v9_session';
+    const panel=document.getElementById('accountPanel');
+
+    const fmt=value=>
+      Number(value||0).toLocaleString('vi-VN');
+
+    const esc=value=>String(value??'').replace(
+      /[&<>"']/g,
+      character=>({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#039;'
+      }[character])
+    );
+
+    function hash(text){
+      let value=2166136261;
+      for(let index=0;index<text.length;index++){
+        value^=text.charCodeAt(index);
+        value=Math.imul(value,16777619);
+      }
+      return(value>>>0).toString(16);
+    }
+
+    function getDb(){
+      try{
+        const database=
+          JSON.parse(localStorage.getItem(DB_KEY))||{};
+        database.users=database.users||{};
+        database.bets=Array.isArray(database.bets)
+          ? database.bets
+          : [];
+        return database;
+      }catch{
+        return{users:{},bets:[]};
+      }
+    }
+
+    function saveDb(database){
+      localStorage.setItem(DB_KEY,JSON.stringify(database));
+    }
+
+    function currentName(){
+      return localStorage.getItem(SESSION_KEY)||'';
+    }
+
+    function currentUser(database=getDb()){
+      return database.users[currentName()]||null;
+    }
+
+    function notify(message,error=false){
+      const box=document.getElementById('accountToast');
+      box.textContent=message;
+      box.classList.toggle('error',error);
+      box.classList.add('show');
+      clearTimeout(notify.timer);
+      notify.timer=setTimeout(
+        ()=>box.classList.remove('show'),
+        2200
+      );
+    }
+
+    function requireAccount(){
+      if(currentUser()){
+        return true;
+      }
+      window.location.replace('index.html');
+      return false;
+    }
+
+    function renderHeader(){
+      const account=currentUser();
+      if(!account){
+        return;
+      }
+      document.getElementById('accountPageUser').innerHTML=`
+        <strong>👤 ${esc(account.username)}</strong>
+        <span>${fmt(account.balance)} VND</span>
+      `;
+    }
+
+    function profileView(){
+      const account=currentUser();
+      const profile=account.profile||{};
+      const withdrawals=Array.isArray(account.withdrawals)
+        ? account.withdrawals
+        : [];
+      const latestWithdrawals=withdrawals.slice(0,5);
+
+      panel.innerHTML=`
+        <h1>Hồ sơ tài khoản</h1>
+        <p class="account-panel-note">Cập nhật đủ thông tin ngân hàng trước khi tạo yêu cầu rút tiền.</p>
+
+        <form id="profileForm">
+          <div class="account-form-grid">
+            <label>Họ và tên
+              <input id="profileFullname" value="${esc(profile.fullname||'')}" required>
+            </label>
+            <label>Số điện thoại
+              <input id="profilePhone" value="${esc(profile.phone||'')}" inputmode="tel">
+            </label>
+            <label>Ngân hàng
+              <input id="profileBank" value="${esc(profile.bank||'')}" placeholder="Ví dụ: Vietcombank" required>
+            </label>
+            <label>Chủ tài khoản
+              <input id="profileBankName" value="${esc(profile.bankName||'')}" required>
+            </label>
+            <label>Số tài khoản
+              <input id="profileBankAccount" value="${esc(profile.bankAccount||'')}" inputmode="numeric" required>
+            </label>
+          </div>
+          <div class="account-form-actions">
+            <button class="account-primary" type="submit">Lưu hồ sơ</button>
+            <a class="account-secondary" href="index.html?wallet=deposit" style="display:grid;place-items:center;text-decoration:none">Nạp tiền</a>
+            <a class="account-secondary" href="index.html?wallet=withdraw" style="display:grid;place-items:center;text-decoration:none">Rút tiền</a>
+          </div>
+        </form>
+
+        <h2 style="margin-top:30px;font-size:17px">Yêu cầu rút gần nhất</h2>
+        ${latestWithdrawals.length?`
+          <div class="account-history-wrap">
+            <table class="account-history-table">
+              <thead><tr><th>Mã</th><th>Thời gian</th><th>Số tiền</th><th>Trạng thái</th></tr></thead>
+              <tbody>${latestWithdrawals.map(item=>`
+                <tr>
+                  <td>${esc(item.id)}</td>
+                  <td>${new Date(item.createdAt).toLocaleString('vi-VN')}</td>
+                  <td>${fmt(item.amount)} VND</td>
+                  <td>Đang xử lý</td>
+                </tr>
+              `).join('')}</tbody>
+            </table>
+          </div>
+        `:'<div class="account-empty">Chưa có yêu cầu rút tiền.</div>'}
+      `;
+
+      document.getElementById('profileForm').onsubmit=event=>{
+        event.preventDefault();
+        const database=getDb();
+        const savedAccount=currentUser(database);
+        savedAccount.profile={
+          fullname:document.getElementById('profileFullname').value.trim(),
+          phone:document.getElementById('profilePhone').value.trim(),
+          bank:document.getElementById('profileBank').value.trim(),
+          bankName:document.getElementById('profileBankName').value.trim(),
+          bankAccount:document.getElementById('profileBankAccount').value.trim()
+        };
+        saveDb(database);
+        notify('Đã lưu hồ sơ.');
+      };
+    }
+
+    function historyView(){
+      const database=getDb();
+      const bets=database.bets
+        .filter(bet=>bet.username===currentName())
+        .sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+      const statusText={
+        pending:'Chờ kết quả',
+        win:'Thắng',
+        lose:'Thua'
+      };
+
+      panel.innerHTML=`
+        <h1>Lịch sử đặt cược</h1>
+        <p class="account-panel-note">Kết quả đã chốt được lưu cùng vé và không bị đối soát lại.</p>
+        ${bets.length?`
+          <div class="account-history-wrap">
+            <table class="account-history-table">
+              <thead>
+                <tr><th>Ngày đặt</th><th>Kỳ</th><th>Loại</th><th>Số</th><th>Tiền cược</th><th>Kết quả</th><th>Tiền thắng</th></tr>
+              </thead>
+              <tbody>${bets.map(bet=>`
+                <tr>
+                  <td>${new Date(bet.createdAt).toLocaleString('vi-VN')}</td>
+                  <td>${esc(bet.draw||bet.drawDate||'')}</td>
+                  <td>${esc(bet.sub||bet.game||'')}</td>
+                  <td>${esc((bet.numbers||[]).join(', '))}</td>
+                  <td>${fmt(bet.total)} VND</td>
+                  <td class="status-${esc(bet.status||'pending')}">${statusText[bet.status]||'Chờ kết quả'}</td>
+                  <td>${fmt(bet.payout||0)} VND</td>
+                </tr>
+              `).join('')}</tbody>
+            </table>
+          </div>
+        `:'<div class="account-empty">Tài khoản chưa có vé cược.</div>'}
+      `;
+    }
+
+    function settingsView(){
+      panel.innerHTML=`
+        <h1>Cài đặt</h1>
+        <p class="account-panel-note">Đổi mật khẩu của tài khoản đang đăng nhập trên thiết bị này.</p>
+        <form id="passwordForm" class="account-settings-form">
+          <label>Mật khẩu hiện tại
+            <input id="oldPassword" type="password" required>
+          </label>
+          <label>Mật khẩu mới
+            <input id="newPassword" type="password" minlength="4" required>
+          </label>
+          <label>Nhập lại mật khẩu mới
+            <input id="repeatPassword" type="password" minlength="4" required>
+          </label>
+          <button class="account-primary" type="submit">Đổi mật khẩu</button>
+        </form>
+      `;
+
+      document.getElementById('passwordForm').onsubmit=event=>{
+        event.preventDefault();
+        const database=getDb();
+        const account=currentUser(database);
+        const oldPassword=document.getElementById('oldPassword').value;
+        const newPassword=document.getElementById('newPassword').value;
+        const repeated=document.getElementById('repeatPassword').value;
+
+        if(account.passwordHash!==hash(oldPassword)){
+          notify('Mật khẩu hiện tại không đúng.',true);
+          return;
+        }
+        if(newPassword.length<4||newPassword!==repeated){
+          notify('Mật khẩu mới chưa hợp lệ hoặc không khớp.',true);
+          return;
+        }
+        account.passwordHash=hash(newPassword);
+        saveDb(database);
+        event.target.reset();
+        notify('Đã đổi mật khẩu.');
+      };
+    }
+
+    function supportView(){
+      const account=currentUser();
+      const complaints=Array.isArray(account.complaints)
+        ? account.complaints
+        : [];
+
+      panel.innerHTML=`
+        <h1>Khiếu nại</h1>
+        <p class="account-panel-note">Gửi nội dung cần kiểm tra. Dữ liệu được lưu trong bản demo trên thiết bị này.</p>
+        <form id="supportForm" class="account-support-form">
+          <label>Nội dung
+            <textarea id="supportContent" placeholder="Nhập nội dung khiếu nại..." required></textarea>
+          </label>
+          <button class="account-primary" type="submit">Gửi khiếu nại</button>
+        </form>
+        <h2 style="margin-top:30px;font-size:17px">Đã gửi gần đây</h2>
+        ${complaints.length?complaints.slice(0,5).map(item=>`
+          <div style="padding:12px 0;border-bottom:1px solid #e7edf4;font-size:13px">
+            <b>${new Date(item.createdAt).toLocaleString('vi-VN')}</b>
+            <p style="margin:5px 0">${esc(item.content)}</p>
+            <span style="color:#d58a00">Đang xử lý</span>
+          </div>
+        `).join(''):'<div class="account-empty">Chưa gửi khiếu nại.</div>'}
+      `;
+
+      document.getElementById('supportForm').onsubmit=event=>{
+        event.preventDefault();
+        const content=document.getElementById('supportContent').value.trim();
+        if(!content){
+          return;
+        }
+        const database=getDb();
+        const savedAccount=currentUser(database);
+        savedAccount.complaints=Array.isArray(savedAccount.complaints)
+          ? savedAccount.complaints
+          : [];
+        savedAccount.complaints.unshift({
+          id:`KN-${Date.now()}`,
+          content,
+          status:'pending',
+          createdAt:new Date().toISOString()
+        });
+        saveDb(database);
+        notify('Đã lưu khiếu nại.');
+        supportView();
+      };
+    }
+
+    const views={
+      profile:profileView,
+      history:historyView,
+      settings:settingsView,
+      support:supportView
+    };
+
+    function openTab(tab){
+      const selected=views[tab]?tab:'profile';
+      document.querySelectorAll('[data-tab]').forEach(button=>{
+        button.classList.toggle('active',button.dataset.tab===selected);
+      });
+      const url=new URL(window.location.href);
+      url.searchParams.set('tab',selected);
+      history.replaceState(null,'',url);
+      views[selected]();
+    }
+
+    if(!requireAccount()){
+      return;
+    }
+
+    renderHeader();
+    document.querySelectorAll('[data-tab]').forEach(button=>{
+      button.onclick=()=>openTab(button.dataset.tab);
+    });
+    document.getElementById('accountLogout').onclick=()=>{
+      localStorage.removeItem(SESSION_KEY);
+      window.location.replace('index.html');
+    };
+
+    openTab(
+      new URLSearchParams(window.location.search).get('tab')||'profile'
+    );
+  })();
+  </script>
+</body>
+</html>
