@@ -2102,10 +2102,59 @@ function prizeCells(){
 }
 
 function numbersFrom(cell){
-  return(
-    (cell?.textContent||'')
-      .match(/\d{2,5}/g)||
-    []
+  if(!cell){
+    return[];
+  }
+
+  const cellConfig=[
+    ['giaidb','db'],
+    ['giai1','g1'],
+    ['giai2','g2'],
+    ['giai3','g3'],
+    ['giai4','g4'],
+    ['giai5','g5'],
+    ['giai6','g6'],
+    ['giai7','g7']
+  ].find(([className])=>
+    cell.classList.contains(className)
+  );
+
+  if(!cellConfig){
+    return(
+      (cell.textContent||'')
+        .match(/\d{2,5}/g)||
+      []
+    );
+  }
+
+  const key=cellConfig[1];
+  const digitsPerNumber=PRIZE_DIGITS[key];
+  const expectedCount=PRIZE_COUNTS[key];
+
+  /*
+   * Minh Ngọc có thể tách 01939 thành:
+   * 0 + 19 + 39.
+   *
+   * Phải ghép tất cả chữ số lại trước khi
+   * chia thành từng kết quả hoàn chỉnh.
+   */
+  const digitStream=(cell.textContent||'')
+    .replace(/\D/g,'');
+
+  const availableCount=Math.min(
+    expectedCount,
+    Math.floor(
+      digitStream.length/digitsPerNumber
+    )
+  );
+
+  return Array.from(
+    {length:availableCount},
+    (_,index)=>
+      digitStream.slice(
+        index*digitsPerNumber,
+        (index+1)*digitsPerNumber
+      )
   );
 }
 
@@ -2147,16 +2196,11 @@ function processMinhNgoc(){
         ?.classList.add('date-row-hidden');
     });
 
-  for(const cell of cells){
-    const raw=(cell.textContent||'')
-      .replace(/\s+/g,' ')
-      .trim();
-
-    const numbers=
-      raw.match(/\d{2,5}/g)||[];
-
-    const signature=
-      numbers.join('|');
+    for(const cell of cells){
+      const numbers=numbersFrom(cell);
+    
+      const signature=
+        numbers.join('|');
 
     if(cell.dataset.renderSig!==signature){
       cell.dataset.renderSig=signature;
@@ -2266,16 +2310,26 @@ function processMinhNgoc(){
     renderDbTags(db);
   }
 
-  renderHeadTail(last2);
-  renderMobileResults();
-
-  document
-    .querySelector('.result-column')
-    ?.classList.add('results-ready');
-
-  settleWithActualResult();
-
-  return true;
+    renderHeadTail(last2);
+    renderMobileResults();
+    
+    document
+      .querySelector('.result-column')
+      ?.classList.add('results-ready');
+    
+    /*
+     * Khi đã có đủ kết quả, chốt vé đúng kỳ ngay.
+     */
+    if(
+      state.lastResult.sourceDateDetected&&
+      isCompleteNorthernResult(
+        state.lastResult.prizes
+      )
+    ){
+      settleWithActualResult();
+    }
+    
+    return true;
 }
 
 function renderDbTags(db){
@@ -2712,15 +2766,17 @@ function settleWithActualResult(){
   const result=state.lastResult;
 
   /*
-   * Không thanh toán khi chưa đọc được đúng ngày
-   * hoặc bảng chưa có đủ 27 kết quả.
+   * Chỉ chốt khi:
+   * - đọc được ngày kết quả;
+   * - bảng có đủ 27 kết quả;
+   * - ngày kết quả trùng ngày của vé.
    */
   if(
     !result||
     !result.sourceDateDetected||
     !isCompleteNorthernResult(result.prizes)
   ){
-    return;
+    return false;
   }
 
   const database=getDb();
@@ -2728,58 +2784,61 @@ function settleWithActualResult(){
 
   for(const bet of database.bets){
     /*
-     * Chỉ xét vé đang chờ và đúng ngày quay.
+     * Vé đã thắng hoặc thua rồi thì bỏ qua.
+     * Vì vậy tiền thưởng không thể bị cộng hai lần.
      */
-    if(
-      bet.status!=='pending'||
-      bet.drawDate!==result.date
-    ){
+    if(bet.status!=='pending'){
+      continue;
+    }
+
+    /*
+     * Kỳ 17/08 chỉ được so với kết quả 17/08.
+     * Vé 18/08 sẽ không bị mang đi so với bảng 17/08.
+     */
+    if(bet.drawDate!==result.date){
       continue;
     }
 
     const winningUnits=
       winningUnitsForBet(bet,result);
 
-    const won=
-      winningUnits>0;
+    const won=winningUnits>0;
 
-    bet.status=
-      won
-        ? 'win'
-        : 'lose';
+    bet.status=won?'win':'lose';
+    bet.winningUnits=winningUnits;
 
-    bet.winningUnits=
-      winningUnits;
-
-    bet.payout=
-      demoPayout(
-        bet,
-        winningUnits
-      );
+    bet.payout=demoPayout(
+      bet,
+      winningUnits
+    );
 
     /*
-     * Tổng thắng thua =
-     * tiền nhận được - tiền cược đã trừ.
+     * Tiền cược đã trừ lúc đặt vé.
+     * result là số tiền lời/lỗ cuối cùng.
      */
     bet.result=
       bet.payout-
-      bet.total;
+      Number(bet.total||0);
 
     bet.settledAt=
       new Date().toISOString();
 
-    bet.settlementVersion=2;
+    bet.settlementVersion=3;
     bet.settlementResultDate=result.date;
     bet.resultDb=result.db;
 
+    /*
+     * Lưu nguyên bảng kết quả dùng để đối soát.
+     * Sau này xem lịch sử không cần so lại.
+     */
     bet.resultSnapshot=
       JSON.parse(
         JSON.stringify(result.prizes)
       );
 
     /*
-     * Tiền cược đã bị trừ lúc đặt vé.
-     * Khi thắng, cộng tiền trả thưởng vào số dư.
+     * Chỉ vé thắng mới được cộng tiền thưởng.
+     * Vé thua không cộng lại khoản nào.
      */
     if(
       won&&
@@ -2794,10 +2853,28 @@ function settleWithActualResult(){
 
   if(changed){
     saveDb(database);
+
     renderAccount();
     renderHistory();
     renderDrawerCounts();
+
+    /*
+     * Nếu đang mở trang hồ sơ trên điện thoại,
+     * cập nhật luôn danh sách đang hiển thị.
+     */
+    if(
+      el('mobileRecords')&&
+      el('mobileRecords').classList.contains('open')
+    ){
+      renderMobileRecords(
+        state.mobileFilter||'all',
+        el('mobileRecordsTitle').textContent||
+        'Hồ sơ cá cược'
+      );
+    }
   }
+
+  return changed;
 }
 
 function renderHistory(){
