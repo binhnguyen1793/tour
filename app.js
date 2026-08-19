@@ -3795,3 +3795,164 @@ function init(){
 }
 
 init();
+
+
+
+async function runSettlementQuickTest(){
+  let resultReady=false;
+
+  /*
+   * Chờ tối đa 15 giây để bảng Minh Ngọc tải xong.
+   */
+  for(let attempt=0;attempt<15;attempt++){
+    processMinhNgoc();
+
+    if(
+      state.lastResult&&
+      state.lastResult.sourceDateDetected&&
+      isCompleteNorthernResult(
+        state.lastResult.prizes
+      )
+    ){
+      resultReady=true;
+      break;
+    }
+
+    await new Promise(resolve=>
+      setTimeout(resolve,1000)
+    );
+  }
+
+  if(!resultReady){
+    alert(
+      'TEST THẤT BẠI\n\n'+
+      'Chưa đọc đủ kết quả từ bảng Minh Ngọc.'
+    );
+
+    return;
+  }
+
+  const result=state.lastResult;
+
+  const checks=[
+    {
+      name:'Lô 4 số: 0058, 0074, 0036',
+      bet:{
+        gameKey:'bao_lo',
+        subId:'lo4',
+        numbers:['0058','0074','0036']
+      },
+      expected:0
+    },
+    {
+      name:'Đề giải nhất: 12, 34, 54',
+      bet:{
+        gameKey:'danh_de',
+        subId:'de_giai1',
+        numbers:['12','34','54']
+      },
+      expected:0
+    },
+    {
+      name:'Đề giải nhất: 65',
+      bet:{
+        gameKey:'danh_de',
+        subId:'de_giai1',
+        numbers:['65']
+      },
+      expected:0
+    },
+    {
+      name:'Đề đặc biệt: 11',
+      bet:{
+        gameKey:'danh_de',
+        subId:'de_db',
+        numbers:['11']
+      },
+      expected:0
+    },
+
+    /*
+     * Ba vé kiểm soát bắt buộc phải thắng.
+     */
+    {
+      name:'Kiểm soát đề ĐB: 39',
+      bet:{
+        gameKey:'danh_de',
+        subId:'de_db',
+        numbers:['39']
+      },
+      expected:1
+    },
+    {
+      name:'Kiểm soát giải nhất: 00',
+      bet:{
+        gameKey:'danh_de',
+        subId:'de_giai1',
+        numbers:['00']
+      },
+      expected:1
+    },
+    {
+      name:'Kiểm soát lô 4 số: 7074',
+      bet:{
+        gameKey:'bao_lo',
+        subId:'lo4',
+        numbers:['7074']
+      },
+      expected:1
+    }
+  ];
+
+  const report=checks.map(check=>{
+    const actual=
+      winningUnitsForBet(
+        check.bet,
+        result
+      );
+
+    return{
+      name:check.name,
+      expected:check.expected,
+      actual,
+      passed:actual===check.expected
+    };
+  });
+
+  const allPassed=
+    report.every(item=>item.passed);
+
+  const details=report
+    .map(item=>
+      `${item.passed?'✅':'❌'} ${item.name}: `+
+      `${item.actual>0?'THẮNG':'THUA'}`
+    )
+    .join('\n');
+
+  if(allPassed){
+    alert(
+      `TEST THÀNH CÔNG\n\n`+
+      `Ngày kết quả: ${result.date}\n`+
+      `Giải ĐB: ${result.db}\n`+
+      `Giải nhất: ${result.prizes.g1[0]}\n\n`+
+      details+
+      `\n\nCác vé pending đúng ngày cũng đã được chốt.`
+    );
+  }else{
+    alert(
+      `TEST CHƯA ĐÚNG\n\n`+
+      details
+    );
+  }
+}
+
+/*
+ * Chỉ chạy test khi URL có ?settlement_test=1
+ */
+if(
+  new URLSearchParams(
+    window.location.search
+  ).get('settlement_test')==='1'
+){
+  runSettlementQuickTest();
+}
