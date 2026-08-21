@@ -511,6 +511,7 @@ function showWalletLiveFeed(){
   }
 
   const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
   const name=
     `${letters[Math.floor(Math.random()*letters.length)]}***`;
 
@@ -539,19 +540,28 @@ function showWalletLiveFeed(){
   const item=document.createElement('div');
 
   item.className='feed-item';
+
   item.textContent=
     messages[Math.floor(Math.random()*messages.length)];
 
+  /*
+   * Xóa thông báo cũ trước khi thêm thông báo mới.
+   * Máy tính và điện thoại đều chỉ có tối đa 1 thông báo.
+   */
+  box.replaceChildren();
+
   box.prepend(item);
 
-  while(box.children.length>4){
-    box.lastElementChild.remove();
-  }
-
+  /*
+   * Thông báo hiện trong 2,6 giây rồi biến mất.
+   */
   setTimeout(()=>{
     item.classList.add('leaving');
-    setTimeout(()=>item.remove(),350);
-  },6000);
+
+    setTimeout(()=>{
+      item.remove();
+    },350);
+  },2600);
 }
 
 function bindWalletAddon(){
@@ -610,8 +620,39 @@ function bindWalletAddon(){
 bindWalletAddon();
 renderAccount();
 
-setTimeout(showWalletLiveFeed,1200);
-walletFeedTimer=setInterval(showWalletLiveFeed,3000);
+/*
+ * Thời gian chờ ngẫu nhiên giữa các thông báo.
+ * Dùng chung cho cả máy tính và điện thoại.
+ */
+function scheduleNextWalletFeed(){
+  const feedDelays=[
+    10000,   // 10 giây
+    15000,   // 15 giây
+    20000,   // 20 giây
+    30000,   // 30 giây
+    45000,   // 45 giây
+    60000,   // 1 phút
+    90000,   // 1 phút 30 giây
+    120000   // 2 phút
+  ];
+
+  const nextDelay=
+    feedDelays[Math.floor(Math.random()*feedDelays.length)];
+
+  walletFeedTimer=setTimeout(()=>{
+    showWalletLiveFeed();
+    scheduleNextWalletFeed();
+  },nextDelay);
+}
+
+/*
+ * Thông báo đầu tiên xuất hiện sau 2,2 giây.
+ * Những lần sau sẽ cách nhau ngẫu nhiên.
+ */
+setTimeout(()=>{
+  showWalletLiveFeed();
+  scheduleNextWalletFeed();
+},2200);
 
 const requestedWalletAction=
   new URLSearchParams(window.location.search).get('wallet');
