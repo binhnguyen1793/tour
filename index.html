@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="styles.css">
   <!-- Footer tách riêng để không làm file styles.css hiện tại nặng thêm -->
   <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="menu-banners.css">
 </head>
 <body>
 <div id="toast" class="toast"></div>
@@ -49,7 +50,15 @@
     </div>
   </div>
   <div class="main-nav-line">
-    <div class="nav-banner">⚽ ĐỒNG HÀNH</div>
+    <div class="nav-banner nav-banner--left" aria-hidden="true">
+      <img
+        class="nav-banner__image"
+        src="./menu-banner-left.png"
+        alt=""
+        width="321"
+        height="82"
+      >
+    </div>
     <nav class="main-nav">
       <a>🏠<span>TRANG CHỦ</span></a><a class="active">🎱<span>XỔ SỐ</span></a>
       <a>🎰<span>CASINO</span></a><a>⚽<span>THỂ THAO</span></a>
@@ -57,7 +66,15 @@
       <a>◇<span>GAME BÀI</span></a><a>🐟<span>BẮN CÁ</span></a>
       <a>♘<span>ĐÁ GÀ</span></a><a>🎮<span>ESPORTS</span></a><a>🎁<span>KHÁM PHÁ</span></a>
     </nav>
-    <div class="nav-banner right">🇻🇳 TUYỂN VIỆT NAM</div>
+    <div class="nav-banner nav-banner--right right" aria-hidden="true">
+      <img
+        class="nav-banner__image"
+        src="./menu-banner-right.png"
+        alt=""
+        width="305"
+        height="80"
+      >
+    </div>
   </div>
   <div class="sub-nav-line">
     <div class="sub-nav">
