@@ -10,7 +10,7 @@
     grid-template-columns: 16% minmax(0, 68%) 16%;
     overflow: hidden;
     /* Xanh đậm hơn CSS cũ để liền màu với mép hai ảnh. */
-    background: linear-gradient(to bottom, #0d73ca 0%, #075faf 100%);
+    background: linear-gradient(to bottom, #1165c5 0%, #075faf 100%);
   }
 
   .desktop-header .main-nav-line .nav-banner {
