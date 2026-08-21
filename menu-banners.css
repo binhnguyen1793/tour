@@ -1,0 +1,59 @@
+/* =========================================================
+   HAI ẢNH HAI BÊN MENU CHÍNH
+   File này được gọi sau styles.css nên tự ghi đè nền màu cũ.
+   ========================================================= */
+
+@media (min-width: 761px) {
+  .desktop-header .main-nav-line {
+    height: 82px;
+    display: grid;
+    grid-template-columns: 16% minmax(0, 68%) 16%;
+    overflow: hidden;
+    background: linear-gradient(#157dd3, #0768b7);
+  }
+
+  .desktop-header .main-nav-line .nav-banner {
+    min-width: 0;
+    height: 82px;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+    background: #0877c9;
+    font-size: 0;
+  }
+
+  .desktop-header .nav-banner__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    margin: 0;
+    /* Giữ trọn nội dung hai ảnh, không cắt ngôi sao hoặc phần chữ ở mép. */
+    object-fit: fill;
+  }
+
+  /* Ảnh cầu thủ nằm bên trái menu */
+  .desktop-header .nav-banner--left .nav-banner__image {
+    object-position: center center;
+  }
+
+  /* Ảnh đồng hành cùng đội tuyển nằm bên phải menu */
+  .desktop-header .nav-banner--right .nav-banner__image {
+    object-position: center center;
+  }
+
+  /* Cho 11 mục menu phủ kín phần giữa giống ảnh mẫu */
+  .desktop-header .main-nav {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+  }
+}
+
+/* Desktop header vốn đã bị ẩn ở mobile; thêm dòng này để tránh ảnh tải sai bố cục. */
+@media (max-width: 760px) {
+  .desktop-header .nav-banner {
+    display: none !important;
+  }
+}
