@@ -7,6 +7,8 @@
   <script src="https://www.minhngoc.net.vn/jquery/jquery-1.7.2.js"></script>
   <link rel="stylesheet" href="https://www.minhngoc.net.vn/style/bangketqua_mini.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- Footer tách riêng để không làm file styles.css hiện tại nặng thêm -->
+  <link rel="stylesheet" href="footer.css">
 </head>
 <body>
 <div id="toast" class="toast"></div>
@@ -499,7 +501,83 @@
 <!-- Thông báo hoạt động mô phỏng -->
 <div id="liveFeed" class="live-feed" aria-live="polite"></div>
 
-<footer><div class="contact-strip"><span>☎ ĐIỆN THOẠI LIÊN LẠC</span><span>✉ LOTTODEMO@EMAIL.COM</span><span>🤝 ĐẠI LÝ</span><span>🛡 HƯỚNG DẪN AN TOÀN</span><span>🎧 CHĂM SÓC KHÁCH HÀNG</span></div><div class="brand-strip"><div><b>SA</b><b>KY</b><b>LEG</b><b>BBIN</b><b>EBET</b><b>PLAY</b><b>PT</b><b>JDB</b><b>HDB</b><b>ACB</b></div><p>Bản demo dùng điểm ảo — không có nạp/rút tiền thật.</p></div></footer>
+<!-- =======================================================
+     FOOTER LIÊN HỆ
+     - Hàng liên hệ được dựng bằng HTML/CSS
+     - Ảnh logo xanh chỉ hiện trên desktop
+     ======================================================= -->
+<footer class="site-footer" aria-label="Thông tin liên hệ và đối tác">
+  <div class="contact-strip">
+    <div class="contact-strip__inner">
+      <!-- Khi có số thật, thay # bằng tel:SO_DIEN_THOAI -->
+      <a class="contact-item" href="#">
+        <span class="contact-item__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="27"></circle>
+            <path d="M23 18c-2 1-5 5-5 8 0 9 11 21 20 22 4 1 8-3 9-6l-8-7-5 5c-5-2-9-6-11-11l5-4-5-7z"></path>
+          </svg>
+        </span>
+        <span class="contact-item__text">Điện thoại liên lạc</span>
+      </a>
+
+      <a class="contact-item" href="mailto:123b88com@gmail.com">
+        <span class="contact-item__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="27"></circle>
+            <rect x="16" y="21" width="32" height="23" rx="2"></rect>
+            <path d="m17 23 15 13 15-13"></path>
+          </svg>
+        </span>
+        <span class="contact-item__text">123b88com@gmail.com</span>
+      </a>
+
+      <!-- Thay # bằng link trang đại lý -->
+      <a class="contact-item" href="#">
+        <span class="contact-item__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="27"></circle>
+            <path d="m13 31 9-7 9 7-8 8-10-8zm38 0-9-7-9 7 8 8 10-8zM23 40l5 5c2 2 5 2 7 0l6-6M25 27l4-4c2-2 5-2 7 0l3 3"></path>
+          </svg>
+        </span>
+        <span class="contact-item__text">Đại lý</span>
+      </a>
+
+      <!-- Thay # bằng link trang hướng dẫn -->
+      <a class="contact-item" href="#">
+        <span class="contact-item__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="27"></circle>
+            <path d="M32 14 47 20v11c0 10-6 17-15 21-9-4-15-11-15-21V20l15-6z"></path>
+            <path d="M32 20v25M23 28h18"></path>
+          </svg>
+        </span>
+        <span class="contact-item__text">Hướng dẫn chống hack DNS</span>
+      </a>
+
+      <!-- Thay # bằng link chăm sóc khách hàng -->
+      <a class="contact-item" href="#">
+        <span class="contact-item__icon" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <circle cx="32" cy="32" r="27"></circle>
+            <path d="M19 34v-5a13 13 0 0 1 26 0v5M18 32h7v12h-5c-2 0-3-2-3-4v-5c0-2 0-3 1-3zm28 0h-7v12h5c2 0 3-2 3-4v-5c0-2 0-3-1-3zM39 47c-2 2-4 3-7 3"></path>
+          </svg>
+        </span>
+        <span class="contact-item__text">Chăm sóc khách hàng</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="brand-strip" aria-hidden="true">
+    <img
+      class="brand-strip__image"
+      src="./footer-partners-desktop.png"
+      alt=""
+      width="1906"
+      height="235"
+      loading="lazy"
+    >
+  </div>
+</footer>
 
 <script src="app.js"></script>
 <script src="wallet-account.js"></script>
