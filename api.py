@@ -1,100 +1,158 @@
 from flask import Flask, request, send_file, after_this_request
 from flask_cors import CORS
-import subprocess
 import os
+import shutil
+import subprocess
+import sys
 import threading
 import time
-import shutil
 import uuid
 
-app = Flask(__name__)
-CORS(app)
 
-# Lock để đảm bảo chỉ 1 người được chạy bot tại 1 thời điểm
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+BOT_PATH = os.path.join(BASE_DIR, "bot3.py")
+QR_IMAGE_PATH = os.path.join(STATIC_DIR, "qr_only.png")
+FULL_IMAGE_PATH = os.path.join(STATIC_DIR, "full_qr.png")
+
+os.makedirs(STATIC_DIR, exist_ok=True)
+
+app = Flask(__name__)
+
+CORS(
+    app,
+    resources={
+        r"/*": {
+            "origins": "https://tuanguyen130287.github.io"
+        }
+    },
+)
+
 bot_lock = threading.Lock()
 
-@app.route("/run-bot", methods=["POST"])
-def run_bot():
-    price = request.form.get("price", "no-price")
-    print(f"💰 Nhận yêu cầu chạy bot với giá: {price}")
 
-    # Thử chiếm lock — nếu đã có người đang chạy thì người sau phải đợi
-    with bot_lock:
-        print("🔒 Lock bot thành công — xử lý yêu cầu này...")
-        start = time.time()
-
-        # Gọi bot xử lý (giữ nguyên như bạn)
-        # Thêm timeout để tránh treo vĩnh viễn (có thể bỏ nếu không muốn)
+def safe_delete(*paths):
+    for path in paths:
         try:
-            result = subprocess.run(
-                ["python3", "bot3.py", price],
-                capture_output=True,
-                text=True,
-                timeout=180  # 3 phút, chỉnh tùy bạn
-            )
-        except subprocess.TimeoutExpired:
-            print("⏰ Bot timeout!")
-            return "Bot chạy quá lâu (timeout)!", 500
-
-        print(result.stdout)
-        print(result.stderr)
-
-        # Đường dẫn ảnh QR đã cắt và ảnh toàn trang (giữ nguyên)
-        qr_image_path = os.path.join("static", "qr_only.png")
-        full_image_path = os.path.join("static", "full_qr.png")
-
-        # Nếu bot lỗi (không bắt buộc, nhưng giúp debug)
-        if result.returncode != 0:
-            print(f"❌ Bot returncode != 0: {result.returncode}")
-
-        if os.path.exists(qr_image_path):
-            elapsed = int(time.time() - start)
-            print(f"✅ Bot xử lý xong trong {elapsed}s. Trả ảnh QR.")
-
-            # ===================== NEW: COPY QR SANG FILE TẠM RIÊNG =====================
-            # Lý do: nếu client tải chậm mà bạn xóa qr_only.png sớm -> dễ lỗi
-            tmp_name = f"qr_{int(time.time())}_{uuid.uuid4().hex[:8]}.png"
-            tmp_qr_path = os.path.join("static", tmp_name)
-
-            try:
-                shutil.copyfile(qr_image_path, tmp_qr_path)
-                print(f"🧷 Đã copy QR sang file tạm: {tmp_qr_path}")
-            except Exception as e:
-                print("❌ Không copy được QR sang file tạm:", e)
-                return "Lỗi tạo file QR tạm!", 500
-
-            # ✅ Sau khi gửi file QR (file tạm), xóa cả 3 ảnh:
-            # - tmp_qr_path (file trả về)
-            # - qr_only.png (file gốc)
-            # - full_qr.png (full screenshot)
-            @after_this_request
-            def remove_files(response):
-                # Delay xoá nhẹ 2s để client tải về xong (giữ nguyên ý của bạn)
-                threading.Thread(
-                    target=delayed_delete,
-                    args=(tmp_qr_path, qr_image_path, full_image_path),
-                    daemon=True
-                ).start()
-                return response
-
-            # Trả file tạm (an toàn hơn)
-            return send_file(tmp_qr_path, mimetype="image/png")
-
-        else:
-            print("❌ Không tìm thấy ảnh QR sau khi chạy bot.")
-            return "Không tìm thấy ảnh QR đã cắt!", 500
+            if path and os.path.exists(path):
+                os.remove(path)
+                print(f"Da xoa: {path}")
+        except Exception as error:
+            print(f"Loi xoa {path}: {error}")
 
 
 def delayed_delete(*paths):
-    time.sleep(2)
-    for path in paths:
+    time.sleep(6)
+    safe_delete(*paths)
+
+
+@app.route("/run-bot", methods=["POST"])
+def run_bot():
+    price_text = request.form.get("price", "").strip()
+
+    if not price_text.isdigit():
+        return "So tien khong hop le!", 400
+
+    price = int(price_text)
+
+    if price < 1_000_000:
+        return "So tien nap toi thieu la 1.000.000!", 400
+
+    print(f"Nhan yeu cau chay bot voi gia: {price}")
+
+    if not bot_lock.acquire(blocking=False):
+        return "Bot dang xu ly mot yeu cau khac!", 429
+
+    try:
+        safe_delete(QR_IMAGE_PATH, FULL_IMAGE_PATH)
+
+        start_time = time.time()
+
         try:
-            if os.path.exists(path):
-                os.remove(path)
-                print(f"🗑️ Đã xóa ảnh: {path}")
-        except Exception as e:
-            print(f"❌ Lỗi khi xóa ảnh {path}:", e)
+            result = subprocess.run(
+                [sys.executable, BOT_PATH, str(price)],
+                cwd=BASE_DIR,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=80,
+            )
+
+        except subprocess.TimeoutExpired:
+            print("Bot timeout sau 80 giay!")
+            return "Bot chay qua lau!", 504
+
+        elapsed = time.time() - start_time
+
+        print(f"Bot chay mat: {elapsed:.2f} giay")
+        print("STDOUT:", result.stdout)
+        print("STDERR:", result.stderr)
+
+        if result.returncode != 0:
+            print(
+                f"Bot loi, returncode: {result.returncode}"
+            )
+            return "Bot khong tao duoc QR!", 500
+
+        if not os.path.exists(QR_IMAGE_PATH):
+            print("Khong tim thay file QR")
+            return "Khong co QR!", 500
+
+        if os.path.getsize(QR_IMAGE_PATH) == 0:
+            print("File QR rong")
+            return "QR rong!", 500
+
+        temp_name = (
+            f"qr_{int(time.time())}_"
+            f"{uuid.uuid4().hex[:8]}.png"
+        )
+
+        temp_qr_path = os.path.join(
+            STATIC_DIR,
+            temp_name,
+        )
+
+        shutil.copyfile(
+            QR_IMAGE_PATH,
+            temp_qr_path,
+        )
+
+        @after_this_request
+        def remove_temp_file(response):
+            threading.Thread(
+                target=delayed_delete,
+                args=(temp_qr_path,),
+                daemon=True,
+            ).start()
+
+            return response
+
+        print(
+            f"Gui QR ve client: {temp_qr_path}"
+        )
+
+        return send_file(
+            temp_qr_path,
+            mimetype="image/png",
+            as_attachment=False,
+        )
+
+    finally:
+        bot_lock.release()
+
+
+@app.route("/health", methods=["GET"])
+def health():
+    return {
+        "ok": True,
+        "port": 8080,
+    }, 200
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(
+        host="0.0.0.0",
+        port=8080,
+        threaded=True,
+    )
