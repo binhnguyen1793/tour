@@ -1,0 +1,1127 @@
+const DB_KEY='lotto_demo_v9_db';
+const SESSION_KEY='lotto_demo_v9_session';
+const DEPOSIT_QR_API_URL=
+  'https://surfing-harry-assumed-reviewed.trycloudflare.com/run-bot';
+
+let depositTimer=null;
+let depositQrObjectUrl='';
+let liveFeedTimer=null;
+
+const GAME={
+  bao_lo:{
+    title:'Bao Lô',
+    quickProfile:'bao',
+    subs:[
+      {
+        id:'lo2',
+        label:'Lô 2 Số',
+        digits:2,
+        odds:'1 : 99.9',
+        unitStake:27000
+      },
+      {
+        id:'lo2dau',
+        label:'Lô 2 Số Đầu',
+        digits:2,
+        odds:'1 : 99.9',
+        unitStake:23000
+      },
+      {
+        id:'lo2_1k',
+        label:'Lô 2 Số 1K',
+        digits:2,
+        odds:'1 : 3.7',
+        unitStake:1000
+      },
+      {
+        id:'lo3',
+        label:'Lô 3 Số',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:23000
+      },
+      {
+        id:'lo4',
+        label:'Lô 4 Số',
+        digits:4,
+        odds:'1 : 8880',
+        unitStake:20000
+      }
+    ]
+  },
+
+  lo_xien:{
+    title:'Lô Xiên',
+    quickProfile:'xien',
+    subs:[
+      {
+        id:'xien2',
+        label:'Xiên 2',
+        pick:2,
+        odds:'1 : 16',
+        ticketStake:1000
+      },
+      {
+        id:'xien3',
+        label:'Xiên 3',
+        pick:3,
+        odds:'1 : 65',
+        ticketStake:1000
+      },
+      {
+        id:'xien4',
+        label:'Xiên 4',
+        pick:4,
+        odds:'1 : 180',
+        ticketStake:1000
+      }
+    ]
+  },
+
+  danh_de:{
+    title:'Đánh Đề',
+    quickProfile:'de',
+    subs:[
+      {
+        id:'de_db',
+        label:'Đề đặc biệt',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      },
+      {
+        id:'de_dau_db',
+        label:'Đề đầu đặc biệt',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      },
+      {
+        id:'de_giai7',
+        label:'Đề Giải 7',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:4000
+      },
+      {
+        id:'de_giai1',
+        label:'Đề Giải Nhất',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      },
+      {
+        id:'de_dau_giai1',
+        label:'Đề đầu giải nhất',
+        digits:2,
+        odds:'1 : 99.5',
+        unitStake:1000
+      }
+    ]
+  },
+
+  dau_duoi:{
+    title:'Đầu Đuôi',
+    quickProfile:null,
+    subs:[
+      {
+        id:'dau',
+        label:'Đầu',
+        digits:1,
+        odds:'1 : 9.95',
+        unitStake:1000
+      },
+      {
+        id:'duoi',
+        label:'Đuôi',
+        digits:1,
+        odds:'1 : 9.95',
+        unitStake:1000
+      }
+    ]
+  },
+
+  ba_cang:{
+    title:'3 Càng',
+    quickProfile:'3cang',
+    subs:[
+      {
+        id:'3c_db',
+        label:'3 Càng Đặc Biệt',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:1000
+      },
+      {
+        id:'3c_giai1',
+        label:'3 Càng Giải Nhất',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:1000
+      },
+      {
+        id:'3c_dau_duoi',
+        label:'3 Càng Đầu Đuôi',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:4000
+      },
+      {
+        id:'3c_dau',
+        label:'3 Càng Đầu',
+        digits:3,
+        odds:'1 : 980',
+        unitStake:3000
+      }
+    ]
+  },
+
+  bon_cang:{
+    title:'4 Càng',
+    quickProfile:null,
+    subs:[
+      {
+        id:'4cang',
+        label:'4 Càng',
+        digits:4,
+        odds:'1 : 8880',
+        unitStake:1000
+      }
+    ]
+  }
+};
+
+const DIGIT_LABELS={
+  1:['Đơn Vị'],
+  2:['Chục','Đơn Vị'],
+  3:['Trăm','Chục','Đơn Vị'],
+  4:['Nghìn','Trăm','Chục','Đơn Vị']
+};
+
+const state={
+  game:'bao_lo',
+  sub:0,
+  mode:'digits',
+  rows:[[],[]],
+  numbers:[],
+  quickPage:0,
+  drafts:[],
+  historyFilter:'all',
+  lastResult:null
+};
+
+const PRIZE_COUNTS={
+  db:1,
+  g1:1,
+  g2:2,
+  g3:6,
+  g4:4,
+  g5:6,
+  g6:3,
+  g7:4
+};
+
+const PRIZE_DIGITS={
+  db:5,
+  g1:5,
+  g2:5,
+  g3:5,
+  g4:4,
+  g5:4,
+  g6:3,
+  g7:2
+};
+
+const PAYOUT_BASE_STAKE=1000;
+
+function el(id){
+  return document.getElementById(id);
+}
+
+function fmt(number){
+  return Number(number||0).toLocaleString('vi-VN');
+}
+
+function esc(value){
+  return String(value).replace(
+    /[&<>"']/g,
+    character=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[character])
+  );
+}
+
+function toast(message,error=false){
+  const box=el('toast');
+
+  box.textContent=message;
+  box.classList.toggle('error',error);
+  box.classList.add('show');
+
+  clearTimeout(toast._timer);
+
+  toast._timer=setTimeout(()=>{
+    box.classList.remove('show');
+  },2200);
+}
+
+function hash(text){
+  let value=2166136261;
+
+  for(let index=0;index<text.length;index++){
+    value^=text.charCodeAt(index);
+    value=Math.imul(value,16777619);
+  }
+
+  return(value>>>0).toString(16);
+}
+
+function blankDb(){
+  return{
+    users:{},
+    bets:[],
+    results:{}
+  };
+}
+
+function normalizeDb(database){
+  const normalized=
+    database&&typeof database==='object'
+      ? database
+      : blankDb();
+
+  normalized.users=normalized.users||{};
+  normalized.bets=Array.isArray(normalized.bets)
+    ? normalized.bets
+    : [];
+  normalized.results=normalized.results||{};
+
+  Object.values(normalized.users).forEach(account=>{
+    account.balance=Number(account.balance||0);
+    account.profile=account.profile||{};
+    account.walletTransactions=
+      Array.isArray(account.walletTransactions)
+        ? account.walletTransactions
+        : [];
+    account.withdrawals=
+      Array.isArray(account.withdrawals)
+        ? account.withdrawals
+        : [];
+    account.complaints=
+      Array.isArray(account.complaints)
+        ? account.complaints
+        : [];
+  });
+
+  return normalized;
+}
+
+function getDb(){
+  try{
+    return normalizeDb(
+      JSON.parse(localStorage.getItem(DB_KEY))||
+      blankDb()
+    );
+  }catch{
+    return blankDb();
+  }
+}
+
+function saveDb(database){
+  localStorage.setItem(
+    DB_KEY,
+    JSON.stringify(database)
+  );
+}
+
+function username(){
+  return localStorage.getItem(SESSION_KEY);
+}
+
+function user(){
+  const name=username();
+
+  return name
+    ? getDb().users[name]||null
+    : null;
+}
+
+function cfg(){
+  return GAME[state.game].subs[state.sub];
+}
+
+function multiplier(){
+  return Math.max(
+    1,
+    Math.floor(
+      Number(el('multiplier').value)||1
+    )
+  );
+}
+
+function localDateKey(date=new Date()){
+  return(
+    `${date.getFullYear()}-`+
+    `${String(date.getMonth()+1).padStart(2,'0')}-`+
+    `${String(date.getDate()).padStart(2,'0')}`
+  );
+}
+
+function displayDate(key){
+  const[y,m,d]=key.split('-');
+  return`${d}/${m}/${y}`;
+}
+
+function nextDrawDate(){
+  const now=new Date();
+  const cutoff=new Date(now);
+
+  cutoff.setHours(18,15,0,0);
+
+  if(now>=cutoff){
+    now.setDate(now.getDate()+1);
+  }
+
+  return localDateKey(now);
+}
+
+function openAuth(which='login'){
+  el('authModal').classList.remove('hidden');
+
+  el('loginPane').classList.toggle(
+    'hidden',
+    which!=='login'
+  );
+
+  el('registerPane').classList.toggle(
+    'hidden',
+    which!=='register'
+  );
+}
+
+function closeAuth(){
+  el('authModal').classList.add('hidden');
+}
+
+function requireLogin(){
+  if(user()){
+    return true;
+  }
+
+  openAuth('login');
+
+  toast(
+    'Hãy đăng nhập hoặc đăng ký tài khoản demo trước.',
+    true
+  );
+
+  return false;
+}
+
+function goAccount(tab='profile'){
+  if(!requireLogin()){
+    return;
+  }
+
+  window.location.href=
+    `account.html?tab=${encodeURIComponent(tab)}`;
+}
+
+function hideAccountDropdown(){
+  el('accountDropdown')?.classList.add('hidden');
+}
+
+function toggleAccountDropdown(event){
+  event?.stopPropagation();
+  el('accountDropdown')?.classList.toggle('hidden');
+}
+
+function closeWalletGift(){
+  el('walletGift')?.classList.add('hidden');
+}
+
+function toggleWalletGift(event){
+  event?.stopPropagation();
+
+  if(!requireLogin()){
+    return;
+  }
+
+  const currentUser=user();
+  const eligible=currentUser?.firstDepositUsed!==true;
+
+  el('walletGiftText').textContent=eligible
+    ? 'Nạp 1 triệu nhận 3 triệu'
+    : 'Bạn đã sử dụng ưu đãi x3';
+
+  el('walletGift').classList.toggle('hidden');
+}
+
+function bindRenderedAccount(){
+  const accountShell=
+    el('accountMenuToggle')?.closest('.account-menu-shell');
+
+  el('accountMenuToggle')?.addEventListener(
+    'click',
+    toggleAccountDropdown
+  );
+
+  if(accountShell){
+    let hideTimer;
+
+    accountShell.onmouseenter=()=>{
+      clearTimeout(hideTimer);
+      el('accountDropdown')?.classList.remove('hidden');
+    };
+
+    accountShell.onmouseleave=()=>{
+      hideTimer=setTimeout(
+        hideAccountDropdown,
+        220
+      );
+    };
+  }
+
+  document
+    .querySelectorAll('[data-account-tab]')
+    .forEach(button=>{
+      button.onclick=()=>
+        goAccount(button.dataset.accountTab);
+    });
+
+  el('desktopDeposit')?.addEventListener(
+    'click',
+    openDeposit
+  );
+  el('desktopWithdraw')?.addEventListener(
+    'click',
+    openWithdraw
+  );
+  el('desktopGift')?.addEventListener(
+    'click',
+    toggleWalletGift
+  );
+  el('menuDeposit')?.addEventListener(
+    'click',
+    openDeposit
+  );
+  el('menuWithdraw')?.addEventListener(
+    'click',
+    openWithdraw
+  );
+  el('menuComplaint')?.addEventListener(
+    'click',
+    ()=>goAccount('support')
+  );
+  el('desktopLogout')?.addEventListener(
+    'click',
+    logout
+  );
+  el('drawerLogout')?.addEventListener(
+    'click',
+    logout
+  );
+  el('drawerDeposit')?.addEventListener(
+    'click',
+    ()=>{
+      closeDrawer();
+      openDeposit();
+    }
+  );
+  el('drawerWithdraw')?.addEventListener(
+    'click',
+    ()=>{
+      closeDrawer();
+      openWithdraw();
+    }
+  );
+  el('drawerAccount')?.addEventListener(
+    'click',
+    ()=>goAccount('profile')
+  );
+}
+
+function renderAccount(){
+  const currentUser=user();
+  const desktop=el('desktopAuth');
+
+  if(currentUser){
+    const eligible=currentUser.firstDepositUsed!==true;
+
+    desktop.innerHTML=`
+      <div class="desktop-user account-menu-shell">
+        <button id="accountMenuToggle" class="account-menu-toggle" type="button">
+          <span class="account-avatar">👤</span>
+          <span class="account-summary">
+            <strong>${esc(currentUser.username)}</strong>
+            <em>${fmt(currentUser.balance)} VND</em>
+          </span>
+          <span class="account-caret">▾</span>
+        </button>
+
+        <div id="accountDropdown" class="account-dropdown hidden">
+          <button type="button" data-account-tab="profile">Hồ sơ</button>
+          <button type="button" data-account-tab="history">Lịch sử đặt cược</button>
+          <button type="button" data-account-tab="settings">Cài đặt</button>
+          <button id="menuComplaint" type="button">Khiếu nại</button>
+          <div class="account-dropdown-wallet">
+            <button id="menuDeposit" type="button">Nạp tiền</button>
+            <button id="menuWithdraw" type="button">Rút tiền</button>
+          </div>
+          <button id="desktopLogout" class="account-logout" type="button">Đăng xuất</button>
+        </div>
+
+        <button id="desktopDeposit" class="header-wallet-btn deposit" type="button">Nạp</button>
+        <button id="desktopWithdraw" class="header-wallet-btn withdraw" type="button">Rút</button>
+        <button id="desktopGift" class="wallet-gift-btn" type="button" aria-label="Quà nạp">
+          🎁${eligible?'<i>1</i>':''}
+        </button>
+      </div>
+    `;
+  }else{
+    closeWalletGift();
+    desktop.innerHTML=`
+      <input
+        id="headerUser"
+        autocomplete="username"
+        placeholder="Tên đăng nhập"
+      >
+
+      <input
+        id="headerPass"
+        autocomplete="current-password"
+        type="password"
+        placeholder="mật khẩu"
+      >
+
+      <span class="captcha-demo">3666</span>
+
+      <input
+        class="captcha-field"
+        placeholder="Mã xác nhận"
+      >
+
+      <button id="headerLogin" class="btn-login">
+        đăng nhập
+      </button>
+
+      <button id="headerRegister" class="btn-register">
+        đăng ký
+      </button>
+
+      <button id="headerTry" class="btn-try">
+        Chơi thử
+      </button>
+
+      <button id="headerForgot" class="btn-forgot">
+        Quên mật khẩu?
+      </button>
+    `;
+
+    bindDesktopAuth();
+  }
+
+  el('drawerBalance').textContent=
+    `${fmt(currentUser?currentUser.balance:0)} VND`;
+
+  el('mBalance').textContent=
+    fmt(currentUser?currentUser.balance:0);
+
+  const drawerAuth=el('drawerAuth');
+
+  if(currentUser){
+    drawerAuth.innerHTML=`
+      <div class="drawer-signed-user">
+        <strong>👤 ${esc(currentUser.username)}</strong>
+        <div class="drawer-wallet-actions">
+          <button id="drawerDeposit" type="button">Nạp</button>
+          <button id="drawerWithdraw" type="button">Rút</button>
+        </div>
+        <button id="drawerAccount" class="drawer-account-btn" type="button">Tài khoản</button>
+        <button id="drawerLogout" class="drawer-logout-btn" type="button">Đăng xuất</button>
+      </div>
+    `;
+  }else{
+    drawerAuth.innerHTML=`
+      <button id="drawerLogin">Đăng nhập</button>
+      <button id="drawerRegister">Đăng ký</button>
+    `;
+
+    el('drawerLogin').onclick=()=>{
+      closeDrawer();
+      openAuth('login');
+    };
+
+    el('drawerRegister').onclick=()=>{
+      closeDrawer();
+      openAuth('register');
+    };
+  }
+
+  bindRenderedAccount();
+  renderDrawerCounts();
+}
+
+function logout(){
+  localStorage.removeItem(SESSION_KEY);
+  renderAll();
+  closeDrawer();
+  toast('Đã đăng xuất.');
+}
+
+function bindDesktopAuth(){
+  el('headerLogin')?.addEventListener(
+    'click',
+    loginFromHeader
+  );
+
+  el('headerRegister')?.addEventListener(
+    'click',
+    ()=>openAuth('register')
+  );
+
+  el('headerTry')?.addEventListener(
+    'click',
+    ()=>openAuth('register')
+  );
+
+  el('headerForgot')?.addEventListener(
+    'click',
+    ()=>toast(
+      'Bản demo không gửi email khôi phục.',
+      true
+    )
+  );
+}
+
+function loginFromHeader(){
+  const name=
+    el('headerUser').value.trim().toLowerCase();
+
+  const password=
+    el('headerPass').value;
+
+  doLogin(name,password);
+}
+
+function doLogin(name,password){
+  const database=getDb();
+  const foundUser=database.users[name];
+
+  if(
+    !foundUser||
+    foundUser.passwordHash!==hash(password)
+  ){
+    return toast(
+      'Sai tài khoản hoặc mật khẩu.',
+      true
+    );
+  }
+
+  localStorage.setItem(
+    SESSION_KEY,
+    name
+  );
+
+  closeAuth();
+  renderAll();
+  toast('Đăng nhập thành công.');
+}
+
+function doRegister(name,password){
+  name=name.trim().toLowerCase();
+
+  if(
+    !/^[a-z0-9_]{3,20}$/i.test(name)||
+    password.length<4
+  ){
+    return toast(
+      'Tên đăng nhập >=3 ký tự, mật khẩu >=4 ký tự.',
+      true
+    );
+  }
+
+  const database=getDb();
+
+  if(database.users[name]){
+    return toast(
+      'Tài khoản đã tồn tại trên thiết bị này.',
+      true
+    );
+  }
+
+  database.users[name]={
+    username:name,
+    passwordHash:hash(password),
+    balance:100000,
+    createdAt:new Date().toISOString(),
+    firstDepositUsed:false,
+    profile:{},
+    walletTransactions:[],
+    withdrawals:[],
+    complaints:[]
+  };
+
+  saveDb(database);
+
+  localStorage.setItem(
+    SESSION_KEY,
+    name
+  );
+
+  closeAuth();
+  renderAll();
+
+  toast(
+    'Đã tạo tài khoản với 100.000 điểm demo.'
+  );
+}
+
+function setModalOpen(id,open){
+  const modal=el(id);
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.toggle('hidden',!open);
+  modal.setAttribute('aria-hidden',String(!open));
+}
+
+function currentDepositMultiplier(){
+  return user()?.firstDepositUsed===true
+    ? 1
+    : 3;
+}
+
+function updateDepositBonus(){
+  const amount=Number(el('depositAmount')?.value||0);
+  const multiplierValue=currentDepositMultiplier();
+  const bonus=el('depositBonus');
+
+  if(!bonus){
+    return;
+  }
+
+  if(!amount){
+    bonus.textContent=
+      multiplierValue===3
+        ? 'Lần nạp đầu: nạp 1 nhận 3.'
+        : 'Ưu đãi x3 đã được sử dụng.';
+    return;
+  }
+
+  bonus.innerHTML=
+    `Bạn sẽ nhận: <b>${fmt(amount*multiplierValue)} VND</b>`;
+}
+
+function resetDepositModal(){
+  el('depositForm')?.reset();
+  el('depositQrBox')?.classList.add('hidden');
+  el('depositProof')?.classList.add('hidden');
+
+  if(el('depositStatus')){
+    el('depositStatus').innerHTML='<b>Đang tạo QR...</b>';
+  }
+
+  if(el('depositCountdown')){
+    el('depositCountdown').textContent='02:00';
+  }
+
+  if(el('depositQrImage')){
+    el('depositQrImage').innerHTML='';
+  }
+
+  if(el('depositMessage')){
+    el('depositMessage').textContent='';
+    el('depositMessage').className='wallet-message';
+  }
+
+  if(el('confirmDeposit')){
+    el('confirmDeposit').disabled=false;
+    el('confirmDeposit').dataset.done='false';
+  }
+
+  if(el('createDepositQr')){
+    el('createDepositQr').disabled=false;
+    el('createDepositQr').textContent='Đăng ký & lấy QR';
+  }
+
+  clearInterval(depositTimer);
+  depositTimer=null;
+
+  if(depositQrObjectUrl){
+    URL.revokeObjectURL(depositQrObjectUrl);
+    depositQrObjectUrl='';
+  }
+
+  updateDepositBonus();
+}
+
+function openDeposit(){
+  if(!requireLogin()){
+    return;
+  }
+
+  closeDrawer();
+  hideAccountDropdown();
+  closeWalletGift();
+  resetDepositModal();
+
+  el('depositOfferText').textContent=
+    currentDepositMultiplier()===3
+      ? 'Lần nạp đầu được nhận x3 giá trị.'
+      : 'Tài khoản đã sử dụng ưu đãi x3.';
+
+  setModalOpen('depositModal',true);
+}
+
+function closeDeposit(){
+  setModalOpen('depositModal',false);
+  resetDepositModal();
+}
+
+function startDepositCountdown(seconds){
+  clearInterval(depositTimer);
+  let remaining=seconds;
+
+  const draw=()=>{
+    const minutes=String(
+      Math.floor(remaining/60)
+    ).padStart(2,'0');
+    const secondsPart=String(
+      remaining%60
+    ).padStart(2,'0');
+
+    el('depositCountdown').textContent=
+      `${minutes}:${secondsPart}`;
+
+    if(remaining<=0){
+      clearInterval(depositTimer);
+      depositTimer=null;
+      el('depositStatus').textContent=
+        'QR đã hết thời gian. Vui lòng tạo lại.';
+      el('depositProof').classList.add('hidden');
+      return;
+    }
+
+    remaining-=1;
+  };
+
+  draw();
+  depositTimer=setInterval(draw,1000);
+}
+
+async function requestDepositQr(amount){
+  const response=await fetch(DEPOSIT_QR_API_URL,{
+    method:'POST',
+    headers:{
+      'Content-Type':
+        'application/x-www-form-urlencoded'
+    },
+    body:`price=${encodeURIComponent(amount)}`
+  });
+
+  if(!response.ok){
+    throw new Error('Không tạo được QR');
+  }
+
+  return response.blob();
+}
+
+async function handleDepositSubmit(event){
+  event.preventDefault();
+
+  const amount=Number(el('depositAmount').value||0);
+
+  if(amount<1000000){
+    toast('Số tiền nạp tối thiểu là 1.000.000 VND.',true);
+    return;
+  }
+
+  const button=el('createDepositQr');
+  button.disabled=true;
+  button.textContent='Đang tạo QR...';
+
+  el('depositQrBox').classList.remove('hidden');
+  el('depositProof').classList.add('hidden');
+  el('depositStatus').textContent='Đang tạo QR...';
+  el('depositQrImage').innerHTML='';
+  startDepositCountdown(120);
+
+  try{
+    const blob=await requestDepositQr(amount);
+
+    if(depositQrObjectUrl){
+      URL.revokeObjectURL(depositQrObjectUrl);
+    }
+
+    depositQrObjectUrl=URL.createObjectURL(blob);
+    const image=document.createElement('img');
+    image.src=depositQrObjectUrl;
+    image.alt=`QR nạp ${fmt(amount)} VND`;
+    el('depositQrImage').appendChild(image);
+    el('depositStatus').textContent=
+      'Quét QR để thực hiện chuyển khoản';
+    el('depositProof').classList.remove('hidden');
+  }catch(error){
+    clearInterval(depositTimer);
+    depositTimer=null;
+    el('depositStatus').textContent=
+      'Không tạo được QR. Kiểm tra lại máy chủ QR rồi thử lại.';
+    toast('Lỗi tạo QR nạp tiền.',true);
+  }finally{
+    button.disabled=false;
+    button.textContent='Tạo lại QR';
+  }
+}
+
+function confirmDeposit(){
+  const amount=Number(el('depositAmount').value||0);
+  const button=el('confirmDeposit');
+  const message=el('depositMessage');
+
+  if(amount<1000000){
+    message.textContent='Số tiền không hợp lệ.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(!el('depositUpload').files.length){
+    message.textContent='Bạn cần tải ảnh xác nhận trước.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(button.dataset.done==='true'){
+    return;
+  }
+
+  const database=getDb();
+  const account=database.users[username()];
+
+  if(!account){
+    closeDeposit();
+    openAuth('login');
+    return;
+  }
+
+  const multiplierValue=
+    account.firstDepositUsed===true?1:3;
+  const credited=amount*multiplierValue;
+
+  account.balance+=credited;
+  account.firstDepositUsed=true;
+  account.walletTransactions.unshift({
+    id:`NAP-${Date.now()}`,
+    type:'deposit',
+    amount,
+    credited,
+    bonusMultiplier:multiplierValue,
+    status:'completed',
+    createdAt:new Date().toISOString()
+  });
+
+  button.dataset.done='true';
+  button.disabled=true;
+  saveDb(database);
+  renderAll();
+
+  message.textContent=
+    `✅ Đã cộng ${fmt(credited)} VND vào tài khoản.`;
+  message.className='wallet-message success';
+
+  setTimeout(closeDeposit,1500);
+}
+
+function profileReady(account){
+  const profile=account?.profile||{};
+
+  return Boolean(
+    profile.fullname&&
+    profile.bank&&
+    profile.bankName&&
+    profile.bankAccount
+  );
+}
+
+function openWithdraw(){
+  if(!requireLogin()){
+    return;
+  }
+
+  const account=user();
+
+  if(!profileReady(account)){
+    toast('Cần cập nhật hồ sơ ngân hàng trước khi rút.',true);
+    setTimeout(()=>goAccount('profile'),700);
+    return;
+  }
+
+  closeDrawer();
+  hideAccountDropdown();
+  closeWalletGift();
+  el('withdrawAmount').value='';
+  el('withdrawAmount').max=String(account.balance||0);
+  el('withdrawMessage').textContent=
+    `Số dư khả dụng: ${fmt(account.balance)} VND`;
+  el('withdrawMessage').className='wallet-message';
+  el('confirmWithdraw').disabled=false;
+  setModalOpen('withdrawModal',true);
+}
+
+function closeWithdraw(){
+  setModalOpen('withdrawModal',false);
+}
+
+function confirmWithdrawRequest(){
+  const amount=Number(el('withdrawAmount').value||0);
+  const message=el('withdrawMessage');
+  const database=getDb();
+  const account=database.users[username()];
+
+  if(!account){
+    closeWithdraw();
+    openAuth('login');
+    return;
+  }
+
+  if(amount<=0){
+    message.textContent='Vui lòng nhập số tiền muốn rút.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(amount>account.balance){
+    message.textContent='Số dư không đủ để tạo yêu cầu.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  account.balance-=amount;
+  const request={
+    id:`RUT-${Date.now()}`,
+    amount,
+    status:'pending',
+    createdAt:new Date().toISOString(),
+    profile:{...account.profile}
+  };
+
+  account.withdrawals.unshift(request);
+  account.walletTransactions.unshift({
+    id:request.id,
+    type:'withdraw',
+    amount:-amount,
+    status:'pending',
+    createdAt:request.createdAt
+  });
+
+  saveDb(database);
+  renderAll();
+  el('confirmWithdraw').disabled=true;
+  message.textContent=
+

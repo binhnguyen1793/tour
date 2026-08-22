@@ -1,0 +1,1127 @@
+  if(bet.gameKey==='ba_cang'){
+    const firstPrize=
+      (prizes.g1||[])[0]||'';
+
+    let targets=[];
+
+    if(bet.subId==='3c_db'){
+      targets=[
+        db.slice(-3)
+      ];
+    }else if(bet.subId==='3c_giai1'){
+      targets=[
+        firstPrize.slice(-3)
+      ];
+    }else if(bet.subId==='3c_dau_duoi'){
+      /*
+       * So cả 3 số đầu và
+       * 3 số cuối giải đặc biệt.
+       */
+      targets=[
+        db.slice(0,3),
+        db.slice(-3)
+      ].filter(Boolean);
+    }else if(bet.subId==='3c_dau'){
+      /*
+       * So 3 số đầu giải đặc biệt.
+       */
+      targets=[
+        db.slice(0,3)
+      ];
+    }
+
+    return targets.filter(target=>
+      selectedNumbers.includes(target)
+    ).length;
+  }
+
+  /*
+   * 4 càng: so 4 số cuối giải đặc biệt.
+   */
+  if(bet.gameKey==='bon_cang'){
+    const target=
+      db.slice(-4);
+
+    return selectedNumbers.includes(target)
+      ? 1
+      : 0;
+  }
+
+  return 0;
+}
+
+function isWinningBet(bet,result){
+  return(
+    winningUnitsForBet(bet,result)>0
+  );
+}
+
+function settleWithActualResult(){
+  const result=state.lastResult;
+
+  /*
+   * Chỉ chốt khi:
+   * - đọc được ngày kết quả;
+   * - bảng có đủ 27 kết quả;
+   * - ngày kết quả trùng ngày của vé.
+   */
+  if(
+    !result||
+    !result.sourceDateDetected||
+    !isCompleteNorthernResult(result.prizes)
+  ){
+    return false;
+  }
+
+  const database=getDb();
+  let changed=false;
+
+  for(const bet of database.bets){
+    /*
+     * Vé đã thắng hoặc thua rồi thì bỏ qua.
+     * Vì vậy tiền thưởng không thể bị cộng hai lần.
+     */
+    if(bet.status!=='pending'){
+      continue;
+    }
+
+    /*
+     * Kỳ 17/08 chỉ được so với kết quả 17/08.
+     * Vé 18/08 sẽ không bị mang đi so với bảng 17/08.
+     */
+    if(bet.drawDate!==result.date){
+      continue;
+    }
+
+    const winningUnits=
+      winningUnitsForBet(bet,result);
+
+    const won=winningUnits>0;
+
+    bet.status=won?'win':'lose';
+    bet.winningUnits=winningUnits;
+
+    bet.payout=demoPayout(
+      bet,
+      winningUnits
+    );
+
+    /*
+     * Tiền cược đã trừ lúc đặt vé.
+     * result là số tiền lời/lỗ cuối cùng.
+     */
+    bet.result=
+      bet.payout-
+      Number(bet.total||0);
+
+    bet.settledAt=
+      new Date().toISOString();
+
+    bet.settlementVersion=3;
+    bet.settlementResultDate=result.date;
+    bet.resultDb=result.db;
+
+    /*
+     * Lưu nguyên bảng kết quả dùng để đối soát.
+     * Sau này xem lịch sử không cần so lại.
+     */
+    bet.resultSnapshot=
+      JSON.parse(
+        JSON.stringify(result.prizes)
+      );
+
+    /*
+     * Chỉ vé thắng mới được cộng tiền thưởng.
+     * Vé thua không cộng lại khoản nào.
+     */
+    if(
+      won&&
+      database.users[bet.username]
+    ){
+      database.users[bet.username].balance+=
+        bet.payout;
+    }
+
+    changed=true;
+  }
+
+  if(changed){
+    saveDb(database);
+
+    renderAccount();
+    renderHistory();
+    renderDrawerCounts();
+
+    /*
+     * Nếu đang mở trang hồ sơ trên điện thoại,
+     * cập nhật luôn danh sách đang hiển thị.
+     */
+    if(
+      el('mobileRecords')&&
+      el('mobileRecords').classList.contains('open')
+    ){
+      renderMobileRecords(
+        state.mobileFilter||'all',
+        el('mobileRecordsTitle').textContent||
+        'Hồ sơ cá cược'
+      );
+    }
+  }
+
+  return changed;
+}
+
+function renderHistory(){
+  const currentUsername=username();
+  const body=el('historyBody');
+
+  if(!currentUsername){
+    body.innerHTML='';
+    el('historyEmpty').style.display='grid';
+    return;
+  }
+
+  let bets=getDb().bets.filter(bet=>
+    bet.username===currentUsername
+  );
+
+  if(state.historyFilter==='pending'){
+    bets=bets.filter(bet=>
+      bet.status==='pending'
+    );
+  }
+
+  if(state.historyFilter==='settled'){
+    bets=bets.filter(bet=>
+      bet.status!=='pending'
+    );
+  }
+
+  bets.reverse();
+
+  if(!bets.length){
+    body.innerHTML='';
+    el('historyEmpty').style.display='grid';
+    return;
+  }
+
+  el('historyEmpty').style.display='none';
+
+  body.innerHTML=bets
+    .map(bet=>`
+      <tr>
+        <td>Miền Bắc</td>
+
+        <td>
+          ${esc(bet.draw)}
+        </td>
+
+        <td>
+          ${esc(bet.id)}
+        </td>
+
+        <td>
+          ${
+            new Date(bet.createdAt)
+              .toLocaleString('vi-VN')
+          }
+        </td>
+
+        <td>
+          ${esc(bet.sub)}
+        </td>
+
+        <td>
+          ${esc(bet.numbers.join(', '))}
+        </td>
+
+        <td>
+          ${bet.count}
+        </td>
+
+        <td>
+          ${bet.multiplier}
+        </td>
+
+        <td>
+          ${fmt(bet.total)}
+        </td>
+
+        <td>
+          ${fmt(bet.valid)}
+        </td>
+
+        <td class="${
+          bet.status==='win'
+            ? 'status-win'
+            : bet.status==='lose'
+              ? 'status-lose'
+              : ''
+        }">
+          ${
+            bet.status==='pending'
+              ? '—'
+              : (
+                `${bet.result>=0?'+':''}`+
+                `${fmt(bet.result)}`
+              )
+          }
+        </td>
+
+        <td class="${
+          bet.status==='pending'
+            ? 'status-pending'
+            : bet.status==='win'
+              ? 'status-win'
+              : 'status-lose'
+        }">
+          ${
+            bet.status==='pending'
+              ? 'Chờ mở thưởng'
+              : 'Đã thanh toán'
+          }
+        </td>
+      </tr>
+    `)
+    .join('');
+}
+
+function renderDrawerCounts(){
+  const currentUsername=username();
+
+  const bets=currentUsername
+    ? getDb().bets.filter(bet=>
+      bet.username===currentUsername
+    )
+    : [];
+
+  el('pendingCountDrawer').textContent=
+    bets.filter(bet=>
+      bet.status==='pending'
+    ).length;
+
+  el('settledCount').textContent=
+    bets.filter(bet=>
+      bet.status!=='pending'
+    ).length;
+}
+
+function renderMobileRecords(
+  filter='all',
+  title='Hồ sơ cá cược'
+){
+  state.mobileFilter=filter;
+
+  const currentUsername=username();
+
+  let bets=currentUsername
+    ? getDb().bets.filter(bet=>
+      bet.username===currentUsername
+    )
+    : [];
+
+  if(filter==='pending'){
+    bets=bets.filter(bet=>
+      bet.status==='pending'
+    );
+  }
+
+  if(filter==='settled'){
+    bets=bets.filter(bet=>
+      bet.status!=='pending'
+    );
+  }
+
+  bets.reverse();
+
+  el('mobileRecordsTitle').textContent=title;
+
+  if(!currentUsername){
+    el('mobileRecordsList').innerHTML=`
+      <div class="mobile-card">
+        Hãy đăng nhập để xem dữ liệu.
+      </div>
+    `;
+  }else if(!bets.length){
+    el('mobileRecordsList').innerHTML=`
+      <div class="mobile-card">
+        Không có dữ liệu.
+      </div>
+    `;
+  }else{
+    el('mobileRecordsList').innerHTML=
+      bets.map(bet=>`
+        <article class="mobile-card">
+          <div class="line">
+            <b>${esc(bet.sub)}</b>
+
+            <span class="${
+              bet.status==='pending'
+                ? 'status-pending'
+                : bet.status==='win'
+                  ? 'status-win'
+                  : 'status-lose'
+            }">
+              ${
+                bet.status==='pending'
+                  ? 'Chờ kết quả'
+                  : bet.status==='win'
+                    ? 'Thắng'
+                    : 'Thua'
+              }
+            </span>
+          </div>
+
+          <div class="line">
+            <span>Lượt xổ</span>
+            <b>${esc(bet.draw)}</b>
+          </div>
+
+          <div class="line">
+            <span>Nội dung</span>
+            <b>${esc(bet.numbers.join(', '))}</b>
+          </div>
+
+          <div class="line">
+            <span>Tiền cược</span>
+            <b>${fmt(bet.total)} VND</b>
+          </div>
+
+          ${
+            bet.status!=='pending'
+              ? `
+                <div class="line">
+                  <span>Thắng/thua</span>
+
+                  <b class="${
+                    bet.status==='win'
+                      ? 'status-win'
+                      : 'status-lose'
+                  }">
+                    ${
+                      bet.result>=0?'+':''
+                    }${fmt(bet.result)} VND
+                  </b>
+                </div>
+              `
+              : ''
+          }
+
+          <div class="line">
+            <span>Thời gian</span>
+
+            <span>
+              ${
+                new Date(bet.createdAt)
+                  .toLocaleString('vi-VN')
+              }
+            </span>
+          </div>
+        </article>
+      `).join('');
+  }
+
+  el('mobileRecords').classList.add('open');
+}
+
+function openDrawer(){
+  el('mobileDrawer').classList.add('open');
+  el('drawerBackdrop').classList.add('open');
+
+  renderAccount();
+}
+
+function closeDrawer(){
+  el('mobileDrawer').classList.remove('open');
+  el('drawerBackdrop').classList.remove('open');
+}
+
+function renderMobileGameMenu(){
+  const menu=el('mobileGameMenu');
+
+  const order=[
+    'bao_lo',
+    'lo_xien',
+    'danh_de',
+    'dau_duoi',
+    'ba_cang',
+    'bon_cang'
+  ];
+
+  const sections=order
+    .map(gameKey=>{
+      const game=GAME[gameKey];
+
+      if(!game){
+        return'';
+      }
+
+      const items=game.subs
+        .map((sub,index)=>`
+          <button
+            data-mgame="${gameKey}"
+            data-msub="${index}"
+            class="
+              mobile-game-option
+              ${
+                state.game===gameKey&&
+                state.sub===index
+                  ? 'active'
+                  : ''
+              }
+            "
+          >
+            ${sub.label}
+          </button>
+        `)
+        .join('');
+
+      return`
+        <section class="mobile-game-group">
+          <h3>${game.title}</h3>
+
+          <div class="mobile-game-option-grid">
+            ${items}
+          </div>
+        </section>
+      `;
+    })
+    .join('');
+
+  menu.innerHTML=`
+    <div class="mobile-game-shell">
+      <div
+        class="mobile-game-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Danh sách trò chơi"
+      >
+        <div class="mobile-game-dialog-title">
+          Danh sách trò chơi
+        </div>
+
+        <div class="mobile-game-dialog-body">
+          <aside class="mobile-game-category">
+            <span>Cổ điển</span>
+          </aside>
+
+          <div class="mobile-game-groups">
+            ${sections}
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="mobile-game-close"
+        data-close-game-menu
+        aria-label="Đóng"
+      >
+        ×
+      </button>
+    </div>
+  `;
+
+  menu
+    .querySelectorAll('[data-mgame]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.game=button.dataset.mgame;
+        state.sub=Number(button.dataset.msub);
+
+        state.mode=
+          defaultModeForGame(state.game);
+
+        state.quickPage=0;
+        state.rows=[];
+        state.numbers=[];
+
+        document
+          .querySelectorAll(
+            '#gameTabs [data-game]'
+          )
+          .forEach(tab=>{
+            tab.classList.toggle(
+              'active',
+              tab.dataset.game===state.game
+            );
+          });
+
+        menu.classList.remove('open');
+
+        renderSubTabs();
+        renderMeta();
+        resetSelections();
+      };
+    });
+
+  menu
+    .querySelector('[data-close-game-menu]')
+    ?.addEventListener(
+      'click',
+      ()=>menu.classList.remove('open')
+    );
+
+  menu.onclick=event=>{
+    if(event.target===menu){
+      menu.classList.remove('open');
+    }
+  };
+}
+
+function clockTick(){
+  const now=new Date();
+  const todayKey=localDateKey(now);
+
+  const todayCutoff=new Date(now);
+  todayCutoff.setHours(18,15,0,0);
+
+  const nextCountdownAt=new Date(now);
+  nextCountdownAt.setHours(19,30,0,0);
+
+  if(now<todayCutoff){
+    const totalSeconds=Math.max(
+      0,
+      Math.floor(
+        (todayCutoff-now)/1000
+      )
+    );
+
+    const hours=
+      String(
+        Math.floor(totalSeconds/3600)
+      ).padStart(2,'0');
+
+    const minutes=
+      String(
+        Math.floor(
+          totalSeconds%3600/60
+        )
+      ).padStart(2,'0');
+
+    const seconds=
+      String(
+        totalSeconds%60
+      ).padStart(2,'0');
+
+    const characters=
+      (hours+minutes+seconds).split('');
+
+    const html=
+      `<b>${characters[0]}</b>`+
+      `<b>${characters[1]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[2]}</b>`+
+      `<b>${characters[3]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[4]}</b>`+
+      `<b>${characters[5]}</b>`;
+
+    el('countdown')
+      .classList.remove('preparing');
+
+    el('mobileCountdown')
+      .classList.remove('preparing');
+
+    el('countdown').innerHTML=html;
+    el('mobileCountdown').innerHTML=html;
+
+    el('deadlineText').textContent=
+      `Kỳ tiếp theo ${displayDate(todayKey)}`;
+
+    el('mobileDrawDate').textContent=
+      displayDate(todayKey);
+  }else if(now<nextCountdownAt){
+    el('deadlineText').textContent=
+      'Hết giờ --';
+
+    el('countdown')
+      .classList.add('preparing');
+
+    el('mobileCountdown')
+      .classList.add('preparing');
+
+    el('countdown').innerHTML=
+      '<span class="preparing-text">Đang chuẩn bị</span>';
+
+    el('mobileCountdown').innerHTML=
+      '<span class="preparing-text">Đang chuẩn bị</span>';
+
+    el('mobileDrawDate').textContent=
+      displayDate(todayKey);
+  }else{
+    const tomorrow=new Date(now);
+
+    tomorrow.setDate(
+      tomorrow.getDate()+1
+    );
+
+    tomorrow.setHours(18,15,0,0);
+
+    const totalSeconds=Math.max(
+      0,
+      Math.floor(
+        (tomorrow-now)/1000
+      )
+    );
+
+    const hours=
+      String(
+        Math.floor(totalSeconds/3600)
+      ).padStart(2,'0');
+
+    const minutes=
+      String(
+        Math.floor(
+          totalSeconds%3600/60
+        )
+      ).padStart(2,'0');
+
+    const seconds=
+      String(
+        totalSeconds%60
+      ).padStart(2,'0');
+
+    const characters=
+      (hours+minutes+seconds).split('');
+
+    const html=
+      `<b>${characters[0]}</b>`+
+      `<b>${characters[1]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[2]}</b>`+
+      `<b>${characters[3]}</b>`+
+      `<em>:</em>`+
+      `<b>${characters[4]}</b>`+
+      `<b>${characters[5]}</b>`;
+
+    el('countdown')
+      .classList.remove('preparing');
+
+    el('mobileCountdown')
+      .classList.remove('preparing');
+
+    el('countdown').innerHTML=html;
+    el('mobileCountdown').innerHTML=html;
+
+    const tomorrowKey=
+      localDateKey(tomorrow);
+
+    el('deadlineText').textContent=
+      `Kỳ tiếp theo ${displayDate(tomorrowKey)}`;
+
+    el('mobileDrawDate').textContent=
+      displayDate(tomorrowKey);
+  }
+
+  if(!state.lastResult){
+    const latest=new Date(now);
+    const resultTime=new Date(now);
+
+    resultTime.setHours(18,30,0,0);
+
+    if(now<resultTime){
+      latest.setDate(
+        latest.getDate()-1
+      );
+    }
+
+    const latestKey=
+      localDateKey(latest);
+
+    el('resultDate').textContent=
+      displayDate(latestKey);
+
+    el('sideDate').textContent=
+      displayDate(latestKey);
+
+    el('sideDrawDate').textContent=
+      displayDate(latestKey);
+  }
+
+  el('desktopClock').textContent=
+    `Ngày ${String(now.getDate()).padStart(2,'0')} `+
+    `Tháng ${String(now.getMonth()+1).padStart(2,'0')} `+
+    `Năm ${now.getFullYear()} `+
+    `${String(now.getHours()).padStart(2,'0')}:`+
+    `${String(now.getMinutes()).padStart(2,'0')} 🇻🇳`;
+}
+
+function renderAll(){
+  renderAccount();
+  renderSubTabs();
+  renderMeta();
+  renderSelection();
+  renderDrafts();
+  renderHistory();
+  updateSummary();
+  renderDrawerCounts();
+}
+
+function bind(){
+  bindWallet();
+
+  el('playHelpBtn').onclick=()=>
+    openHelpModal('play');
+
+  el('modeHint').onclick=()=>{
+    const type=
+      el('modeHint').dataset.popup;
+
+    if(type){
+      openHelpModal(type);
+    }
+  };
+
+  el('helpModalClose').onclick=
+    closeHelpModal;
+
+  el('helpModal').onclick=event=>{
+    if(event.target===el('helpModal')){
+      closeHelpModal();
+    }
+  };
+
+  document.addEventListener(
+    'keydown',
+    event=>{
+      if(
+        event.key==='Escape'&&
+        !el('helpModal')
+          .classList.contains('hidden')
+      ){
+        closeHelpModal();
+      }
+    }
+  );
+
+  document
+    .querySelectorAll(
+      '#gameTabs [data-game]'
+    )
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.game=button.dataset.game;
+        state.sub=0;
+
+        state.mode=
+          defaultModeForGame(state.game);
+
+        state.quickPage=0;
+        state.rows=[];
+        state.numbers=[];
+
+        document
+          .querySelectorAll(
+            '#gameTabs [data-game]'
+          )
+          .forEach(tab=>{
+            tab.classList.toggle(
+              'active',
+              tab===button
+            );
+          });
+
+        renderSubTabs();
+        renderMeta();
+        resetSelections();
+      };
+    });
+
+  el('modeTabs')
+    .querySelectorAll('button')
+    .forEach(button=>{
+      button.onclick=()=>{
+        if(!modeAllowed(button.dataset.mode)){
+          return;
+        }
+
+        state.mode=button.dataset.mode;
+        state.quickPage=0;
+
+        syncModes();
+        resetSelections();
+      };
+    });
+
+  el('minus').onclick=()=>{
+    el('multiplier').value=
+      Math.max(
+        1,
+        multiplier()-1
+      );
+
+    updateSummary();
+  };
+
+  el('plus').onclick=()=>{
+    el('multiplier').value=
+      multiplier()+1;
+
+    updateSummary();
+  };
+
+  el('multiplier').oninput=
+    updateSummary;
+
+  el('addDraft').onclick=
+    addDraft;
+
+  el('instantBet').onclick=
+    instantBet;
+
+  el('resetSelection').onclick=
+    resetSelections;
+
+  el('clearDrafts').onclick=()=>{
+    state.drafts=[];
+    renderDrafts();
+  };
+
+  el('submitDrafts').onclick=
+    submitDrafts;
+
+  el('historyTabs')
+    .querySelectorAll('[data-filter]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.historyFilter=
+          button.dataset.filter;
+
+        el('historyTabs')
+          .querySelectorAll('[data-filter]')
+          .forEach(tab=>{
+            tab.classList.toggle(
+              'active',
+              tab===button
+            );
+          });
+
+        renderHistory();
+      };
+    });
+
+  el('refreshHistory').onclick=
+    renderHistory;
+
+  el('mobileMenu').onclick=
+    openDrawer;
+
+  el('drawerBackdrop').onclick=
+    closeDrawer;
+
+  el('mobileBack').onclick=()=>{
+    window.scrollTo({
+      top:0,
+      behavior:'smooth'
+    });
+  };
+
+  el('mobileGamePicker').onclick=()=>{
+    el('mobileGameMenu')
+      .classList.toggle('open');
+  };
+
+  document
+    .querySelectorAll('[data-chip]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        el('multiplier').value=
+          button.dataset.chip;
+
+        updateSummary();
+      };
+    });
+
+  el('mMultiplier').oninput=event=>{
+    const input=event.currentTarget;
+    const digits=input.value.replace(/\D/g,'');
+    const value=Math.max(
+      1,
+      Math.floor(Number(digits)||1)
+    );
+
+    input.value=String(value);
+    el('multiplier').value=String(value);
+
+    updateSummary();
+  };
+
+  el('mMultiplier').onfocus=event=>{
+    event.currentTarget.select();
+  };
+
+  el('mReset').onclick=
+    resetSelections;
+
+  el('mBet').onclick=()=>{
+    if(state.drafts.length){
+      submitDrafts();
+    }else{
+      instantBet();
+    }
+  };
+
+  document
+    .querySelectorAll('[data-drawer]')
+    .forEach(button=>{
+      button.onclick=()=>{
+        const action=
+          button.dataset.drawer;
+
+        closeDrawer();
+
+        if(action==='all'){
+          return renderMobileRecords(
+            'all',
+            'Hồ sơ cá cược'
+          );
+        }
+
+        if(action==='pending'){
+          return renderMobileRecords(
+            'pending',
+            'Chờ kết quả'
+          );
+        }
+
+        if(action==='settled'){
+          return renderMobileRecords(
+            'settled',
+            'Thắng thua'
+          );
+        }
+
+        if(action==='feed'){
+          return renderMobileRecords(
+            'all',
+            'Lịch sử nuôi'
+          );
+        }
+
+        if(action==='results'){
+          renderMobileResults();
+
+          return el('mobileResults')
+            .classList.add('open');
+        }
+
+        if(action==='help'){
+          return openHelpModal('play');
+        }
+
+        if(action==='home'){
+          return window.scrollTo({
+            top:0,
+            behavior:'smooth'
+          });
+        }
+
+        if(action==='closed'){
+          return toast(
+            'Mục mô phỏng kỳ đã đóng.'
+          );
+        }
+
+        if(action==='theme'){
+          return toast(
+            'Bản demo hiện dùng một chủ đề.'
+          );
+        }
+
+        if(action==='support'){
+          return toast('CSKH demo.');
+        }
+      };
+    });
+
+  document
+    .querySelectorAll(
+      '[data-close-mobile-page]'
+    )
+    .forEach(button=>{
+      button.onclick=()=>{
+        button
+          .closest('.mobile-page')
+          .classList.remove('open');
+      };
+    });
+
+  el('mobileRecordsRefresh').onclick=()=>{
+    renderMobileRecords(
+      state.mobileFilter||'all',
+      el('mobileRecordsTitle').textContent||
+      'Hồ sơ cá cược'
+    );
+  };
+
+  el('mobileResultsRefresh').onclick=
+    renderMobileResults;
+
+  el('closeAuth').onclick=
+    closeAuth;
+
+  el('showRegister').onclick=()=>{
+    openAuth('register');
+  };
+
+  el('showLogin').onclick=()=>{
+    openAuth('login');
+  };
+
+  el('doLogin').onclick=()=>{
+    doLogin(
+      el('loginUser').value
+        .trim()
+        .toLowerCase(),
+
+      el('loginPass').value
+    );
+  };
+
+  el('doRegister').onclick=()=>{
+    doRegister(
+      el('registerUser').value,
+      el('registerPass').value
+    );
+  };
+
+  el('authModal').onclick=event=>{
+    if(event.target===el('authModal')){
+      closeAuth();
+    }
+  };
+
+  bindDesktopAuth();
+}
+
+function init(){
+  state.mode=defaultModeForGame(state.game);
+
+  bind();
+  renderAll();
+  clockTick();
+  startLiveFeed();
+
+  const walletAction=
+    new URLSearchParams(window.location.search)
+      .get('wallet');
+
+  if(walletAction==='deposit'){
+    setTimeout(openDeposit,0);
+  }
+
+  if(walletAction==='withdraw'){
+    setTimeout(openWithdraw,0);
+  }
+
+  setInterval(
+    clockTick,
+    1000
+  );
+
+  installResultObserver();
+}
+
+init();
+

@@ -1,0 +1,1127 @@
+    '✅ Đã gửi yêu cầu. Hệ thống đang xác minh (1–5 phút).';
+  message.className='wallet-message success';
+  setTimeout(closeWithdraw,1700);
+}
+
+function randomFeedName(){
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return`${letters[Math.floor(Math.random()*letters.length)]}***`;
+}
+
+function randomFeedMoney(){
+  const values=[
+    100000,200000,300000,500000,
+    1000000,2000000,3000000,5000000,
+    10000000
+  ];
+
+  return values[
+    Math.floor(Math.random()*values.length)
+  ];
+}
+
+function showLiveFeed(){
+  const box=el('liveFeed');
+
+  if(!box){
+    return;
+  }
+
+  const name=randomFeedName();
+  const money=fmt(randomFeedMoney());
+  const messages=[
+    `💰 ${name} vừa nạp ${money} VND`,
+    `🎯 ${name} vừa đặt cược`,
+    `💸 ${name} đã gửi yêu cầu rút ${money} VND`,
+    `🏆 ${name} vừa nhận thưởng ${money} VND`
+  ];
+  const item=document.createElement('div');
+
+  item.className='feed-item';
+  item.textContent=messages[
+    Math.floor(Math.random()*messages.length)
+  ];
+  box.prepend(item);
+
+  while(box.children.length>4){
+    box.lastElementChild.remove();
+  }
+
+  setTimeout(()=>{
+    item.classList.add('leaving');
+    setTimeout(()=>item.remove(),350);
+  },6000);
+}
+
+function startLiveFeed(){
+  clearInterval(liveFeedTimer);
+  setTimeout(showLiveFeed,1200);
+  liveFeedTimer=setInterval(showLiveFeed,3000);
+}
+
+function bindWallet(){
+  el('closeWalletGift').onclick=closeWalletGift;
+  el('giftDepositNow').onclick=openDeposit;
+  el('closeDeposit').onclick=closeDeposit;
+  el('closeWithdraw').onclick=closeWithdraw;
+  el('depositAmount').oninput=updateDepositBonus;
+  el('depositForm').onsubmit=handleDepositSubmit;
+  el('confirmDeposit').onclick=confirmDeposit;
+  el('confirmWithdraw').onclick=confirmWithdrawRequest;
+
+  ['depositModal','withdrawModal'].forEach(id=>{
+    el(id).addEventListener('click',event=>{
+      if(event.target!==el(id)){
+        return;
+      }
+
+      if(id==='depositModal'){
+        closeDeposit();
+      }else{
+        closeWithdraw();
+      }
+    });
+  });
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest('.account-menu-shell')){
+      hideAccountDropdown();
+    }
+
+    if(
+      !event.target.closest('#walletGift')&&
+      !event.target.closest('.wallet-gift-btn')
+    ){
+      closeWalletGift();
+    }
+  });
+
+  document.addEventListener('keydown',event=>{
+    if(event.key!=='Escape'){
+      return;
+    }
+
+    hideAccountDropdown();
+    closeWalletGift();
+
+    if(!el('depositModal').classList.contains('hidden')){
+      closeDeposit();
+    }
+
+    if(!el('withdrawModal').classList.contains('hidden')){
+      closeWithdraw();
+    }
+  });
+}
+
+function oddsRatio(value=cfg().odds){
+  const match=
+    String(value||'').match(/:\s*([\d.]+)/);
+
+  return match
+    ? Number(match[1])
+    : 1;
+}
+
+function unitStake(){
+  return Number(
+    cfg().unitStake||
+    cfg().ticketStake||
+    1000
+  );
+}
+
+function defaultModeForGame(game=state.game){
+  if(
+    window.matchMedia('(max-width: 760px)').matches&&
+    modeAllowed('manual',game)
+  ){
+    return'manual';
+  }
+
+  if(game==='lo_xien'){
+    return'quick';
+  }
+
+  return'digits';
+}
+
+function modeAllowed(mode,game=state.game){
+  if(game==='lo_xien'){
+    return(
+      mode==='manual'||
+      mode==='quick'
+    );
+  }
+
+  if(
+    game==='dau_duoi'||
+    game==='bon_cang'
+  ){
+    return(
+      mode==='digits'||
+      mode==='manual'
+    );
+  }
+
+  return[
+    'digits',
+    'manual',
+    'quick'
+  ].includes(mode);
+}
+
+function normalizeMode(){
+  if(!modeAllowed(state.mode)){
+    state.mode=defaultModeForGame();
+  }
+}
+
+function selectionCost(numbers=selected()){
+  const multiply=multiplier();
+
+  if(state.game==='lo_xien'){
+    return numbers.length===cfg().pick
+      ? Number(cfg().ticketStake||1000)*multiply
+      : 0;
+  }
+
+  return(
+    numbers.length*
+    unitStake()*
+    multiply
+  );
+}
+
+function quickWidth(){
+  return Number(cfg().digits||2);
+}
+
+function quickPageCount(){
+  const width=quickWidth();
+
+  if(width<=2){
+    return 1;
+  }
+
+  return Math.pow(10,width)/100;
+}
+
+function quickRangeValues(){
+  const width=quickWidth();
+  const pages=quickPageCount();
+
+  state.quickPage=Math.max(
+    0,
+    Math.min(
+      state.quickPage,
+      pages-1
+    )
+  );
+
+  const start=state.quickPage*100;
+  const maximum=Math.pow(10,width);
+  const end=Math.min(start+100,maximum);
+
+  return Array.from(
+    {length:end-start},
+    (_,index)=>
+      String(start+index).padStart(width,'0')
+  );
+}
+
+function quickRangeLabel(){
+  const values=quickRangeValues();
+
+  if(!values.length){
+    return'';
+  }
+
+  return(
+    `${values[0]} - `+
+    `${values[values.length-1]}`
+  );
+}
+
+function frequencyBadge(
+  value,
+  profile=GAME[state.game].quickProfile
+){
+  const width=
+    state.game==='lo_xien'
+      ? 2
+      : quickWidth();
+
+  const number=Number(value);
+  const today=new Date();
+
+  let maximum=20;
+
+  if(width===1){
+    maximum=9;
+  }
+
+  if(width===3){
+    maximum=8;
+  }
+
+  if(width>=4){
+    maximum=3;
+  }
+
+  const seed=Math.abs(
+    number*37+
+    today.getDate()*11+
+    (today.getMonth()+1)*17+
+    today.getFullYear()*3+
+    width*29+
+    (
+      profile==='xien'
+        ? 41
+        : profile==='de'
+          ? 23
+          : profile==='3cang'
+            ? 13
+            : 7
+    )
+  );
+
+  if(
+    seed%9===0||
+    seed%17===0
+  ){
+    return 0;
+  }
+
+  return(
+    1+
+    (
+      (
+        seed*7+
+        Math.floor(number/3)
+      )%maximum
+    )
+  );
+}
+
+function randomSample(values,count){
+  const result=[...values];
+
+  for(
+    let index=result.length-1;
+    index>0;
+    index--
+  ){
+    const randomIndex=
+      Math.floor(
+        Math.random()*(index+1)
+      );
+
+    [
+      result[index],
+      result[randomIndex]
+    ]=[
+      result[randomIndex],
+      result[index]
+    ];
+  }
+
+  return result.slice(
+    0,
+    Math.min(count,result.length)
+  );
+}
+
+function rowLabels(){
+  if(state.game==='lo_xien'){
+    return[];
+  }
+
+  return(
+    DIGIT_LABELS[cfg().digits]||
+    ['Đơn Vị']
+  );
+}
+
+function resetSelections(){
+  state.rows=
+    rowLabels().map(()=>[]);
+
+  state.numbers=[];
+  state.quickPage=0;
+
+  renderSelection();
+  updateSummary();
+}
+
+function cartesian(rows){
+  if(
+    !rows.length||
+    rows.some(row=>!row.length)
+  ){
+    return[];
+  }
+
+  let output=[''];
+
+  for(const row of rows){
+    const next=[];
+
+    for(const prefix of output){
+      for(const digit of row){
+        next.push(prefix+digit);
+      }
+    }
+
+    output=next;
+  }
+
+  return output;
+}
+
+function manualNumbers(){
+  const textarea=el('manualInput');
+
+  if(!textarea){
+    return[];
+  }
+
+  const width=
+    state.game==='lo_xien'
+      ? 2
+      : cfg().digits||2;
+
+  return[
+    ...new Set(
+      textarea.value
+        .split(/[\s,;]+/)
+        .map(value=>value.trim())
+        .filter(value=>
+          new RegExp(
+            `^\\d{${width}}$`
+          ).test(value)
+        )
+    )
+  ];
+}
+
+function selected(){
+  if(state.mode==='manual'){
+    return manualNumbers();
+  }
+
+  if(state.game==='lo_xien'){
+    return state.numbers.slice();
+  }
+
+  if(
+    state.mode==='quick'&&
+    state.numbers.length
+  ){
+    return state.numbers.slice();
+  }
+
+  return cartesian(state.rows);
+}
+
+function toggleDigit(row,digit){
+  const values=state.rows[row]||[];
+
+  state.rows[row]=values.includes(digit)
+    ? values.filter(value=>value!==digit)
+    : [...values,digit].sort((a,b)=>a-b);
+
+  renderSelection();
+  updateSummary();
+}
+
+function quickRow(row,type){
+  const choices={
+    all:[0,1,2,3,4,5,6,7,8,9],
+    tai:[5,6,7,8,9],
+    xiu:[0,1,2,3,4],
+    odd:[1,3,5,7,9],
+    even:[0,2,4,6,8],
+    clear:[]
+  };
+
+  state.rows[row]=choices[type].slice();
+
+  renderSelection();
+  updateSummary();
+}
+
+function toggleNumber(number){
+  const limit=
+    state.game==='lo_xien'
+      ? cfg().pick
+      : 100;
+
+  if(state.numbers.includes(number)){
+    state.numbers=
+      state.numbers.filter(
+        value=>value!==number
+      );
+  }else{
+    if(
+      state.game==='lo_xien'&&
+      state.numbers.length>=limit
+    ){
+      return toast(
+        `Chỉ chọn ${limit} số cho ${cfg().label}.`,
+        true
+      );
+    }
+
+    state.numbers.push(number);
+  }
+
+  renderSelection();
+  updateSummary();
+}
+
+function renderSubTabs(){
+  el('subTabs').innerHTML=
+    GAME[state.game].subs
+      .map((sub,index)=>`
+        <button
+          data-sub="${index}"
+          class="${index===state.sub?'active':''}"
+        >
+          ${sub.label}
+        </button>
+      `)
+      .join('');
+
+  el('subTabs')
+    .querySelectorAll('button')
+    .forEach(button=>{
+      button.onclick=()=>{
+        state.sub=
+          Number(button.dataset.sub);
+
+        state.mode=
+          defaultModeForGame(state.game);
+
+        state.quickPage=0;
+        state.rows=[];
+        state.numbers=[];
+
+        renderSubTabs();
+        renderMeta();
+        resetSelections();
+      };
+    });
+}
+
+function syncModes(){
+  const box=el('modeTabs');
+
+  const digits=
+    box.querySelector('[data-mode="digits"]');
+
+  const manual=
+    box.querySelector('[data-mode="manual"]');
+
+  const quick=
+    box.querySelector('[data-mode="quick"]');
+
+  const hint=el('modeHint');
+
+  normalizeMode();
+
+  digits.style.display=
+    state.game==='lo_xien'
+      ? 'none'
+      : '';
+
+  quick.style.display=
+    (
+      state.game==='dau_duoi'||
+      state.game==='bon_cang'
+    )
+      ? 'none'
+      : '';
+
+  const visible=[
+    digits,
+    manual,
+    quick
+  ].filter(button=>
+    button.style.display!=='none'
+  );
+
+  box.classList.toggle(
+    'two',
+    visible.length===2
+  );
+
+  hint.classList.remove('clickable');
+  hint.removeAttribute('data-popup');
+
+  if(
+    state.mode==='quick'&&
+    [
+      'bao_lo',
+      'lo_xien',
+      'danh_de',
+      'ba_cang'
+    ].includes(state.game)
+  ){
+    hint.innerHTML=
+      '<span class="help-dot">?</span> Hướng dẫn';
+
+    hint.dataset.popup='quick';
+    hint.classList.add('clickable');
+  }else if(
+    state.mode==='digits'&&
+    [
+      'danh_de',
+      'ba_cang',
+      'bon_cang'
+    ].includes(state.game)
+  ){
+    hint.innerHTML=
+      '<span class="hotcold-dot">?</span> Nóng/Lạnh';
+
+    hint.dataset.popup='hotcold';
+    hint.classList.add('clickable');
+  }else{
+    hint.textContent='';
+  }
+
+  [
+    digits,
+    manual,
+    quick
+  ].forEach(button=>
+    button.classList.toggle(
+      'active',
+      button.dataset.mode===state.mode
+    )
+  );
+}
+
+function helpTemplateHtml(type){
+  if(type==='quick'){
+    return(
+      document
+        .getElementById('helpQuickTemplate')
+        ?.innerHTML||
+      ''
+    );
+  }
+
+  if(type==='hotcold'){
+    return(
+      document
+        .getElementById('helpHotColdTemplate')
+        ?.innerHTML||
+      ''
+    );
+  }
+
+  if(type==='play'){
+    const subId=cfg().id;
+
+    const template=document.querySelector(
+      `template[data-help-type="play"]`+
+      `[data-game="${state.game}"]`+
+      `[data-sub="${subId}"]`
+    );
+
+    return(
+      template?.innerHTML||
+      '<p>Chưa có nội dung cách chơi cho mục này.</p>'
+    );
+  }
+
+  return'';
+}
+function openHelpModal(type){
+  const modal=el('helpModal');
+  const title=el('helpModalTitle');
+  const body=el('helpModalBody');
+
+  const titles={
+    quick:'Hướng dẫn chơi',
+    hotcold:'Hướng dẫn chơi',
+    play:'Cách chơi'
+  };
+
+  title.textContent=titles[type]||'Hướng dẫn chơi';
+  body.innerHTML=helpTemplateHtml(type);
+
+  modal.classList.remove('hidden');
+  modal.setAttribute('aria-hidden','false');
+  document.body.classList.add('popup-open');
+}
+
+function closeHelpModal(){
+  const modal=el('helpModal');
+
+  modal.classList.add('hidden');
+  modal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('popup-open');
+}
+
+function renderMeta(){
+  const config=cfg();
+
+  el('desktopGameName').textContent=config.label;
+  el('mobileGameName').textContent=config.label;
+  el('oddsText').textContent=config.odds;
+
+  el('selectionArea').dataset.mobileOdds=
+    `Tỉ lệ cược ${config.odds}  ⓘ`;
+
+  syncModes();
+  renderMobileGameMenu();
+}
+
+function quickProfileConfig(){
+  if(state.game==='bao_lo'){
+    return{
+      random:[1,2,3,5,10],
+      special:['same'],
+      top:[1,2,5,10,20]
+    };
+  }
+
+  if(state.game==='danh_de'){
+    return{
+      random:[10,20,30,40,50],
+      special:['same','even','odd','tai','xiu'],
+      top:[1,2,5,10,20]
+    };
+  }
+
+  if(state.game==='ba_cang'){
+    return{
+      random:[10,20,30,40,50],
+      special:['same'],
+      top:[]
+    };
+  }
+
+  return{
+    random:[],
+    special:[],
+    top:[]
+  };
+}
+
+function specialLabel(key){
+  return{
+    same:'Cùng số',
+    even:'Chẵn',
+    odd:'Lẻ',
+    tai:'Tài',
+    xiu:'Xỉu'
+  }[key]||key;
+}
+
+function smartQuickHtml(){
+  const profile=quickProfileConfig();
+  const values=quickRangeValues();
+  const selectedSet=new Set(state.numbers);
+
+  const randomButtons=profile.random
+    .map(number=>`
+      <button data-smart="random:${number}">
+        ${number} số
+      </button>
+    `)
+    .join('');
+
+  const specialButtons=profile.special
+    .map(key=>`
+      <button data-smart="${key}">
+        ${specialLabel(key)}
+      </button>
+    `)
+    .join('');
+
+  const topButtons=profile.top
+    .map(number=>`
+      <button data-smart="top:${number}">
+        Top ${number}
+      </button>
+    `)
+    .join('');
+
+  const grid=values
+    .map(value=>{
+      const badge=frequencyBadge(value);
+      const red=badge<=1?' red':'';
+
+      return`
+        <button
+          class="smart-number ${
+            selectedSet.has(value)?'active':''
+          }"
+          data-number="${value}"
+        >
+          <span>${value}</span>
+          <i class="smart-stat${red}">${badge}</i>
+        </button>
+      `;
+    })
+    .join('');
+
+  return`
+    <div class="smart-quick-layout">
+      <aside class="smart-quick-side">
+        <button
+          class="smart-range"
+          data-smart="next-range"
+        >
+          ${quickRangeLabel()}
+          <i>${state.numbers.length}</i>
+        </button>
+
+        ${
+          randomButtons
+            ? `
+              <section>
+                <p>Ngẫu Nhiên</p>
+                <div>${randomButtons}</div>
+              </section>
+            `
+            : ''
+        }
+
+        ${
+          specialButtons
+            ? `
+              <section>
+                <p>Đặc biệt</p>
+                <div>${specialButtons}</div>
+              </section>
+            `
+            : ''
+        }
+
+        ${
+          topButtons
+            ? `
+              <section>
+                <p>Ít Xuất Hiện</p>
+                <div>${topButtons}</div>
+              </section>
+            `
+            : ''
+        }
+      </aside>
+
+      <div class="smart-grid-panel">
+        <div class="smart-grid">
+          ${grid}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function smartPick(action){
+  const values=quickRangeValues();
+
+  if(action==='next-range'){
+    if(quickPageCount()>1){
+      state.quickPage=
+        (state.quickPage+1)%quickPageCount();
+
+      state.numbers=[];
+    }
+  }else if(action.startsWith('random:')){
+    const count=
+      Number(action.split(':')[1]);
+
+    state.numbers=
+      randomSample(values,count);
+  }else if(action==='same'){
+    state.numbers=values.filter(value=>
+      new Set(value.split('')).size===1
+    );
+  }else if(action==='even'){
+    state.numbers=values.filter(value=>
+      Number(value)%2===0
+    );
+  }else if(action==='odd'){
+    state.numbers=values.filter(value=>
+      Number(value)%2===1
+    );
+  }else if(action==='tai'){
+    state.numbers=values.filter(value=>
+      Number(value)>=
+      Math.pow(10,quickWidth())/2
+    );
+
+    if(!state.numbers.length){
+      state.numbers=
+        values.filter((_,index)=>index>=50);
+    }
+  }else if(action==='xiu'){
+    state.numbers=values.filter(value=>
+      Number(value)<
+      Math.pow(10,quickWidth())/2
+    );
+
+    if(
+      state.numbers.length===values.length&&
+      values.length===100
+    ){
+      state.numbers=values.slice(0,50);
+    }
+  }else if(action.startsWith('top:')){
+    const count=
+      Number(action.split(':')[1]);
+
+    state.numbers=[...values]
+      .sort((a,b)=>
+        frequencyBadge(a)-frequencyBadge(b)
+      )
+      .slice(0,count);
+  }
+
+  renderSelection();
+  updateSummary();
+}
+
+function showDigitHotColdStats(){
+  return(
+    state.mode==='digits'&&
+    [
+      'danh_de',
+      'ba_cang',
+      'bon_cang'
+    ].includes(state.game)
+  );
+}
+
+function digitHotColdStat(row,digit){
+  const now=new Date();
+
+  const gameSalt={
+    danh_de:17,
+    ba_cang:31,
+    bon_cang:47
+  }[state.game]||7;
+
+  const seed=Math.abs(
+    gameSalt*97+
+    (row+1)*53+
+    digit*29+
+    now.getDate()*11+
+    (now.getMonth()+1)*17+
+    now.getFullYear()*3
+  );
+
+  if(seed%13===0){
+    return 0;
+  }
+
+  if(seed%17===0){
+    return 1;
+  }
+
+  return(
+    2+
+    (
+      (
+        seed*7+
+        row*digit*3
+      )%48
+    )
+  );
+}
+
+function digitStatClass(value){
+  if(value<=1){
+    return'red';
+  }
+
+  if(value>=10){
+    return'blue';
+  }
+
+  return'gray';
+}
+
+function digitRowsHtml(){
+  const withStats=
+    showDigitHotColdStats();
+
+  return rowLabels()
+    .map((label,row)=>`
+      <div class="digit-row ${
+        withStats?'has-hotcold-stats':''
+      }">
+        <div class="row-label">
+          ${label}
+        </div>
+
+        <div class="digit-list">
+          ${
+            Array.from(
+              {length:10},
+              (_,digit)=>{
+                const stat=
+                  withStats
+                    ? digitHotColdStat(row,digit)
+                    : null;
+
+                return`
+                  <div class="digit-cell">
+                    <button
+                      class="digit-btn ${
+                        state.rows[row]?.includes(digit)
+                          ? 'active'
+                          : ''
+                      }"
+                      data-digit="${digit}"
+                      data-row="${row}"
+                    >
+                      ${digit}
+                    </button>
+
+                    ${
+                      withStats
+                        ? `
+                          <span class="
+                            digit-hotcold-stat
+                            ${digitStatClass(stat)}
+                          ">
+                            ${stat}
+                          </span>
+                        `
+                        : ''
+                    }
+                  </div>
+                `;
+              }
+            ).join('')
+          }
+        </div>
+
+        <div class="quick-actions">
+          ${
+            [
+              ['all','Toàn bộ'],
+              ['tai','Tài'],
+              ['xiu','Xỉu'],
+              ['odd','Lẻ'],
+              ['even','Chẵn'],
+              ['clear','Xóa']
+            ]
+              .map(item=>`
+                <button
+                  data-q="${item[0]}"
+                  data-row="${row}"
+                >
+                  ${item[1]}
+                </button>
+              `)
+              .join('')
+          }
+        </div>
+      </div>
+    `)
+    .join('');
+}
+
+function numberGridHtml(className=''){
+  return`
+    <div class="number-grid-wrap ${className}">
+      <div class="number-grid">
+        ${
+          Array.from(
+            {length:100},
+            (_,index)=>{
+              const number=
+                String(index).padStart(2,'0');
+
+              return`
+                <button
+                  data-number="${number}"
+                  class="${
+                    state.numbers.includes(number)
+                      ? 'active'
+                      : ''
+                  }"
+                >
+                  ${number}
+                </button>
+              `;
+            }
+          ).join('')
+        }
+      </div>
+
+      ${
+        state.game==='lo_xien'
+          ? `
+            <div class="selection-note">
+              Chọn đúng ${cfg().pick} số cho ${cfg().label}.
+            </div>
+          `
+          : ''
+      }
+    </div>
+  `;
+}
+
+function loXienHtml(){
+  const full=
+    state.numbers.length>=cfg().pick;
+
+  return`
+    <div class="loxien-layout">
+      <aside class="loxien-side">
+        <button
+          class="loxien-range"
+          data-lx="clear"
+        >
+          00 - 99
+          <i>${state.numbers.length}</i>
+        </button>
+
+        <p>Ngẫu Nhiên</p>
+
+        <button
+          class="loxien-random"
+          data-lx="random"
+        >
+          1 số
+        </button>
+      </aside>
+
+      <div class="loxien-grid-panel">
+        <div class="loxien-grid">
+          ${
+            Array.from(
+              {length:100},
+              (_,index)=>{
+                const number=
+                  String(index).padStart(2,'0');
+
+                const badge=
+                  frequencyBadge(number,'xien');
+
+                const active=
+                  state.numbers.includes(number);
+
+                const locked=
+                  full&&!active;
+
+                return`
+                  <button
+                    class="
+                      loxien-number
+                      ${active?'active':''}
+                      ${locked?'locked':''}
+                    "
+                    data-number="${number}"
+                    ${locked?'disabled':''}
+                  >
+
