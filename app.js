@@ -415,7 +415,7 @@ function requireLogin(){
   openAuth('login');
 
   toast(
-    'Hãy đăng nhập hoặc đăng ký tài khoản demo trước.',
+    'Hãy đăng nhập hoặc đăng ký tài khoản trước.',
     true
   );
 
@@ -692,7 +692,7 @@ function bindDesktopAuth(){
   el('headerForgot')?.addEventListener(
     'click',
     ()=>toast(
-      'Bản demo không gửi email khôi phục.',
+      'Đang bảo trì hệ thống...',
       true
     )
   );
@@ -777,7 +777,7 @@ function doRegister(name,password){
   renderAll();
 
   toast(
-    'Đã tạo tài khoản với 100.000 điểm demo.'
+    'Đã tạo tài khoản thành công.'
   );
 }
 
@@ -3373,9 +3373,7 @@ function winningUnitsForBet(bet,result){
 
   /*
    * 3 càng.
-   */
-
-  if(bet.gameKey==='ba_cang'){
+   */  if(bet.gameKey==='ba_cang'){
     const firstPrize=
       (prizes.g1||[])[0]||'';
 
@@ -4396,18 +4394,18 @@ function bind(){
 
         if(action==='closed'){
           return toast(
-            'Mục mô phỏng kỳ đã đóng.'
+            'Đang bảo trì hệ thống...'
           );
         }
 
         if(action==='theme'){
           return toast(
-            'Bản demo hiện dùng một chủ đề.'
+            'Đang bảo trì hệ thống...'
           );
         }
 
         if(action==='support'){
-          return toast('CSKH demo.');
+          return toast('CSKH.');
         }
       };
     });
@@ -4501,4 +4499,3 @@ function init(){
 }
 
 init();
-
