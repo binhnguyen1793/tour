@@ -1,5 +1,11 @@
 const DB_KEY='lotto_demo_v9_db';
 const SESSION_KEY='lotto_demo_v9_session';
+const DEPOSIT_QR_API_URL=
+  'https://surfing-harry-assumed-reviewed.trycloudflare.com/run-bot';
+
+let depositTimer=null;
+let depositQrObjectUrl='';
+let liveFeedTimer=null;
 
 const GAME={
   bao_lo:{
@@ -277,13 +283,46 @@ function hash(text){
 function blankDb(){
   return{
     users:{},
-    bets:[]
+    bets:[],
+    results:{}
   };
+}
+
+function normalizeDb(database){
+  const normalized=
+    database&&typeof database==='object'
+      ? database
+      : blankDb();
+
+  normalized.users=normalized.users||{};
+  normalized.bets=Array.isArray(normalized.bets)
+    ? normalized.bets
+    : [];
+  normalized.results=normalized.results||{};
+
+  Object.values(normalized.users).forEach(account=>{
+    account.balance=Number(account.balance||0);
+    account.profile=account.profile||{};
+    account.walletTransactions=
+      Array.isArray(account.walletTransactions)
+        ? account.walletTransactions
+        : [];
+    account.withdrawals=
+      Array.isArray(account.withdrawals)
+        ? account.withdrawals
+        : [];
+    account.complaints=
+      Array.isArray(account.complaints)
+        ? account.complaints
+        : [];
+  });
+
+  return normalized;
 }
 
 function getDb(){
   try{
-    return(
+    return normalizeDb(
       JSON.parse(localStorage.getItem(DB_KEY))||
       blankDb()
     );
@@ -383,23 +422,168 @@ function requireLogin(){
   return false;
 }
 
+function goAccount(tab='profile'){
+  if(!requireLogin()){
+    return;
+  }
+
+  window.location.href=
+    `account.html?tab=${encodeURIComponent(tab)}`;
+}
+
+function hideAccountDropdown(){
+  el('accountDropdown')?.classList.add('hidden');
+}
+
+function toggleAccountDropdown(event){
+  event?.stopPropagation();
+  el('accountDropdown')?.classList.toggle('hidden');
+}
+
+function closeWalletGift(){
+  el('walletGift')?.classList.add('hidden');
+}
+
+function toggleWalletGift(event){
+  event?.stopPropagation();
+
+  if(!requireLogin()){
+    return;
+  }
+
+  const currentUser=user();
+  const eligible=currentUser?.firstDepositUsed!==true;
+
+  el('walletGiftText').textContent=eligible
+    ? 'Nạp 1 triệu nhận 3 triệu'
+    : 'Bạn đã sử dụng ưu đãi x3';
+
+  el('walletGift').classList.toggle('hidden');
+}
+
+function bindRenderedAccount(){
+  const accountShell=
+    el('accountMenuToggle')?.closest('.account-menu-shell');
+
+  el('accountMenuToggle')?.addEventListener(
+    'click',
+    toggleAccountDropdown
+  );
+
+  if(accountShell){
+    let hideTimer;
+
+    accountShell.onmouseenter=()=>{
+      clearTimeout(hideTimer);
+      el('accountDropdown')?.classList.remove('hidden');
+    };
+
+    accountShell.onmouseleave=()=>{
+      hideTimer=setTimeout(
+        hideAccountDropdown,
+        220
+      );
+    };
+  }
+
+  document
+    .querySelectorAll('[data-account-tab]')
+    .forEach(button=>{
+      button.onclick=()=>
+        goAccount(button.dataset.accountTab);
+    });
+
+  el('desktopDeposit')?.addEventListener(
+    'click',
+    openDeposit
+  );
+  el('desktopWithdraw')?.addEventListener(
+    'click',
+    openWithdraw
+  );
+  el('desktopGift')?.addEventListener(
+    'click',
+    toggleWalletGift
+  );
+  el('menuDeposit')?.addEventListener(
+    'click',
+    openDeposit
+  );
+  el('menuWithdraw')?.addEventListener(
+    'click',
+    openWithdraw
+  );
+  el('menuComplaint')?.addEventListener(
+    'click',
+    ()=>goAccount('support')
+  );
+  el('desktopLogout')?.addEventListener(
+    'click',
+    logout
+  );
+  el('drawerLogout')?.addEventListener(
+    'click',
+    logout
+  );
+  el('drawerDeposit')?.addEventListener(
+    'click',
+    ()=>{
+      closeDrawer();
+      openDeposit();
+    }
+  );
+  el('drawerWithdraw')?.addEventListener(
+    'click',
+    ()=>{
+      closeDrawer();
+      openWithdraw();
+    }
+  );
+  el('drawerAccount')?.addEventListener(
+    'click',
+    ()=>goAccount('profile')
+  );
+}
+
 function renderAccount(){
   const currentUser=user();
   const desktop=el('desktopAuth');
 
   if(currentUser){
+    const eligible=currentUser.firstDepositUsed!==true;
+
     desktop.innerHTML=`
-      <div class="desktop-user">
-        <div>
-          <strong>${esc(currentUser.username)}</strong>
-          <em>${fmt(currentUser.balance)} điểm</em>
+      <div class="desktop-user account-menu-shell">
+        <button id="accountMenuToggle" class="account-menu-toggle" type="button">
+          <span class="account-avatar">👤</span>
+          <span class="account-summary">
+            <strong>${esc(currentUser.username)}</strong>
+            <em>${fmt(currentUser.balance)} VND</em>
+          </span>
+          <span class="account-caret">▾</span>
+        </button>
+
+        <div id="accountDropdown" class="account-dropdown hidden">
+          <button type="button" data-account-tab="profile">Hồ sơ</button>
+          <button type="button" data-account-tab="history">Lịch sử đặt cược</button>
+          <button type="button" data-account-tab="settings">Cài đặt</button>
+          <button id="menuComplaint" type="button">Khiếu nại</button>
+          <div class="account-dropdown-wallet">
+            <button id="menuDeposit" type="button">Nạp tiền</button>
+            <button id="menuWithdraw" type="button">Rút tiền</button>
+          </div>
+          <button id="desktopLogout" class="account-logout" type="button">Đăng xuất</button>
         </div>
-        <button id="desktopLogout">Đăng xuất</button>
+
+        <button id="desktopDeposit" class="header-wallet-btn deposit" type="button">Nạp</button>
+        <button id="desktopWithdraw" class="header-wallet-btn withdraw" type="button">Rút</button>
+        <button id="desktopGift" class="wallet-gift-btn" type="button" aria-label="Quà nạp">
+          🎁${eligible?'<i>1</i>':''}
+        </button>
       </div>
     `;
-
-    el('desktopLogout').onclick=logout;
   }else{
+    closeWalletGift();
     desktop.innerHTML=`
       <input
         id="headerUser"
@@ -451,15 +635,16 @@ function renderAccount(){
 
   if(currentUser){
     drawerAuth.innerHTML=`
-      <button
-        id="drawerLogout"
-        style="background:#2298e9;min-width:145px"
-      >
-        Đăng xuất ${esc(currentUser.username)}
-      </button>
+      <div class="drawer-signed-user">
+        <strong>👤 ${esc(currentUser.username)}</strong>
+        <div class="drawer-wallet-actions">
+          <button id="drawerDeposit" type="button">Nạp</button>
+          <button id="drawerWithdraw" type="button">Rút</button>
+        </div>
+        <button id="drawerAccount" class="drawer-account-btn" type="button">Tài khoản</button>
+        <button id="drawerLogout" class="drawer-logout-btn" type="button">Đăng xuất</button>
+      </div>
     `;
-
-    el('drawerLogout').onclick=logout;
   }else{
     drawerAuth.innerHTML=`
       <button id="drawerLogin">Đăng nhập</button>
@@ -477,6 +662,7 @@ function renderAccount(){
     };
   }
 
+  bindRenderedAccount();
   renderDrawerCounts();
 }
 
@@ -572,7 +758,12 @@ function doRegister(name,password){
     username:name,
     passwordHash:hash(password),
     balance:100000,
-    createdAt:new Date().toISOString()
+    createdAt:new Date().toISOString(),
+    firstDepositUsed:false,
+    profile:{},
+    walletTransactions:[],
+    withdrawals:[],
+    complaints:[]
   };
 
   saveDb(database);
@@ -588,6 +779,464 @@ function doRegister(name,password){
   toast(
     'Đã tạo tài khoản với 100.000 điểm demo.'
   );
+}
+
+function setModalOpen(id,open){
+  const modal=el(id);
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.toggle('hidden',!open);
+  modal.setAttribute('aria-hidden',String(!open));
+}
+
+function currentDepositMultiplier(){
+  return user()?.firstDepositUsed===true
+    ? 1
+    : 3;
+}
+
+function updateDepositBonus(){
+  const amount=Number(el('depositAmount')?.value||0);
+  const multiplierValue=currentDepositMultiplier();
+  const bonus=el('depositBonus');
+
+  if(!bonus){
+    return;
+  }
+
+  if(!amount){
+    bonus.textContent=
+      multiplierValue===3
+        ? 'Lần nạp đầu: nạp 1 nhận 3.'
+        : 'Ưu đãi x3 đã được sử dụng.';
+    return;
+  }
+
+  bonus.innerHTML=
+    `Bạn sẽ nhận: <b>${fmt(amount*multiplierValue)} VND</b>`;
+}
+
+function resetDepositModal(){
+  el('depositForm')?.reset();
+  el('depositQrBox')?.classList.add('hidden');
+  el('depositProof')?.classList.add('hidden');
+
+  if(el('depositStatus')){
+    el('depositStatus').innerHTML='<b>Đang tạo QR...</b>';
+  }
+
+  if(el('depositCountdown')){
+    el('depositCountdown').textContent='02:00';
+  }
+
+  if(el('depositQrImage')){
+    el('depositQrImage').innerHTML='';
+  }
+
+  if(el('depositMessage')){
+    el('depositMessage').textContent='';
+    el('depositMessage').className='wallet-message';
+  }
+
+  if(el('confirmDeposit')){
+    el('confirmDeposit').disabled=false;
+    el('confirmDeposit').dataset.done='false';
+  }
+
+  if(el('createDepositQr')){
+    el('createDepositQr').disabled=false;
+    el('createDepositQr').textContent='Đăng ký & lấy QR';
+  }
+
+  clearInterval(depositTimer);
+  depositTimer=null;
+
+  if(depositQrObjectUrl){
+    URL.revokeObjectURL(depositQrObjectUrl);
+    depositQrObjectUrl='';
+  }
+
+  updateDepositBonus();
+}
+
+function openDeposit(){
+  if(!requireLogin()){
+    return;
+  }
+
+  closeDrawer();
+  hideAccountDropdown();
+  closeWalletGift();
+  resetDepositModal();
+
+  el('depositOfferText').textContent=
+    currentDepositMultiplier()===3
+      ? 'Lần nạp đầu được nhận x3 giá trị.'
+      : 'Tài khoản đã sử dụng ưu đãi x3.';
+
+  setModalOpen('depositModal',true);
+}
+
+function closeDeposit(){
+  setModalOpen('depositModal',false);
+  resetDepositModal();
+}
+
+function startDepositCountdown(seconds){
+  clearInterval(depositTimer);
+  let remaining=seconds;
+
+  const draw=()=>{
+    const minutes=String(
+      Math.floor(remaining/60)
+    ).padStart(2,'0');
+    const secondsPart=String(
+      remaining%60
+    ).padStart(2,'0');
+
+    el('depositCountdown').textContent=
+      `${minutes}:${secondsPart}`;
+
+    if(remaining<=0){
+      clearInterval(depositTimer);
+      depositTimer=null;
+      el('depositStatus').textContent=
+        'QR đã hết thời gian. Vui lòng tạo lại.';
+      el('depositProof').classList.add('hidden');
+      return;
+    }
+
+    remaining-=1;
+  };
+
+  draw();
+  depositTimer=setInterval(draw,1000);
+}
+
+async function requestDepositQr(amount){
+  const response=await fetch(DEPOSIT_QR_API_URL,{
+    method:'POST',
+    headers:{
+      'Content-Type':
+        'application/x-www-form-urlencoded'
+    },
+    body:`price=${encodeURIComponent(amount)}`
+  });
+
+  if(!response.ok){
+    throw new Error('Không tạo được QR');
+  }
+
+  return response.blob();
+}
+
+async function handleDepositSubmit(event){
+  event.preventDefault();
+
+  const amount=Number(el('depositAmount').value||0);
+
+  if(amount<1000000){
+    toast('Số tiền nạp tối thiểu là 1.000.000 VND.',true);
+    return;
+  }
+
+  const button=el('createDepositQr');
+  button.disabled=true;
+  button.textContent='Đang tạo QR...';
+
+  el('depositQrBox').classList.remove('hidden');
+  el('depositProof').classList.add('hidden');
+  el('depositStatus').textContent='Đang tạo QR...';
+  el('depositQrImage').innerHTML='';
+  startDepositCountdown(120);
+
+  try{
+    const blob=await requestDepositQr(amount);
+
+    if(depositQrObjectUrl){
+      URL.revokeObjectURL(depositQrObjectUrl);
+    }
+
+    depositQrObjectUrl=URL.createObjectURL(blob);
+    const image=document.createElement('img');
+    image.src=depositQrObjectUrl;
+    image.alt=`QR nạp ${fmt(amount)} VND`;
+    el('depositQrImage').appendChild(image);
+    el('depositStatus').textContent=
+      'Quét QR để thực hiện chuyển khoản';
+    el('depositProof').classList.remove('hidden');
+  }catch(error){
+    clearInterval(depositTimer);
+    depositTimer=null;
+    el('depositStatus').textContent=
+      'Không tạo được QR. Kiểm tra lại máy chủ QR rồi thử lại.';
+    toast('Lỗi tạo QR nạp tiền.',true);
+  }finally{
+    button.disabled=false;
+    button.textContent='Tạo lại QR';
+  }
+}
+
+function confirmDeposit(){
+  const amount=Number(el('depositAmount').value||0);
+  const button=el('confirmDeposit');
+  const message=el('depositMessage');
+
+  if(amount<1000000){
+    message.textContent='Số tiền không hợp lệ.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(!el('depositUpload').files.length){
+    message.textContent='Bạn cần tải ảnh xác nhận trước.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(button.dataset.done==='true'){
+    return;
+  }
+
+  const database=getDb();
+  const account=database.users[username()];
+
+  if(!account){
+    closeDeposit();
+    openAuth('login');
+    return;
+  }
+
+  const multiplierValue=
+    account.firstDepositUsed===true?1:3;
+  const credited=amount*multiplierValue;
+
+  account.balance+=credited;
+  account.firstDepositUsed=true;
+  account.walletTransactions.unshift({
+    id:`NAP-${Date.now()}`,
+    type:'deposit',
+    amount,
+    credited,
+    bonusMultiplier:multiplierValue,
+    status:'completed',
+    createdAt:new Date().toISOString()
+  });
+
+  button.dataset.done='true';
+  button.disabled=true;
+  saveDb(database);
+  renderAll();
+
+  message.textContent=
+    `✅ Đã cộng ${fmt(credited)} VND vào tài khoản.`;
+  message.className='wallet-message success';
+
+  setTimeout(closeDeposit,1500);
+}
+
+function profileReady(account){
+  const profile=account?.profile||{};
+
+  return Boolean(
+    profile.fullname&&
+    profile.bank&&
+    profile.bankName&&
+    profile.bankAccount
+  );
+}
+
+function openWithdraw(){
+  if(!requireLogin()){
+    return;
+  }
+
+  const account=user();
+
+  if(!profileReady(account)){
+    toast('Cần cập nhật hồ sơ ngân hàng trước khi rút.',true);
+    setTimeout(()=>goAccount('profile'),700);
+    return;
+  }
+
+  closeDrawer();
+  hideAccountDropdown();
+  closeWalletGift();
+  el('withdrawAmount').value='';
+  el('withdrawAmount').max=String(account.balance||0);
+  el('withdrawMessage').textContent=
+    `Số dư khả dụng: ${fmt(account.balance)} VND`;
+  el('withdrawMessage').className='wallet-message';
+  el('confirmWithdraw').disabled=false;
+  setModalOpen('withdrawModal',true);
+}
+
+function closeWithdraw(){
+  setModalOpen('withdrawModal',false);
+}
+
+function confirmWithdrawRequest(){
+  const amount=Number(el('withdrawAmount').value||0);
+  const message=el('withdrawMessage');
+  const database=getDb();
+  const account=database.users[username()];
+
+  if(!account){
+    closeWithdraw();
+    openAuth('login');
+    return;
+  }
+
+  if(amount<=0){
+    message.textContent='Vui lòng nhập số tiền muốn rút.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(amount>account.balance){
+    message.textContent='Số dư không đủ để tạo yêu cầu.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  account.balance-=amount;
+  const request={
+    id:`RUT-${Date.now()}`,
+    amount,
+    status:'pending',
+    createdAt:new Date().toISOString(),
+    profile:{...account.profile}
+  };
+
+  account.withdrawals.unshift(request);
+  account.walletTransactions.unshift({
+    id:request.id,
+    type:'withdraw',
+    amount:-amount,
+    status:'pending',
+    createdAt:request.createdAt
+  });
+
+  saveDb(database);
+  renderAll();
+  el('confirmWithdraw').disabled=true;
+  message.textContent=    '✅ Đã gửi yêu cầu. Hệ thống đang xác minh (1–5 phút).';
+  message.className='wallet-message success';
+  setTimeout(closeWithdraw,1700);
+}
+
+function randomFeedName(){
+  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  return`${letters[Math.floor(Math.random()*letters.length)]}***`;
+}
+
+function randomFeedMoney(){
+  const values=[
+    100000,200000,300000,500000,
+    1000000,2000000,3000000,5000000,
+    10000000
+  ];
+
+  return values[
+    Math.floor(Math.random()*values.length)
+  ];
+}
+
+function showLiveFeed(){
+  const box=el('liveFeed');
+
+  if(!box){
+    return;
+  }
+
+  const name=randomFeedName();
+  const money=fmt(randomFeedMoney());
+  const messages=[
+    `💰 ${name} vừa nạp ${money} VND`,
+    `🎯 ${name} vừa đặt cược`,
+    `💸 ${name} đã gửi yêu cầu rút ${money} VND`,
+    `🏆 ${name} vừa nhận thưởng ${money} VND`
+  ];
+  const item=document.createElement('div');
+
+  item.className='feed-item';
+  item.textContent=messages[
+    Math.floor(Math.random()*messages.length)
+  ];
+  box.prepend(item);
+
+  while(box.children.length>4){
+    box.lastElementChild.remove();
+  }
+
+  setTimeout(()=>{
+    item.classList.add('leaving');
+    setTimeout(()=>item.remove(),350);
+  },6000);
+}
+
+function startLiveFeed(){
+  clearInterval(liveFeedTimer);
+  setTimeout(showLiveFeed,1200);
+  liveFeedTimer=setInterval(showLiveFeed,3000);
+}
+
+function bindWallet(){
+  el('closeWalletGift').onclick=closeWalletGift;
+  el('giftDepositNow').onclick=openDeposit;
+  el('closeDeposit').onclick=closeDeposit;
+  el('closeWithdraw').onclick=closeWithdraw;
+  el('depositAmount').oninput=updateDepositBonus;
+  el('depositForm').onsubmit=handleDepositSubmit;
+  el('confirmDeposit').onclick=confirmDeposit;
+  el('confirmWithdraw').onclick=confirmWithdrawRequest;
+
+  ['depositModal','withdrawModal'].forEach(id=>{
+    el(id).addEventListener('click',event=>{
+      if(event.target!==el(id)){
+        return;
+      }
+
+      if(id==='depositModal'){
+        closeDeposit();
+      }else{
+        closeWithdraw();
+      }
+    });
+  });
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest('.account-menu-shell')){
+      hideAccountDropdown();
+    }
+
+    if(
+      !event.target.closest('#walletGift')&&
+      !event.target.closest('.wallet-gift-btn')
+    ){
+      closeWalletGift();
+    }
+  });
+
+  document.addEventListener('keydown',event=>{
+    if(event.key!=='Escape'){
+      return;
+    }
+
+    hideAccountDropdown();
+    closeWalletGift();
+
+    if(!el('depositModal').classList.contains('hidden')){
+      closeDeposit();
+    }
+
+    if(!el('withdrawModal').classList.contains('hidden')){
+      closeWithdraw();
+    }
+  });
 }
 
 function oddsRatio(value=cfg().odds){
@@ -608,6 +1257,13 @@ function unitStake(){
 }
 
 function defaultModeForGame(game=state.game){
+  if(
+    window.matchMedia('(max-width: 760px)').matches&&
+    modeAllowed('manual',game)
+  ){
+    return'manual';
+  }
+
   if(game==='lo_xien'){
     return'quick';
   }
@@ -1592,8 +2248,7 @@ function loXienHtml(){
                     "
                     data-number="${number}"
                     ${locked?'disabled':''}
-                  >
-                    <span>${number}</span>
+                  >                    <span>${number}</span>
 
                     <i class="${badge<=1?'red':''}">
                       ${badge}
@@ -1649,11 +2304,14 @@ function renderSelection(){
       <div class="manual-box">
         <label>
           Nhập ${width} chữ số, ngăn cách bằng
-          dấu phẩy / khoảng trắng
+          dấu phẩy
         </label>
 
         <textarea
           id="manualInput"
+          inputmode="decimal"
+          autocomplete="off"
+          spellcheck="false"
           placeholder="Ví dụ: ${example}"
         ></textarea>
 
@@ -1752,7 +2410,19 @@ function renderSelection(){
 
   el('manualInput')?.addEventListener(
     'input',
-    updateSummary
+    event=>{
+      const textarea=event.currentTarget;
+      const filtered=textarea.value.replace(
+        /[^0-9,]/g,
+        ''
+      );
+
+      if(textarea.value!==filtered){
+        textarea.value=filtered;
+      }
+
+      updateSummary();
+    }
   );
 }
 
@@ -3465,6 +4135,8 @@ function renderAll(){
 }
 
 function bind(){
+  bindWallet();
+
   el('playHelpBtn').onclick=()=>
     openHelpModal('play');
 
@@ -3637,6 +4309,24 @@ function bind(){
       };
     });
 
+  el('mMultiplier').oninput=event=>{
+    const input=event.currentTarget;
+    const digits=input.value.replace(/\D/g,'');
+    const value=Math.max(
+      1,
+      Math.floor(Number(digits)||1)
+    );
+
+    input.value=String(value);
+    el('multiplier').value=String(value);
+
+    updateSummary();
+  };
+
+  el('mMultiplier').onfocus=event=>{
+    event.currentTarget.select();
+  };
+
   el('mReset').onclick=
     resetSelections;
 
@@ -3782,9 +4472,24 @@ function bind(){
 }
 
 function init(){
+  state.mode=defaultModeForGame(state.game);
+
   bind();
   renderAll();
   clockTick();
+  startLiveFeed();
+
+  const walletAction=
+    new URLSearchParams(window.location.search)
+      .get('wallet');
+
+  if(walletAction==='deposit'){
+    setTimeout(openDeposit,0);
+  }
+
+  if(walletAction==='withdraw'){
+    setTimeout(openWithdraw,0);
+  }
 
   setInterval(
     clockTick,
@@ -3795,3 +4500,9 @@ function init(){
 }
 
 init();
+
+
+
+
+
+
