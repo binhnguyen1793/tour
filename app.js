@@ -3374,6 +3374,7 @@ function winningUnitsForBet(bet,result){
   /*
    * 3 càng.
    */
+
   if(bet.gameKey==='ba_cang'){
     const firstPrize=
       (prizes.g1||[])[0]||'';
@@ -4500,9 +4501,4 @@ function init(){
 }
 
 init();
-
-
-
-
-
 
