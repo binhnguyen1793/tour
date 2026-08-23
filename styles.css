@@ -2708,3 +2708,17 @@ body.popup-open{
   height: 100%;
   object-fit: contain;
 }
+/* Các mục điều hướng desktop chưa mở trang riêng vẫn là liên kết có thể bấm. */
+.top-links a,.sub-nav a,.main-nav a{
+  color:inherit;
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.top-links a.strong{
+  font-weight:700;
+}
+
+.top-links a:hover,.sub-nav a:hover{
+  text-decoration:underline;
+}
