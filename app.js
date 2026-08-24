@@ -1,11 +1,8 @@
-const DB_KEY='lotto_demo_v9_db';
-const SESSION_KEY='lotto_demo_v9_session';
-const DEPOSIT_QR_API_URL=
-  'https://surfing-harry-assumed-reviewed.trycloudflare.com/run-bot';
+const DB_KEY='lotto_v9_db';
+const SESSION_KEY='lotto_v9_session';
+const MAINTENANCE_MESSAGE='Đang bảo trì hệ thống, vui lòng thử lại sau.';
 
-let depositTimer=null;
-let depositQrObjectUrl='';
-let liveFeedTimer=null;
+let storageMigrationDone=false;
 
 const GAME={
   bao_lo:{
@@ -269,6 +266,51 @@ function toast(message,error=false){
   },2200);
 }
 
+function showMaintenance(){
+  toast(MAINTENANCE_MESSAGE,true);
+}
+
+function bindMaintenanceLinks(){
+  document.addEventListener(
+    'click',
+    event=>{
+      const target=event.target.closest?.('[data-maintenance]');
+
+      if(!target){
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      if(target.closest('.mobile-drawer')){
+        closeDrawer();
+      }
+
+      showMaintenance();
+    },
+    true
+  );
+
+  document.addEventListener(
+    'keydown',
+    event=>{
+      if(!['Enter',' '].includes(event.key)){
+        return;
+      }
+
+      const target=event.target.closest?.('[data-maintenance]');
+
+      if(!target){
+        return;
+      }
+
+      event.preventDefault();
+      showMaintenance();
+    }
+  );
+}
+
 function hash(text){
   let value=2166136261;
 
@@ -278,6 +320,47 @@ function hash(text){
   }
 
   return(value>>>0).toString(16);
+}
+
+function migrateLegacyStorage(){
+  if(storageMigrationDone){
+    return;
+  }
+
+  storageMigrationDone=true;
+
+  const keys=Array.from(
+    {length:localStorage.length},
+    (_,index)=>localStorage.key(index)
+  ).filter(Boolean);
+
+  if(!localStorage.getItem(DB_KEY)){
+    const legacyDbKey=keys.find(key=>
+      key!==DB_KEY&&
+      /^lotto_[a-z0-9-]+_v9_db$/i.test(key)
+    );
+
+    if(legacyDbKey){
+      localStorage.setItem(
+        DB_KEY,
+        localStorage.getItem(legacyDbKey)||''
+      );
+    }
+  }
+
+  if(!localStorage.getItem(SESSION_KEY)){
+    const legacySessionKey=keys.find(key=>
+      key!==SESSION_KEY&&
+      /^lotto_[a-z0-9-]+_v9_session$/i.test(key)
+    );
+
+    if(legacySessionKey){
+      localStorage.setItem(
+        SESSION_KEY,
+        localStorage.getItem(legacySessionKey)||''
+      );
+    }
+  }
 }
 
 function blankDb(){
@@ -319,8 +402,9 @@ function normalizeDb(database){
 
   return normalized;
 }
-
 function getDb(){
+  migrateLegacyStorage();
+
   try{
     return normalizeDb(
       JSON.parse(localStorage.getItem(DB_KEY))||
@@ -332,6 +416,8 @@ function getDb(){
 }
 
 function saveDb(database){
+  migrateLegacyStorage();
+
   localStorage.setItem(
     DB_KEY,
     JSON.stringify(database)
@@ -339,6 +425,7 @@ function saveDb(database){
 }
 
 function username(){
+  migrateLegacyStorage();
   return localStorage.getItem(SESSION_KEY);
 }
 
@@ -422,129 +509,6 @@ function requireLogin(){
   return false;
 }
 
-function goAccount(tab='profile'){
-  if(!requireLogin()){
-    return;
-  }
-
-  window.location.href=
-    `account.html?tab=${encodeURIComponent(tab)}`;
-}
-
-function hideAccountDropdown(){
-  el('accountDropdown')?.classList.add('hidden');
-}
-
-function toggleAccountDropdown(event){
-  event?.stopPropagation();
-  el('accountDropdown')?.classList.toggle('hidden');
-}
-
-function closeWalletGift(){
-  el('walletGift')?.classList.add('hidden');
-}
-
-function toggleWalletGift(event){
-  event?.stopPropagation();
-
-  if(!requireLogin()){
-    return;
-  }
-
-  const currentUser=user();
-  const eligible=currentUser?.firstDepositUsed!==true;
-
-  el('walletGiftText').textContent=eligible
-    ? 'Nạp 1 triệu nhận 3 triệu'
-    : 'Bạn đã sử dụng ưu đãi x3';
-
-  el('walletGift').classList.toggle('hidden');
-}
-
-function bindRenderedAccount(){
-  const accountShell=
-    el('accountMenuToggle')?.closest('.account-menu-shell');
-
-  el('accountMenuToggle')?.addEventListener(
-    'click',
-    toggleAccountDropdown
-  );
-
-  if(accountShell){
-    let hideTimer;
-
-    accountShell.onmouseenter=()=>{
-      clearTimeout(hideTimer);
-      el('accountDropdown')?.classList.remove('hidden');
-    };
-
-    accountShell.onmouseleave=()=>{
-      hideTimer=setTimeout(
-        hideAccountDropdown,
-        220
-      );
-    };
-  }
-
-  document
-    .querySelectorAll('[data-account-tab]')
-    .forEach(button=>{
-      button.onclick=()=>
-        goAccount(button.dataset.accountTab);
-    });
-
-  el('desktopDeposit')?.addEventListener(
-    'click',
-    openDeposit
-  );
-  el('desktopWithdraw')?.addEventListener(
-    'click',
-    openWithdraw
-  );
-  el('desktopGift')?.addEventListener(
-    'click',
-    toggleWalletGift
-  );
-  el('menuDeposit')?.addEventListener(
-    'click',
-    openDeposit
-  );
-  el('menuWithdraw')?.addEventListener(
-    'click',
-    openWithdraw
-  );
-  el('menuComplaint')?.addEventListener(
-    'click',
-    ()=>goAccount('support')
-  );
-  el('desktopLogout')?.addEventListener(
-    'click',
-    logout
-  );
-  el('drawerLogout')?.addEventListener(
-    'click',
-    logout
-  );
-  el('drawerDeposit')?.addEventListener(
-    'click',
-    ()=>{
-      closeDrawer();
-      openDeposit();
-    }
-  );
-  el('drawerWithdraw')?.addEventListener(
-    'click',
-    ()=>{
-      closeDrawer();
-      openWithdraw();
-    }
-  );
-  el('drawerAccount')?.addEventListener(
-    'click',
-    ()=>goAccount('profile')
-  );
-}
-
 function renderAccount(){
   const currentUser=user();
   const desktop=el('desktopAuth');
@@ -583,7 +547,6 @@ function renderAccount(){
       </div>
     `;
   }else{
-    closeWalletGift();
     desktop.innerHTML=`
       <input
         id="headerUser"
@@ -598,7 +561,7 @@ function renderAccount(){
         placeholder="mật khẩu"
       >
 
-      <span class="captcha-demo">3666</span>
+      <span class="captcha-box">3666</span>
 
       <input
         class="captcha-field"
@@ -613,11 +576,11 @@ function renderAccount(){
         đăng ký
       </button>
 
-      <button id="headerTry" class="btn-try">
+      <button id="headerTry" class="btn-try" type="button" data-maintenance>
         Chơi thử
       </button>
 
-      <button id="headerForgot" class="btn-forgot">
+      <button id="headerForgot" class="btn-forgot" type="button" data-maintenance>
         Quên mật khẩu?
       </button>
     `;
@@ -662,7 +625,6 @@ function renderAccount(){
     };
   }
 
-  bindRenderedAccount();
   renderDrawerCounts();
 }
 
@@ -682,19 +644,6 @@ function bindDesktopAuth(){
   el('headerRegister')?.addEventListener(
     'click',
     ()=>openAuth('register')
-  );
-
-  el('headerTry')?.addEventListener(
-    'click',
-    ()=>openAuth('register')
-  );
-
-  el('headerForgot')?.addEventListener(
-    'click',
-    ()=>toast(
-      'Đang bảo trì hệ thống...',
-      true
-    )
   );
 }
 
@@ -757,7 +706,7 @@ function doRegister(name,password){
   database.users[name]={
     username:name,
     passwordHash:hash(password),
-    balance:100000,
+    balance:0,
     createdAt:new Date().toISOString(),
     firstDepositUsed:false,
     profile:{},
@@ -779,464 +728,12 @@ function doRegister(name,password){
   toast(
     'Đã tạo tài khoản thành công.'
   );
-}
-
-function setModalOpen(id,open){
-  const modal=el(id);
-
-  if(!modal){
-    return;
-  }
-
-  modal.classList.toggle('hidden',!open);
-  modal.setAttribute('aria-hidden',String(!open));
-}
-
-function currentDepositMultiplier(){
-  return user()?.firstDepositUsed===true
-    ? 1
-    : 3;
-}
-
-function updateDepositBonus(){
-  const amount=Number(el('depositAmount')?.value||0);
-  const multiplierValue=currentDepositMultiplier();
-  const bonus=el('depositBonus');
-
-  if(!bonus){
-    return;
-  }
-
-  if(!amount){
-    bonus.textContent=
-      multiplierValue===3
-        ? 'Lần nạp đầu: nạp 1 nhận 3.'
-        : 'Ưu đãi x3 đã được sử dụng.';
-    return;
-  }
-
-  bonus.innerHTML=
-    `Bạn sẽ nhận: <b>${fmt(amount*multiplierValue)} VND</b>`;
-}
-
-function resetDepositModal(){
-  el('depositForm')?.reset();
-  el('depositQrBox')?.classList.add('hidden');
-  el('depositProof')?.classList.add('hidden');
-
-  if(el('depositStatus')){
-    el('depositStatus').innerHTML='<b>Đang tạo QR...</b>';
-  }
-
-  if(el('depositCountdown')){
-    el('depositCountdown').textContent='02:00';
-  }
-
-  if(el('depositQrImage')){
-    el('depositQrImage').innerHTML='';
-  }
-
-  if(el('depositMessage')){
-    el('depositMessage').textContent='';
-    el('depositMessage').className='wallet-message';
-  }
-
-  if(el('confirmDeposit')){
-    el('confirmDeposit').disabled=false;
-    el('confirmDeposit').dataset.done='false';
-  }
-
-  if(el('createDepositQr')){
-    el('createDepositQr').disabled=false;
-    el('createDepositQr').textContent='Đăng ký & lấy QR';
-  }
-
-  clearInterval(depositTimer);
-  depositTimer=null;
-
-  if(depositQrObjectUrl){
-    URL.revokeObjectURL(depositQrObjectUrl);
-    depositQrObjectUrl='';
-  }
-
-  updateDepositBonus();
-}
-
-function openDeposit(){
-  if(!requireLogin()){
-    return;
-  }
-
-  closeDrawer();
-  hideAccountDropdown();
-  closeWalletGift();
-  resetDepositModal();
-
-  el('depositOfferText').textContent=
-    currentDepositMultiplier()===3
-      ? 'Lần nạp đầu được nhận x3 giá trị.'
-      : 'Tài khoản đã sử dụng ưu đãi x3.';
-
-  setModalOpen('depositModal',true);
-}
-
-function closeDeposit(){
-  setModalOpen('depositModal',false);
-  resetDepositModal();
-}
-
-function startDepositCountdown(seconds){
-  clearInterval(depositTimer);
-  let remaining=seconds;
-
-  const draw=()=>{
-    const minutes=String(
-      Math.floor(remaining/60)
-    ).padStart(2,'0');
-    const secondsPart=String(
-      remaining%60
-    ).padStart(2,'0');
-
-    el('depositCountdown').textContent=
-      `${minutes}:${secondsPart}`;
-
-    if(remaining<=0){
-      clearInterval(depositTimer);
-      depositTimer=null;
-      el('depositStatus').textContent=
-        'QR đã hết thời gian. Vui lòng tạo lại.';
-      el('depositProof').classList.add('hidden');
-      return;
-    }
-
-    remaining-=1;
-  };
-
-  draw();
-  depositTimer=setInterval(draw,1000);
-}
-
-async function requestDepositQr(amount){
-  const response=await fetch(DEPOSIT_QR_API_URL,{
-    method:'POST',
-    headers:{
-      'Content-Type':
-        'application/x-www-form-urlencoded'
-    },
-    body:`price=${encodeURIComponent(amount)}`
-  });
-
-  if(!response.ok){
-    throw new Error('Không tạo được QR');
-  }
-
-  return response.blob();
-}
-
-async function handleDepositSubmit(event){
-  event.preventDefault();
-
-  const amount=Number(el('depositAmount').value||0);
-
-  if(amount<1000000){
-    toast('Số tiền nạp tối thiểu là 1.000.000 VND.',true);
-    return;
-  }
-
-  const button=el('createDepositQr');
-  button.disabled=true;
-  button.textContent='Đang tạo QR...';
-
-  el('depositQrBox').classList.remove('hidden');
-  el('depositProof').classList.add('hidden');
-  el('depositStatus').textContent='Đang tạo QR...';
-  el('depositQrImage').innerHTML='';
-  startDepositCountdown(120);
-
-  try{
-    const blob=await requestDepositQr(amount);
-
-    if(depositQrObjectUrl){
-      URL.revokeObjectURL(depositQrObjectUrl);
-    }
-
-    depositQrObjectUrl=URL.createObjectURL(blob);
-    const image=document.createElement('img');
-    image.src=depositQrObjectUrl;
-    image.alt=`QR nạp ${fmt(amount)} VND`;
-    el('depositQrImage').appendChild(image);
-    el('depositStatus').textContent=
-      'Quét QR để thực hiện chuyển khoản';
-    el('depositProof').classList.remove('hidden');
-  }catch(error){
-    clearInterval(depositTimer);
-    depositTimer=null;
-    el('depositStatus').textContent=
-      'Không tạo được QR. Kiểm tra lại máy chủ QR rồi thử lại.';
-    toast('Lỗi tạo QR nạp tiền.',true);
-  }finally{
-    button.disabled=false;
-    button.textContent='Tạo lại QR';
-  }
-}
-
-function confirmDeposit(){
-  const amount=Number(el('depositAmount').value||0);
-  const button=el('confirmDeposit');
-  const message=el('depositMessage');
-
-  if(amount<1000000){
-    message.textContent='Số tiền không hợp lệ.';
-    message.className='wallet-message error';
-    return;
-  }
-
-  if(!el('depositUpload').files.length){
-    message.textContent='Bạn cần tải ảnh xác nhận trước.';
-    message.className='wallet-message error';
-    return;
-  }
-
-  if(button.dataset.done==='true'){
-    return;
-  }
-
-  const database=getDb();
-  const account=database.users[username()];
-
-  if(!account){
-    closeDeposit();
-    openAuth('login');
-    return;
-  }
-
-  const multiplierValue=
-    account.firstDepositUsed===true?1:3;
-  const credited=amount*multiplierValue;
-
-  account.balance+=credited;
-  account.firstDepositUsed=true;
-  account.walletTransactions.unshift({
-    id:`NAP-${Date.now()}`,
-    type:'deposit',
-    amount,
-    credited,
-    bonusMultiplier:multiplierValue,
-    status:'completed',
-    createdAt:new Date().toISOString()
-  });
-
-  button.dataset.done='true';
-  button.disabled=true;
-  saveDb(database);
-  renderAll();
-
-  message.textContent=
-    `✅ Đã cộng ${fmt(credited)} VND vào tài khoản.`;
-  message.className='wallet-message success';
-
-  setTimeout(closeDeposit,1500);
-}
-
-function profileReady(account){
-  const profile=account?.profile||{};
-
-  return Boolean(
-    profile.fullname&&
-    profile.bank&&
-    profile.bankName&&
-    profile.bankAccount
-  );
-}
-
-function openWithdraw(){
-  if(!requireLogin()){
-    return;
-  }
-
-  const account=user();
-
-  if(!profileReady(account)){
-    toast('Cần cập nhật hồ sơ ngân hàng trước khi rút.',true);
-    setTimeout(()=>goAccount('profile'),700);
-    return;
-  }
-
-  closeDrawer();
-  hideAccountDropdown();
-  closeWalletGift();
-  el('withdrawAmount').value='';
-  el('withdrawAmount').max=String(account.balance||0);
-  el('withdrawMessage').textContent=
-    `Số dư khả dụng: ${fmt(account.balance)} VND`;
-  el('withdrawMessage').className='wallet-message';
-  el('confirmWithdraw').disabled=false;
-  setModalOpen('withdrawModal',true);
-}
-
-function closeWithdraw(){
-  setModalOpen('withdrawModal',false);
-}
-
-function confirmWithdrawRequest(){
-  const amount=Number(el('withdrawAmount').value||0);
-  const message=el('withdrawMessage');
-  const database=getDb();
-  const account=database.users[username()];
-
-  if(!account){
-    closeWithdraw();
-    openAuth('login');
-    return;
-  }
-
-  if(amount<=0){
-    message.textContent='Vui lòng nhập số tiền muốn rút.';
-    message.className='wallet-message error';
-    return;
-  }
-
-  if(amount>account.balance){
-    message.textContent='Số dư không đủ để tạo yêu cầu.';
-    message.className='wallet-message error';
-    return;
-  }
-
-  account.balance-=amount;
-  const request={
-    id:`RUT-${Date.now()}`,
-    amount,
-    status:'pending',
-    createdAt:new Date().toISOString(),
-    profile:{...account.profile}
-  };
-
-  account.withdrawals.unshift(request);
-  account.walletTransactions.unshift({
-    id:request.id,
-    type:'withdraw',
-    amount:-amount,
-    status:'pending',
-    createdAt:request.createdAt
-  });
-
-  saveDb(database);
-  renderAll();
-  el('confirmWithdraw').disabled=true;
-  message.textContent=    '✅ Đã gửi yêu cầu. Hệ thống đang xác minh (1–5 phút).';
-  message.className='wallet-message success';
-  setTimeout(closeWithdraw,1700);
-}
-
-function randomFeedName(){
-  const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  return`${letters[Math.floor(Math.random()*letters.length)]}***`;
-}
-
-function randomFeedMoney(){
-  const values=[
-    100000,200000,300000,500000,
-    1000000,2000000,3000000,5000000,
-    10000000
-  ];
-
-  return values[
-    Math.floor(Math.random()*values.length)
-  ];
-}
-
-function showLiveFeed(){
-  const box=el('liveFeed');
-
-  if(!box){
-    return;
-  }
-
-  const name=randomFeedName();
-  const money=fmt(randomFeedMoney());
-  const messages=[
-    `💰 ${name} vừa nạp ${money} VND`,
-    `🎯 ${name} vừa đặt cược`,
-    `💸 ${name} đã gửi yêu cầu rút ${money} VND`,
-    `🏆 ${name} vừa nhận thưởng ${money} VND`
-  ];
-  const item=document.createElement('div');
-
-  item.className='feed-item';
-  item.textContent=messages[
-    Math.floor(Math.random()*messages.length)
-  ];
-  box.prepend(item);
-
-  while(box.children.length>4){
-    box.lastElementChild.remove();
-  }
 
   setTimeout(()=>{
-    item.classList.add('leaving');
-    setTimeout(()=>item.remove(),350);
-  },6000);
-}
-
-function startLiveFeed(){
-  clearInterval(liveFeedTimer);
-  setTimeout(showLiveFeed,1200);
-  liveFeedTimer=setInterval(showLiveFeed,3000);
-}
-
-function bindWallet(){
-  el('closeWalletGift').onclick=closeWalletGift;
-  el('giftDepositNow').onclick=openDeposit;
-  el('closeDeposit').onclick=closeDeposit;
-  el('closeWithdraw').onclick=closeWithdraw;
-  el('depositAmount').oninput=updateDepositBonus;
-  el('depositForm').onsubmit=handleDepositSubmit;
-  el('confirmDeposit').onclick=confirmDeposit;
-  el('confirmWithdraw').onclick=confirmWithdrawRequest;
-
-  ['depositModal','withdrawModal'].forEach(id=>{
-    el(id).addEventListener('click',event=>{
-      if(event.target!==el(id)){
-        return;
-      }
-
-      if(id==='depositModal'){
-        closeDeposit();
-      }else{
-        closeWithdraw();
-      }
-    });
-  });
-
-  document.addEventListener('click',event=>{
-    if(!event.target.closest('.account-menu-shell')){
-      hideAccountDropdown();
+    if(typeof openDeposit==='function'){
+      openDeposit();
     }
-
-    if(
-      !event.target.closest('#walletGift')&&
-      !event.target.closest('.wallet-gift-btn')
-    ){
-      closeWalletGift();
-    }
-  });
-
-  document.addEventListener('keydown',event=>{
-    if(event.key!=='Escape'){
-      return;
-    }
-
-    hideAccountDropdown();
-    closeWalletGift();
-
-    if(!el('depositModal').classList.contains('hidden')){
-      closeDeposit();
-    }
-
-    if(!el('withdrawModal').classList.contains('hidden')){
-      closeWithdraw();
-    }
-  });
+  },300);
 }
 
 function oddsRatio(value=cfg().odds){
@@ -1270,7 +767,6 @@ function defaultModeForGame(game=state.game){
 
   return'digits';
 }
-
 function modeAllowed(mode,game=state.game){
   if(game==='lo_xien'){
     return(
@@ -1638,7 +1134,6 @@ function renderSubTabs(){
       };
     });
 }
-
 function syncModes(){
   const box=el('modeTabs');
 
@@ -1763,6 +1258,7 @@ function helpTemplateHtml(type){
 
   return'';
 }
+
 function openHelpModal(type){
   const modal=el('helpModal');
   const title=el('helpModalTitle');
@@ -2060,7 +1556,6 @@ function digitHotColdStat(row,digit){
     )
   );
 }
-
 function digitStatClass(value){
   if(value<=1){
     return'red';
@@ -2155,47 +1650,6 @@ function digitRowsHtml(){
     .join('');
 }
 
-function numberGridHtml(className=''){
-  return`
-    <div class="number-grid-wrap ${className}">
-      <div class="number-grid">
-        ${
-          Array.from(
-            {length:100},
-            (_,index)=>{
-              const number=
-                String(index).padStart(2,'0');
-
-              return`
-                <button
-                  data-number="${number}"
-                  class="${
-                    state.numbers.includes(number)
-                      ? 'active'
-                      : ''
-                  }"
-                >
-                  ${number}
-                </button>
-              `;
-            }
-          ).join('')
-        }
-      </div>
-
-      ${
-        state.game==='lo_xien'
-          ? `
-            <div class="selection-note">
-              Chọn đúng ${cfg().pick} số cho ${cfg().label}.
-            </div>
-          `
-          : ''
-      }
-    </div>
-  `;
-}
-
 function loXienHtml(){
   const full=
     state.numbers.length>=cfg().pick;
@@ -2248,7 +1702,8 @@ function loXienHtml(){
                     "
                     data-number="${number}"
                     ${locked?'disabled':''}
-                  >                    <span>${number}</span>
+                  >
+                    <span>${number}</span>
 
                     <i class="${badge<=1?'red':''}">
                       ${badge}
@@ -2401,24 +1856,27 @@ function renderSelection(){
         smartPick(button.dataset.smart);
     });
 
-  box
-    .querySelectorAll('[data-fast]')
-    .forEach(button=>{
-      button.onclick=()=>
-        fastPick(button.dataset.fast);
-    });
-
   el('manualInput')?.addEventListener(
     'input',
     event=>{
       const textarea=event.currentTarget;
-      const filtered=textarea.value.replace(
-        /[^0-9,]/g,
-        ''
-      );
+      const rawValue=textarea.value;
+      const rawCaret=textarea.selectionStart??rawValue.length;
 
-      if(textarea.value!==filtered){
-        textarea.value=filtered;
+      const formatValue=value=>
+        value
+          .replace(/[^0-9,]/g,'')
+          .replace(/,+/g,',')
+          .replace(/,/g,', ');
+
+      const formatted=formatValue(rawValue);
+      const caret=formatValue(
+        rawValue.slice(0,rawCaret)
+      ).length;
+
+      if(rawValue!==formatted){
+        textarea.value=formatted;
+        textarea.setSelectionRange(caret,caret);
       }
 
       updateSummary();
@@ -2426,50 +1884,7 @@ function renderSelection(){
   );
 }
 
-function fastPick(type){
-  if(type==='clear'){
-    state.numbers=[];
-    state.rows=rowLabels().map(()=>[]);
-  }else if(type==='random'){
-    if(state.game==='lo_xien'){
-      state.numbers=[];
-
-      while(state.numbers.length<cfg().pick){
-        const number=
-          String(
-            Math.floor(Math.random()*100)
-          ).padStart(2,'0');
-
-        if(!state.numbers.includes(number)){
-          state.numbers.push(number);
-        }
-      }
-    }else{
-      state.rows=rowLabels()
-        .map(()=>[
-          Math.floor(Math.random()*10)
-        ]);
-
-      state.numbers=[];
-    }
-  }else if(/^\d\d-\d\d$/.test(type)){
-    const[start,end]=
-      type.split('-').map(Number);
-
-    state.numbers=[];
-
-    for(let number=start;number<=end;number++){
-      state.numbers.push(
-        String(number).padStart(2,'0')
-      );
-    }
-  }
-
-  renderSelection();
-  updateSummary();
-}
-
-function updateSummary(){
+function updateSummary(options={}){
   const numbers=selected();
   const amount=selectionCost(numbers);
 
@@ -2485,8 +1900,10 @@ function updateSummary(){
   el('mMoney').textContent=
     fmt(amount);
 
-  el('mMultiplier').value=
-    multiplier();
+  if(!options.preserveMobileMultiplier){
+    el('mMultiplier').value=
+      multiplier();
+  }
 
   el('mBalance').textContent=
     fmt(user()?.balance||0);
@@ -2500,7 +1917,6 @@ function updateSummary(){
       );
     });
 }
-
 function makeDraft(){
   const numbers=selected();
 
@@ -2655,20 +2071,20 @@ function placeDrafts(drafts){
     toast('Vui lòng đăng nhập trước khi đặt cược.',true);
     return false;
   }
-  
+
   if(Number(currentUser.balance)<=0){
     toast('Bạn chưa có tiền. Vui lòng nạp tiền trước.',true);
     return false;
   }
-  
+
   if(Number(currentUser.balance)<total){
     const missing=total-Number(currentUser.balance);
-  
+
     toast(
       `Số dư không đủ. Bạn còn thiếu ${fmt(missing)} VND.`,
       true
     );
-  
+
     return false;
   }
 
@@ -2801,13 +2217,6 @@ function numbersFrom(cell){
   const digitsPerNumber=PRIZE_DIGITS[key];
   const expectedCount=PRIZE_COUNTS[key];
 
-  /*
-   * Minh Ngọc có thể tách 01939 thành:
-   * 0 + 19 + 39.
-   *
-   * Phải ghép tất cả chữ số lại trước khi
-   * chia thành từng kết quả hoàn chỉnh.
-   */
   const digitStream=(cell.textContent||'')
     .replace(/\D/g,'');
 
@@ -2844,7 +2253,6 @@ function isCompleteNorthernResult(prizes){
       );
     });
 }
-
 function processMinhNgoc(){
   const root=el('box_kqxs_minhngoc');
 
@@ -2866,11 +2274,11 @@ function processMinhNgoc(){
         ?.classList.add('date-row-hidden');
     });
 
-    for(const cell of cells){
-      const numbers=numbersFrom(cell);
-    
-      const signature=
-        numbers.join('|');
+  for(const cell of cells){
+    const numbers=numbersFrom(cell);
+
+    const signature=
+      numbers.join('|');
 
     if(cell.dataset.renderSig!==signature){
       cell.dataset.renderSig=signature;
@@ -2980,26 +2388,23 @@ function processMinhNgoc(){
     renderDbTags(db);
   }
 
-    renderHeadTail(last2);
-    renderMobileResults();
-    
-    document
-      .querySelector('.result-column')
-      ?.classList.add('results-ready');
-    
-    /*
-     * Khi đã có đủ kết quả, chốt vé đúng kỳ ngay.
-     */
-    if(
-      state.lastResult.sourceDateDetected&&
-      isCompleteNorthernResult(
-        state.lastResult.prizes
-      )
-    ){
-      settleWithActualResult();
-    }
-    
-    return true;
+  renderHeadTail(last2);
+  renderMobileResults();
+
+  document
+    .querySelector('.result-column')
+    ?.classList.add('results-ready');
+
+  if(
+    state.lastResult.sourceDateDetected&&
+    isCompleteNorthernResult(
+      state.lastResult.prizes
+    )
+  ){
+    settleWithActualResult();
+  }
+
+  return true;
 }
 
 function renderDbTags(db){
@@ -3163,18 +2568,12 @@ function installResultObserver(){
 
   run();
 }
-function demoPayout(bet,winningUnits){
+
+function calculatePayout(bet,winningUnits){
   if(!winningUnits){
     return 0;
   }
 
-  /*
-   * Một điểm = 1.000đ.
-   *
-   * Ví dụ Lô 2 số:
-   * - Giá mua một điểm: 27.000đ.
-   * - Một nháy trúng: 1.000 × 99,9 = 99.900đ.
-   */
   const payoutBaseStake=
     Number(
       bet.payoutBaseStake||
@@ -3194,7 +2593,6 @@ function demoPayout(bet,winningUnits){
     ratio
   );
 }
-
 function winningUnitsForBet(bet,result){
   const db=result.db||'';
 
@@ -3204,9 +2602,6 @@ function winningUnitsForBet(bet,result){
   const prizes=result.prizes||{};
   const all=result.all||[];
 
-  /*
-   * Lô xiên: tất cả số đã chọn phải xuất hiện.
-   */
   if(bet.gameKey==='lo_xien'){
     const requiredPicks={
       xien2:2,
@@ -3232,16 +2627,9 @@ function winningUnitsForBet(bet,result){
       : 0;
   }
 
-  /*
-   * Bao lô.
-   */
   if(bet.gameKey==='bao_lo'){
     let targets=[];
 
-    /*
-     * Lô 2 số và Lô 2 số 1K:
-     * so 2 số cuối của cả 27 kết quả.
-     */
     if(
       bet.subId==='lo2'||
       bet.subId==='lo2_1k'
@@ -3251,11 +2639,6 @@ function winningUnitsForBet(bet,result){
       );
     }
 
-    /*
-     * Lô 2 số đầu:
-     * so 2 số đầu của 23 kết quả,
-     * từ giải đặc biệt đến giải 6.
-     */
     else if(bet.subId==='lo2dau'){
       targets=[
         ...(prizes.db||[]),
@@ -3270,10 +2653,6 @@ function winningUnitsForBet(bet,result){
       );
     }
 
-    /*
-     * Lô 3 số:
-     * so 3 số cuối của 23 kết quả.
-     */
     else if(bet.subId==='lo3'){
       targets=[
         ...(prizes.db||[]),
@@ -3288,11 +2667,6 @@ function winningUnitsForBet(bet,result){
       );
     }
 
-    /*
-     * Lô 4 số:
-     * so 4 số cuối của 20 kết quả,
-     * từ giải đặc biệt đến giải 5.
-     */
     else if(bet.subId==='lo4'){
       targets=[
         ...(prizes.db||[]),
@@ -3306,17 +2680,11 @@ function winningUnitsForBet(bet,result){
       );
     }
 
-    /*
-     * Mỗi lần xuất hiện là một nháy thắng.
-     */
     return targets.filter(target=>
       selectedNumbers.includes(target)
     ).length;
   }
 
-  /*
-   * Đánh đề.
-   */
   if(bet.gameKey==='danh_de'){
     let targets=[];
 
@@ -3354,9 +2722,6 @@ function winningUnitsForBet(bet,result){
     ).length;
   }
 
-  /*
-   * Đầu và đuôi giải đặc biệt.
-   */
   if(bet.gameKey==='dau_duoi'){
     const lastTwoDigits=
       db.slice(-2);
@@ -3371,9 +2736,7 @@ function winningUnitsForBet(bet,result){
       : 0;
   }
 
-  /*
-   * 3 càng.
-   */  if(bet.gameKey==='ba_cang'){
+  if(bet.gameKey==='ba_cang'){
     const firstPrize=
       (prizes.g1||[])[0]||'';
 
@@ -3388,18 +2751,11 @@ function winningUnitsForBet(bet,result){
         firstPrize.slice(-3)
       ];
     }else if(bet.subId==='3c_dau_duoi'){
-      /*
-       * So cả 3 số đầu và
-       * 3 số cuối giải đặc biệt.
-       */
       targets=[
         db.slice(0,3),
         db.slice(-3)
       ].filter(Boolean);
     }else if(bet.subId==='3c_dau'){
-      /*
-       * So 3 số đầu giải đặc biệt.
-       */
       targets=[
         db.slice(0,3)
       ];
@@ -3410,9 +2766,6 @@ function winningUnitsForBet(bet,result){
     ).length;
   }
 
-  /*
-   * 4 càng: so 4 số cuối giải đặc biệt.
-   */
   if(bet.gameKey==='bon_cang'){
     const target=
       db.slice(-4);
@@ -3425,21 +2778,9 @@ function winningUnitsForBet(bet,result){
   return 0;
 }
 
-function isWinningBet(bet,result){
-  return(
-    winningUnitsForBet(bet,result)>0
-  );
-}
-
 function settleWithActualResult(){
   const result=state.lastResult;
 
-  /*
-   * Chỉ chốt khi:
-   * - đọc được ngày kết quả;
-   * - bảng có đủ 27 kết quả;
-   * - ngày kết quả trùng ngày của vé.
-   */
   if(
     !result||
     !result.sourceDateDetected||
@@ -3452,18 +2793,10 @@ function settleWithActualResult(){
   let changed=false;
 
   for(const bet of database.bets){
-    /*
-     * Vé đã thắng hoặc thua rồi thì bỏ qua.
-     * Vì vậy tiền thưởng không thể bị cộng hai lần.
-     */
     if(bet.status!=='pending'){
       continue;
     }
 
-    /*
-     * Kỳ 17/08 chỉ được so với kết quả 17/08.
-     * Vé 18/08 sẽ không bị mang đi so với bảng 17/08.
-     */
     if(bet.drawDate!==result.date){
       continue;
     }
@@ -3476,15 +2809,11 @@ function settleWithActualResult(){
     bet.status=won?'win':'lose';
     bet.winningUnits=winningUnits;
 
-    bet.payout=demoPayout(
+    bet.payout=calculatePayout(
       bet,
       winningUnits
     );
 
-    /*
-     * Tiền cược đã trừ lúc đặt vé.
-     * result là số tiền lời/lỗ cuối cùng.
-     */
     bet.result=
       bet.payout-
       Number(bet.total||0);
@@ -3496,19 +2825,11 @@ function settleWithActualResult(){
     bet.settlementResultDate=result.date;
     bet.resultDb=result.db;
 
-    /*
-     * Lưu nguyên bảng kết quả dùng để đối soát.
-     * Sau này xem lịch sử không cần so lại.
-     */
     bet.resultSnapshot=
       JSON.parse(
         JSON.stringify(result.prizes)
       );
 
-    /*
-     * Chỉ vé thắng mới được cộng tiền thưởng.
-     * Vé thua không cộng lại khoản nào.
-     */
     if(
       won&&
       database.users[bet.username]
@@ -3527,10 +2848,6 @@ function settleWithActualResult(){
     renderHistory();
     renderDrawerCounts();
 
-    /*
-     * Nếu đang mở trang hồ sơ trên điện thoại,
-     * cập nhật luôn danh sách đang hiển thị.
-     */
     if(
       el('mobileRecords')&&
       el('mobileRecords').classList.contains('open')
@@ -3680,7 +2997,6 @@ function renderDrawerCounts(){
       bet.status!=='pending'
     ).length;
 }
-
 function renderMobileRecords(
   filter='all',
   title='Hồ sơ cá cược'
@@ -4121,7 +3437,6 @@ function clockTick(){
     `${String(now.getHours()).padStart(2,'0')}:`+
     `${String(now.getMinutes()).padStart(2,'0')} 🇻🇳`;
 }
-
 function renderAll(){
   renderAccount();
   renderSubTabs();
@@ -4134,7 +3449,7 @@ function renderAll(){
 }
 
 function bind(){
-  bindWallet();
+  bindMaintenanceLinks();
 
   el('playHelpBtn').onclick=()=>
     openHelpModal('play');
@@ -4311,19 +3626,35 @@ function bind(){
   el('mMultiplier').oninput=event=>{
     const input=event.currentTarget;
     const digits=input.value.replace(/\D/g,'');
+
+    if(digits===''){
+      input.value='';
+      el('multiplier').value='1';
+      updateSummary({preserveMobileMultiplier:true});
+      return;
+    }
+
     const value=Math.max(
       1,
-      Math.floor(Number(digits)||1)
+      Math.floor(Number(digits))
     );
 
     input.value=String(value);
     el('multiplier').value=String(value);
 
-    updateSummary();
+    updateSummary({preserveMobileMultiplier:true});
   };
 
   el('mMultiplier').onfocus=event=>{
     event.currentTarget.select();
+  };
+
+  el('mMultiplier').onblur=event=>{
+    if(!event.currentTarget.value){
+      event.currentTarget.value='1';
+      el('multiplier').value='1';
+      updateSummary();
+    }
   };
 
   el('mReset').onclick=
@@ -4367,13 +3698,6 @@ function bind(){
           );
         }
 
-        if(action==='feed'){
-          return renderMobileRecords(
-            'all',
-            'Lịch sử nuôi'
-          );
-        }
-
         if(action==='results'){
           renderMobileResults();
 
@@ -4385,27 +3709,11 @@ function bind(){
           return openHelpModal('play');
         }
 
-        if(action==='home'){
-          return window.scrollTo({
-            top:0,
-            behavior:'smooth'
-          });
-        }
-
-        if(action==='closed'){
-          return toast(
-            'Đang bảo trì hệ thống...'
-          );
-        }
-
-        if(action==='theme'){
-          return toast(
-            'Đang bảo trì hệ thống...'
-          );
-        }
-
-        if(action==='support'){
-          return toast('CSKH.');
+        if(
+          ['closed','feed','theme','support','home']
+            .includes(action)
+        ){
+          return showMaintenance();
         }
       };
     });
@@ -4476,19 +3784,6 @@ function init(){
   bind();
   renderAll();
   clockTick();
-  startLiveFeed();
-
-  const walletAction=
-    new URLSearchParams(window.location.search)
-      .get('wallet');
-
-  if(walletAction==='deposit'){
-    setTimeout(openDeposit,0);
-  }
-
-  if(walletAction==='withdraw'){
-    setTimeout(openWithdraw,0);
-  }
 
   setInterval(
     clockTick,
