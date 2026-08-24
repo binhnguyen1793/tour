@@ -1,7 +1,23 @@
 const DB_KEY='lotto_v9_db';
 const SESSION_KEY='lotto_v9_session';
 const MAINTENANCE_MESSAGE='Đang bảo trì hệ thống, vui lòng thử lại sau.';
+function generateCaptchaCode(){
+  return String(
+    Math.floor(1000 + Math.random()*9000)
+  );
+}
 
+let captchaCode=generateCaptchaCode();
+
+function refreshCaptchaCode(){
+  captchaCode=generateCaptchaCode();
+
+  const captcha=document.querySelector('.captcha-box');
+
+  if(captcha){
+    captcha.textContent=captchaCode;
+  }
+}
 let storageMigrationDone=false;
 
 const GAME={
@@ -561,7 +577,13 @@ function renderAccount(){
         placeholder="mật khẩu"
       >
 
-      <span class="captcha-box">3666</span>
+      <span
+        class="captcha-box"
+        id="captchaCode"
+        title="Bấm để đổi mã"
+      >
+        ${captchaCode}
+      </span>
 
       <input
         class="captcha-field"
@@ -643,7 +665,15 @@ function bindDesktopAuth(){
 
   el('headerRegister')?.addEventListener(
     'click',
-    ()=>openAuth('register')
+    ()=>{
+      refreshCaptchaCode();
+      openAuth('register');
+    }
+  );
+
+  el('captchaCode')?.addEventListener(
+    'click',
+    refreshCaptchaCode
   );
 }
 
