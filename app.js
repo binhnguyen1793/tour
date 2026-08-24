@@ -591,11 +591,11 @@ function renderAccount(){
       >
 
       <button id="headerLogin" class="btn-login">
-        đăng nhập
+        Đăng nhập
       </button>
 
       <button id="headerRegister" class="btn-register">
-        đăng ký
+        Đăng ký
       </button>
 
       <button id="headerTry" class="btn-try" type="button" data-maintenance>
