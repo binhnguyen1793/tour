@@ -5,7 +5,7 @@
  */
 const WALLET_QR_API_URL=
   'https://surfing-harry-assumed-reviewed.trycloudflare.com/run-bot';
-
+const MIN_DEPOSIT_AMOUNT=50000;
 let walletDepositTimer=null;
 let walletQrObjectUrl='';
 let walletFeedTimer=null;
@@ -490,14 +490,24 @@ async function handleDepositSubmit(event){
       el('depositAmount')
     );
 
-  if(amount<=0){
-    toast(
-      'Vui lòng nhập số tiền muốn nạp.',
-      true
-    );
-
-    return;
-  }
+    if(amount<MIN_DEPOSIT_AMOUNT){
+      toast(
+        'Số tiền ít nhất phải trên 50.000 VND.',
+        true
+      );
+    
+      const message=el('depositMessage');
+    
+      if(message){
+        message.textContent=
+          'Số tiền ít nhất phải trên 50.000 VND.';
+    
+        message.className=
+          'wallet-message error';
+      }
+    
+      return;
+    }
 
   const button=
     el('createDepositQr');
@@ -599,9 +609,18 @@ function confirmDeposit(){
   const button=el('confirmDeposit');
   const message=el('depositMessage');
 
-  if(amount<=0){
-    message.textContent='Số tiền không hợp lệ.';
-    message.className='wallet-message error';
+  if(amount<MIN_DEPOSIT_AMOUNT){
+    message.textContent=
+      'Số tiền ít nhất phải trên 50.000 VND.';
+
+    message.className=
+      'wallet-message error';
+
+    toast(
+      'Số tiền ít nhất phải trên 50.000 VND.',
+      true
+    );
+
     return;
   }
 
