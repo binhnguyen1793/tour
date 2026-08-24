@@ -421,7 +421,7 @@ function openDeposit(){
   resetDepositModal();
 
   el('depositOfferText').textContent=
-    'Ưu đãi hôm nay: X3 khoản nạp đầu không giới hạn cho các thẻ nạp từ 1.000.000 VND trở lên.';
+    'Ưu đãi hôm nay: X3 khoản nạp đầu không giới hạn cho các khoản nạp từ 1.000.000 VND.';
 
   walletSetModal(
     'depositModal',
