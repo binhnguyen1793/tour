@@ -971,7 +971,7 @@ function showWalletLiveFeed(){
 
     },350);
 
-  },6000);
+  },4000);
 }
 
 
@@ -989,7 +989,7 @@ function scheduleNextWalletFeed(){
 
       scheduleNextWalletFeed();
 
-    },5000);
+    },3000);
 }
 
 
