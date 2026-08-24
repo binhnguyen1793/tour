@@ -825,56 +825,110 @@ function confirmWithdrawRequest(){
 }
 
 function showWalletLiveFeed(){
-  const box=
-    el('liveFeed');
+  const box=el('liveFeed');
 
   if(!box){
     return;
   }
 
-  const letters=
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  /*
+   * Tên mô phỏng:
+   * giữ 3 ký tự đầu + ***
+   */
+  const fakeNames=[
+    'bin***',
+    'nam***',
+    'han***',
+    'min***',
+    'anh***',
+    'hoa***',
+    'duc***',
+    'bao***',
+    'huy***',
+    'lan***',
+    'mai***',
+    'son***',
+    'van***',
+    'yen***',
+    'tuy***',
+    'dat***',
+    'lin***',
+    'thu***',
+    'nga***',
+    'tam***'
+  ];
 
   const name=
-    `${letters[
+    fakeNames[
       Math.floor(
-        Math.random()*letters.length
+        Math.random()*fakeNames.length
       )
-    ]}***`;
+    ];
 
-  const values=[
+  /*
+   * Các mức tiền mô phỏng.
+   */
+  const depositValues=[
+    50000,
     100000,
     200000,
     300000,
     500000,
     1000000,
+    1500000,
+    2000000,
+    3000000,
+    5000000
+  ];
+
+  const rewardValues=[
+    500000,
+    1000000,
+    1500000,
     2000000,
     3000000,
     5000000,
-    10000000
+    8000000,
+    10000000,
+    13000000,
+    15000000,
+    20000000
   ];
 
-  const money=
+  const depositMoney=
     fmt(
-      values[
+      depositValues[
         Math.floor(
-          Math.random()*values.length
+          Math.random()*depositValues.length
         )
       ]
     );
 
+  const rewardMoney=
+    fmt(
+      rewardValues[
+        Math.floor(
+          Math.random()*rewardValues.length
+        )
+      ]
+    );
+
+  /*
+   * Nội dung chạy ngẫu nhiên.
+   */
   const messages=[
-    `💰 ${name} vừa nạp ${money} VND`,
-    `🎯 ${name} vừa đặt cược`,
-    `💸 ${name} đã gửi yêu cầu rút ${money} VND`,
-    `🏆 ${name} vừa nhận thưởng ${money} VND`
+    `🎁 ${name} vừa nhận ưu đãi X3 khoản nạp`,
+    `🎮 ${name} vừa tham gia`,
+    `💰 ${name} vừa nạp ${depositMoney} VND`,
+    `🎯 ${name} vừa đặt cược thành công`,
+    `🎁 ${name} vừa nhận ưu đãi X3 khoản nạp`,
+    `🏆 ${name} vừa nhận ${rewardMoney} VND`
   ];
 
   const item=
     document.createElement('div');
 
-  item.className=
-    'feed-item';
+  item.className='feed-item';
 
   item.textContent=
     messages[
@@ -884,30 +938,72 @@ function showWalletLiveFeed(){
     ];
 
   /*
-   * Xóa thông báo cũ trước khi
-   * thêm thông báo mới.
-   * Máy tính và điện thoại đều
-   * chỉ có tối đa 1 thông báo.
+   * Chỉ được có tối đa 2 dòng.
+   *
+   * Nếu đã đủ 2 dòng thì xóa
+   * dòng cũ nhất trước khi thêm.
    */
-  box.replaceChildren();
+  while(box.children.length>=2){
+    box.lastElementChild?.remove();
+  }
 
+  /*
+   * Tin mới nằm trên cùng.
+   */
   box.prepend(item);
 
   /*
-   * Thông báo hiện trong 2,6 giây
-   * rồi biến mất.
+   * Mỗi thông báo tồn tại 6 giây.
    */
   setTimeout(()=>{
-    item.classList.add(
-      'leaving'
-    );
+
+    if(!item.isConnected){
+      return;
+    }
+
+    item.classList.add('leaving');
 
     setTimeout(()=>{
-      item.remove();
+
+      if(item.isConnected){
+        item.remove();
+      }
+
     },350);
 
-  },2600);
+  },6000);
 }
+
+
+/*
+ * Cứ đúng 5 giây
+ * xuất hiện một thông báo mới.
+ */
+function scheduleNextWalletFeed(){
+  clearTimeout(walletFeedTimer);
+
+  walletFeedTimer=
+    setTimeout(()=>{
+
+      showWalletLiveFeed();
+
+      scheduleNextWalletFeed();
+
+    },5000);
+}
+
+
+/*
+ * Thông báo đầu tiên xuất hiện
+ * sau khoảng 1 giây khi mở trang.
+ */
+setTimeout(()=>{
+
+  showWalletLiveFeed();
+
+  scheduleNextWalletFeed();
+
+},1000);
 
 function bindWalletAddon(){
   el('closeWalletGift').onclick=
