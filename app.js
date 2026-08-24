@@ -2073,7 +2073,7 @@ function placeDrafts(drafts){
   }
 
   if(Number(currentUser.balance)<=0){
-    toast('Bạn chưa có tiền. Vui lòng nạp tiền trước.',true);
+    toast('Số dư không đủ. Nạp ngay nhận ưu đãi khủng!',true);
     return false;
   }
 
