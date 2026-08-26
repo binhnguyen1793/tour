@@ -599,6 +599,65 @@
 
 <script src="app.js"></script>
 <script src="wallet-account.js"></script>
-<script src="app1.js"></script>
+
+<!-- POPUP ƯU ĐÃI X3 -->
+<div id="x3PromoModal" class="x3-promo-overlay hidden" aria-hidden="true">
+
+  <div class="x3-promo-box">
+
+    <img
+      id="x3PromoImage"
+      class="x3-promo-image"
+      src="LINK_ANH_GITHUB_CUA_BAN"
+      alt="Ưu đãi nạp đầu X3"
+    >
+
+    <!-- Nút đóng thật -->
+    <button
+      id="closeX3Promo"
+      class="x3-promo-close"
+      type="button"
+      aria-label="Đóng"
+    >
+      ×
+    </button>
+
+    <!--
+      Vùng click vô phần "Số tiền nạp"
+      trên chính bức ảnh
+    -->
+    <button
+      id="x3AmountHotspot"
+      class="x3-hotspot x3-hotspot-amount"
+      type="button"
+      aria-label="Nhập số tiền nạp"
+    ></button>
+
+    <!--
+      Vùng click vô nút NHẬN ƯU ĐÃI
+      trên chính bức ảnh
+    -->
+    <button
+      id="x3ClaimHotspot"
+      class="x3-hotspot x3-hotspot-claim"
+      type="button"
+      aria-label="Nhận ưu đãi"
+    ></button>
+
+  </div>
+
+</div>
+
+
+<!-- HỘP QUÀ NỔI -->
+<button
+  id="floatingX3Gift"
+  class="floating-x3-gift"
+  type="button"
+  aria-label="Ưu đãi nạp đầu X3"
+>
+  <span class="floating-gift-icon">🎁</span>
+  <span class="floating-gift-badge">X3</span>
+</button>
 </body>
 </html>
