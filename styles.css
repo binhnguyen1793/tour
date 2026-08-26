@@ -3043,3 +3043,45 @@ body.popup-open{
     font-size:34px;
   }
 }
+/* =========================================
+   HỘP QUÀ X3 NỔI
+   ========================================= */
+
+.floating-x3-gift{
+  position:fixed;
+
+  right:10px;
+  top:48%;
+
+  z-index:8888;
+
+  width:78px;
+  height:78px;
+
+  padding:0;
+  border:0;
+  background:transparent;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  animation:floatingGiftMove 2.2s ease-in-out infinite;
+
+  filter:
+    drop-shadow(0 5px 10px rgba(0,0,0,.28))
+    drop-shadow(0 0 8px rgba(255,190,25,.5));
+}
+
+.floating-x3-gift-image{
+  display:block;
+
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+
+  pointer-events:none;
+}
