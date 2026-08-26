@@ -1165,6 +1165,183 @@ setTimeout(()=>{
 
 },2200);
 
+/* =========================================
+   POPUP QUẢNG CÁO X3
+   ========================================= */
+
+let x3PromoWaitingForRegister=false;
+
+
+function openX3Promo(){
+  const modal=el('x3PromoModal');
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.remove('hidden');
+
+  modal.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+}
+
+
+function closeX3Promo(){
+  const modal=el('x3PromoModal');
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.add('hidden');
+
+  modal.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+}
+
+
+/*
+ * Khi bấm:
+ * - vùng nhập tiền
+ * - NHẬN ƯU ĐÃI
+ *
+ * đều chạy cùng một luồng.
+ */
+function claimX3Promotion(){
+
+  closeX3Promo();
+
+  /*
+   * Chưa đăng nhập
+   */
+  if(!user()){
+
+    x3PromoWaitingForRegister=true;
+
+    toast(
+      'Vui lòng đăng ký tài khoản trước khi nạp tiền.',
+      true
+    );
+
+    /*
+     * Mở thẳng màn hình ĐĂNG KÝ,
+     * không mở login.
+     */
+    openAuth('register');
+
+    return;
+  }
+
+
+  /*
+   * Đã có tài khoản
+   * → mở thẳng popup nạp tiền.
+   */
+  openDeposit();
+}
+
+
+/*
+ * Binding
+ */
+
+function bindX3Promo(){
+
+  el('closeX3Promo')
+    ?.addEventListener(
+      'click',
+      event=>{
+
+        event.stopPropagation();
+
+        closeX3Promo();
+
+      }
+    );
+
+
+  el('x3AmountHotspot')
+    ?.addEventListener(
+      'click',
+      claimX3Promotion
+    );
+
+
+  el('x3ClaimHotspot')
+    ?.addEventListener(
+      'click',
+      claimX3Promotion
+    );
+
+
+  /*
+   * Hộp quà nổi:
+   * click → mở lại popup X3.
+   */
+  el('floatingX3Gift')
+    ?.addEventListener(
+      'click',
+      openX3Promo
+    );
+
+
+  /*
+   * Click vùng tối bên ngoài
+   * cũng đóng được.
+   */
+  el('x3PromoModal')
+    ?.addEventListener(
+      'click',
+      event=>{
+
+        if(
+          event.target===
+          el('x3PromoModal')
+        ){
+          closeX3Promo();
+        }
+
+      }
+    );
+
+
+  /*
+   * ESC trên máy tính.
+   */
+  document.addEventListener(
+    'keydown',
+    event=>{
+
+      if(event.key==='Escape'){
+        closeX3Promo();
+      }
+
+    }
+  );
+}
+
+
+bindX3Promo();
+
+
+/*
+ * Khi vừa vào trang:
+ * đợi khoảng 1 giây rồi hiện popup.
+ *
+ * Chỉ tự động chạy 1 lần cho
+ * lần load trang hiện tại.
+ */
+setTimeout(()=>{
+
+  openX3Promo();
+
+},1000);
+
+
 const requestedWalletAction=
   new URLSearchParams(
     window.location.search
