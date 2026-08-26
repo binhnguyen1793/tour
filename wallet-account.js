@@ -1115,55 +1115,7 @@ function bindWalletAddon(){
 bindWalletAddon();
 renderAccount();
 
-/*
- * Thời gian chờ ngẫu nhiên
- * giữa các thông báo.
- * Dùng chung cho cả máy tính
- * và điện thoại.
- */
-function scheduleNextWalletFeed(){
-  const feedDelays=[
-    10000,
-    15000,
-    20000,
-    30000,
-    45000,
-    60000,
-    90000,
-    120000
-  ];
 
-  const nextDelay=
-    feedDelays[
-      Math.floor(
-        Math.random()*
-        feedDelays.length
-      )
-    ];
-
-  walletFeedTimer=
-    setTimeout(()=>{
-
-      showWalletLiveFeed();
-
-      scheduleNextWalletFeed();
-
-    },nextDelay);
-}
-
-/*
- * Thông báo đầu tiên xuất hiện
- * sau 2,2 giây.
- * Những lần sau sẽ cách nhau
- * ngẫu nhiên.
- */
-setTimeout(()=>{
-
-  showWalletLiveFeed();
-
-  scheduleNextWalletFeed();
-
-},2200);
 
 /* =========================================
    POPUP QUẢNG CÁO X3
