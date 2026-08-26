@@ -2768,3 +2768,278 @@ body.popup-open{
     font-size:11px;
   }
 }
+/* =========================================
+   POPUP QUẢNG CÁO X3
+   ========================================= */
+
+.x3-promo-overlay{
+  position:fixed;
+  inset:0;
+  z-index:99990;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  padding:22px 14px;
+
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
+}
+
+.x3-promo-overlay.hidden{
+  display:none !important;
+}
+
+.x3-promo-box{
+  position:relative;
+
+  width:min(88vw,430px);
+  max-height:88vh;
+
+  border-radius:20px;
+
+  overflow:hidden;
+
+  box-shadow:
+    0 18px 55px rgba(0,0,0,.6),
+    0 0 25px rgba(255,190,40,.2);
+
+  animation:x3PromoShow .25s ease-out;
+}
+
+.x3-promo-image{
+  display:block;
+
+  width:100%;
+  height:auto;
+
+  max-height:88vh;
+
+  object-fit:contain;
+
+  border-radius:20px;
+}
+
+
+/* Nút X thật */
+
+.x3-promo-close{
+  position:absolute;
+
+  top:10px;
+  right:10px;
+
+  z-index:10;
+
+  width:38px;
+  height:38px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:2px solid #ffc928;
+  border-radius:50%;
+
+  background:rgba(0,0,0,.78);
+  color:#fff;
+
+  font-size:27px;
+  line-height:1;
+
+  cursor:pointer;
+
+  box-shadow:
+    0 3px 12px rgba(0,0,0,.45);
+}
+
+
+/*
+ * Các nút này trong suốt.
+ * Người dùng có cảm giác đang bấm
+ * trực tiếp vào bức ảnh.
+ */
+
+.x3-hotspot{
+  position:absolute;
+
+  z-index:7;
+
+  border:0;
+  background:transparent;
+
+  cursor:pointer;
+}
+
+
+/* vùng ô nhập tiền trong ảnh */
+
+.x3-hotspot-amount{
+  left:8%;
+  width:52%;
+
+  top:59%;
+  height:12%;
+}
+
+
+/* vùng nút NHẬN ƯU ĐÃI */
+
+.x3-hotspot-claim{
+  left:8%;
+  width:52%;
+
+  top:76%;
+  height:10%;
+}
+
+
+/* =========================================
+   HỘP QUÀ NỔI
+   ========================================= */
+
+.floating-x3-gift{
+  position:fixed;
+
+  right:14px;
+  top:48%;
+
+  z-index:8888;
+
+  width:64px;
+  height:64px;
+
+  border:2px solid #ffd545;
+  border-radius:18px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    radial-gradient(
+      circle at 40% 30%,
+      #274ca0,
+      #071a54 65%,
+      #031039
+    );
+
+  cursor:pointer;
+
+  box-shadow:
+    0 0 12px rgba(255,195,20,.75),
+    0 5px 18px rgba(0,0,0,.4);
+
+  animation:floatingGiftMove 2.2s ease-in-out infinite;
+}
+
+.floating-gift-icon{
+  font-size:38px;
+  line-height:1;
+}
+
+.floating-gift-badge{
+  position:absolute;
+
+  right:-6px;
+  top:-7px;
+
+  min-width:29px;
+  height:23px;
+
+  padding:0 6px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:2px solid #fff;
+  border-radius:12px;
+
+  background:#e31919;
+  color:#fff;
+
+  font-size:12px;
+  font-weight:900;
+
+  box-shadow:0 2px 7px rgba(0,0,0,.35);
+}
+
+
+@keyframes x3PromoShow{
+  from{
+    opacity:0;
+    transform:scale(.9);
+  }
+
+  to{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+
+@keyframes floatingGiftMove{
+  0%,
+  100%{
+    transform:translateY(-4px) rotate(-2deg);
+  }
+
+  50%{
+    transform:translateY(5px) rotate(2deg);
+  }
+}
+
+
+/* MOBILE */
+
+@media(max-width:760px){
+
+  .x3-promo-overlay{
+    padding:18px 16px;
+  }
+
+  .x3-promo-box{
+    /*
+     * Quan trọng:
+     * chỉ khoảng 84% chiều rộng màn hình
+     * nên vẫn thấy web phía sau.
+     */
+    width:84vw;
+
+    max-width:360px;
+    max-height:86vh;
+
+    border-radius:17px;
+  }
+
+  .x3-promo-image{
+    max-height:86vh;
+    border-radius:17px;
+  }
+
+  .x3-promo-close{
+    top:8px;
+    right:8px;
+
+    width:34px;
+    height:34px;
+
+    font-size:24px;
+  }
+
+  .floating-x3-gift{
+    right:8px;
+
+    width:58px;
+    height:58px;
+
+    border-radius:16px;
+  }
+
+  .floating-gift-icon{
+    font-size:34px;
+  }
+}
