@@ -360,7 +360,7 @@
          BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
          ===================================================== -->
     <p><b>Đề Giải 7: </b></p>
-    <p>Chọn một số từ hàng chục và hàng đơn vị để tạo thành bộ gồm 2 chữ số để đặt cược, nếu có nhiều hơn một số trúng thưởng, số tiền trúng thưởng sẽ được nhân đôi tương ứng. Nếu số được bình chọn trùng với số bất kỳ bộ số nào trong giải bảy của kết quả xổ số thì đó là người chiến thắng. Ví dụ bạn đặt cược vào 45, nếu giải 7 mở ra 45 là thắng. Nếu trong dãy số mở thưởng thứ bảy có N 45 chữ số thì phần thưởng được nhân với N.</p>>
+    <p>Chọn một số từ hàng chục và hàng đơn vị để tạo thành bộ gồm 2 chữ số để đặt cược, nếu có nhiều hơn một số trúng thưởng, số tiền trúng thưởng sẽ được nhân đôi tương ứng. Nếu số được bình chọn trùng với số bất kỳ bộ số nào trong giải bảy của kết quả xổ số thì đó là người chiến thắng. Ví dụ bạn đặt cược vào 45, nếu giải 7 mở ra 45 là thắng. Nếu trong dãy số mở thưởng thứ bảy có N 45 chữ số thì phần thưởng được nhân với N.</p>
   </template>
   <template data-help-type="play" data-game="danh_de" data-sub="de_giai1">
     <!-- =====================================================
@@ -407,7 +407,7 @@
          CÁCH CHƠI: 3 Càng Giải Nhất
          BẠN TỰ THAY NỘI DUNG TRONG TEMPLATE NÀY
          ===================================================== -->
-    <p><b>3 Càng Giải Nhất<: /b></p>
+    <p><b>3 Càng Giải Nhất:</b></p>
     <p>Chọn một số từ các chữ số hàng trăm, hàng chục và hàng đơn vị để tạo thành bộ 3 chữ số để đặt cược. Nếu số bình chọn trùng với 3 số cuối của giải nhất của kết quả xổ số thì trúng thưởng. Ví dụ bạn đặt cược 456 thì 3 số cuối của giải nhất của kết quả xổ số là 456 và bạn trúng thưởng.</p>
   </template>
   <template data-help-type="play" data-game="ba_cang" data-sub="3c_dau_duoi">
@@ -641,13 +641,20 @@
 
         Khi QR trả về sẽ tự ẩn.
       -->
+      <div
+        id="depositCountdown"
+        class="deposit-countdown hidden"
+      >
+        01:00
+      </div>
+
       <!-- HIỆN TRONG LÚC ĐANG CHỜ TẠO QR -->
       <div
         id="depositWaitingNote"
         class="deposit-waiting-note hidden"
       >
         <span>⚠️</span>
-      
+
         <p>
           <b>Đang kiểm tra IP để xác minh lần nạp đầu tiên.</b>
           Vui lòng chờ hệ thống tạo mã QR và
@@ -655,6 +662,11 @@
         </p>
       </div>
 
+      <!-- HIỆN SAU KHI QR ĐÃ TẠO XONG -->
+      <div
+        id="depositTransferNote"
+        class="deposit-transfer-note hidden"
+      >
         <span>⚠️</span>
 
         <p>
@@ -662,7 +674,6 @@
           Không chỉnh sửa nội dung chuyển khoản
           được tạo sẵn trong mã QR.
         </p>
-
       </div>
 
 
