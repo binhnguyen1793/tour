@@ -641,22 +641,19 @@
 
         Khi QR trả về sẽ tự ẩn.
       -->
+      <!-- HIỆN TRONG LÚC ĐANG CHỜ TẠO QR -->
       <div
-        id="depositCountdown"
-        class="deposit-countdown hidden"
+        id="depositWaitingNote"
+        class="deposit-waiting-note hidden"
       >
-        01:00
+        <span>⚠️</span>
+      
+        <p>
+          <b>Đang kiểm tra IP để xác minh lần nạp đầu tiên.</b>
+          Vui lòng chờ hệ thống tạo mã QR và
+          <strong>không thoát khỏi màn hình này.</strong>
+        </p>
       </div>
-
-
-      <!--
-        Giữ ID cũ để không phá JS.
-        Nội dung mới hoàn toàn.
-      -->
-      <div
-        id="depositIpNote"
-        class="deposit-transfer-note hidden"
-      >
 
         <span>⚠️</span>
 
