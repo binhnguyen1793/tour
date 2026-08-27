@@ -3085,3 +3085,805 @@ body.popup-open{
 
   pointer-events:none;
 }
+/* =========================================================
+   V28 - DEPOSIT POPUP PREMIUM
+   ========================================================= */
+
+.deposit-modal-card{
+  width:min(460px,calc(100vw - 28px)) !important;
+
+  max-height:
+    calc(100dvh - 24px) !important;
+
+  padding:22px !important;
+
+  overflow-y:auto !important;
+
+  border-radius:18px !important;
+
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f8fbff 100%
+    ) !important;
+
+  box-shadow:
+    0 22px 65px
+    rgba(0,0,0,.32) !important;
+}
+
+
+/* HEADER */
+
+.deposit-modal-header{
+  display:flex;
+
+  align-items:center;
+
+  gap:11px;
+
+  margin-bottom:15px;
+
+  padding-right:30px;
+}
+
+
+.deposit-title-icon{
+  width:43px;
+  height:43px;
+
+  flex:0 0 43px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #188ef1,
+      #075ebc
+    );
+
+  color:#fff;
+
+  font-size:22px;
+
+  box-shadow:
+    0 6px 15px
+    rgba(10,119,218,.25);
+}
+
+
+.deposit-modal-header h2{
+  margin:0 !important;
+
+  color:#24364a;
+
+  font-size:21px !important;
+
+  line-height:25px;
+}
+
+
+.deposit-modal-header p{
+  margin:3px 0 0;
+
+  color:#8390a0;
+
+  font-size:12px;
+}
+
+
+/* =========================================
+   CARD ƯU ĐÃI X3
+   ========================================= */
+
+.deposit-offer-card{
+  position:relative;
+
+  margin:0 0 18px;
+
+  padding:14px 14px 12px;
+
+  overflow:hidden;
+
+  border:
+    1px solid
+    rgba(255,181,39,.42);
+
+  border-radius:14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff8df 0%,
+      #fff2bc 55%,
+      #ffedaa 100%
+    );
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.8),
+    0 5px 16px
+    rgba(184,133,21,.10);
+}
+
+
+.deposit-offer-card::after{
+  content:"";
+
+  position:absolute;
+
+  width:120px;
+  height:120px;
+
+  right:-45px;
+  top:-50px;
+
+  border-radius:50%;
+
+  background:
+    rgba(255,187,33,.16);
+}
+
+
+.deposit-offer-head{
+  position:relative;
+
+  z-index:1;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:9px;
+}
+
+
+.deposit-offer-gift{
+  width:37px;
+  height:37px;
+
+  flex:0 0 37px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:10px;
+
+  background:#fff;
+
+  font-size:21px;
+
+  box-shadow:
+    0 3px 10px
+    rgba(129,89,8,.12);
+}
+
+
+.deposit-offer-title{
+  display:flex;
+
+  flex:1;
+
+  flex-direction:column;
+}
+
+
+.deposit-offer-title small{
+  color:#986100;
+
+  font-size:10px;
+
+  font-weight:700;
+
+  letter-spacing:.7px;
+}
+
+
+.deposit-offer-title strong{
+  margin-top:1px;
+
+  color:#c73525;
+
+  font-size:18px;
+
+  line-height:22px;
+}
+
+
+.deposit-offer-x3{
+  position:relative;
+
+  z-index:2;
+
+  min-width:51px;
+  height:36px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ff4d36,
+      #ce1f1e
+    );
+
+  color:#fff;
+
+  font-size:20px;
+
+  font-weight:900;
+
+  text-shadow:
+    0 1px 2px
+    rgba(0,0,0,.18);
+
+  box-shadow:
+    0 5px 12px
+    rgba(196,39,29,.2);
+}
+
+
+.deposit-offer-description{
+  position:relative;
+
+  z-index:1;
+
+  margin-top:11px;
+
+  color:#655323;
+
+  font-size:12px;
+
+  line-height:1.5;
+}
+
+
+.deposit-offer-description b,
+.deposit-offer-description strong{
+  color:#c23323;
+}
+
+
+.deposit-offer-tags{
+  position:relative;
+
+  z-index:1;
+
+  display:flex;
+
+  gap:6px;
+
+  margin-top:10px;
+}
+
+
+.deposit-offer-tags span{
+  padding:5px 8px;
+
+  border-radius:999px;
+
+  background:
+    rgba(255,255,255,.7);
+
+  color:#7c651e;
+
+  font-size:10px;
+
+  font-weight:700;
+}
+
+
+/* =========================================
+   INPUT TIỀN
+   ========================================= */
+
+.deposit-payment-form{
+  gap:7px !important;
+}
+
+
+.deposit-payment-form>label{
+  margin-top:1px;
+
+  color:#394b61;
+
+  font-size:13px;
+
+  font-weight:700;
+}
+
+
+.deposit-input-wrap{
+  position:relative;
+
+  display:flex;
+
+  align-items:center;
+}
+
+
+.deposit-input-wrap input{
+  width:100% !important;
+
+  height:48px !important;
+
+  padding:
+    0 61px
+    0 13px !important;
+
+  margin:0 !important;
+
+  border:
+    1px solid
+    #cbd7e5 !important;
+
+  border-radius:
+    10px !important;
+
+  background:#fff;
+
+  color:#26384d;
+
+  font-size:16px;
+
+  outline:none;
+
+  transition:
+    border-color .2s,
+    box-shadow .2s;
+}
+
+
+.deposit-input-wrap input:focus{
+  border-color:
+    #258be8 !important;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(37,139,232,.10);
+}
+
+
+.deposit-input-wrap>span{
+  position:absolute;
+
+  right:12px;
+
+  color:#8694a5;
+
+  font-size:12px;
+
+  font-weight:700;
+}
+
+
+.deposit-minimum{
+  color:#8995a3;
+
+  font-size:11px;
+}
+
+
+.deposit-minimum b{
+  color:#e06c24;
+}
+
+
+.deposit-bonus{
+  margin:5px 0 2px !important;
+
+  min-height:40px !important;
+
+  display:flex;
+
+  align-items:center;
+
+  padding:9px 11px;
+
+  border-radius:9px;
+
+  background:#edf6ff;
+
+  color:#267ecb !important;
+
+  font-size:13px !important;
+}
+
+
+.deposit-bonus b{
+  margin-left:4px;
+
+  color:#146dc0;
+
+  font-size:15px;
+}
+
+
+/* =========================================
+   NÚT THANH TOÁN
+   ========================================= */
+
+.deposit-pay-btn{
+  height:47px;
+
+  margin-top:5px;
+
+  border-radius:10px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #168fee,
+      #0668cf
+    ) !important;
+
+  box-shadow:
+    0 7px 17px
+    rgba(15,119,216,.22);
+
+  font-size:15px;
+}
+
+
+/* =========================================
+   KHU QR
+   ========================================= */
+
+.deposit-qr-box{
+  margin-top:18px !important;
+
+  padding:15px !important;
+
+  border:
+    1px solid
+    #dce7f2 !important;
+
+  border-radius:14px;
+
+  background:#fff;
+
+  text-align:center;
+
+  box-shadow:
+    0 5px 18px
+    rgba(40,75,110,.07);
+}
+
+
+.deposit-qr-header{
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:9px;
+
+  margin-bottom:7px;
+
+  text-align:left;
+}
+
+
+.deposit-qr-header strong{
+  display:block;
+
+  color:#2e4054;
+
+  font-size:14px;
+}
+
+
+.deposit-qr-header small{
+  display:block;
+
+  margin-top:2px;
+
+  color:#8996a5;
+
+  font-size:10px;
+}
+
+
+.deposit-qr-success-icon{
+  width:32px;
+  height:32px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:50%;
+
+  background:#e4f8ef;
+
+  color:#13a162;
+
+  font-size:17px;
+
+  font-weight:900;
+}
+
+
+.deposit-countdown{
+  margin:8px auto !important;
+
+  color:#d85a5a !important;
+
+  font-size:20px !important;
+
+  font-weight:800;
+}
+
+
+/* QR */
+
+.deposit-qr-image{
+  min-height:0 !important;
+}
+
+
+.deposit-qr-image img{
+  width:220px !important;
+
+  max-width:82% !important;
+
+  margin:10px auto !important;
+
+  padding:8px;
+
+  border:
+    1px solid
+    #e1e7ed;
+
+  border-radius:12px;
+
+  background:#fff;
+
+  box-shadow:
+    0 5px 18px
+    rgba(0,0,0,.08);
+}
+
+
+/* =========================================
+   LƯU Ý CHUYỂN KHOẢN
+   ========================================= */
+
+.deposit-transfer-note{
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:8px;
+
+  max-width:330px;
+
+  margin:10px auto !important;
+
+  padding:9px 10px;
+
+  border:
+    1px solid
+    #ffdfa3;
+
+  border-radius:9px;
+
+  background:#fff8e6;
+
+  color:#93600b;
+
+  text-align:left;
+
+  font-size:11px;
+
+  line-height:1.45;
+}
+
+
+.deposit-transfer-note span{
+  flex:0 0 auto;
+
+  font-size:15px;
+}
+
+
+.deposit-transfer-note p{
+  margin:0;
+}
+
+
+.deposit-transfer-note b{
+  color:#c3730e;
+}
+
+
+/* =========================================
+   TẢI ẢNH THANH TOÁN
+   ========================================= */
+
+.deposit-proof{
+  margin-top:15px !important;
+
+  padding-top:14px;
+
+  border-top:
+    1px solid
+    #e6edf4;
+
+  gap:9px !important;
+}
+
+
+.deposit-proof-reminder{
+  display:flex;
+
+  gap:8px;
+
+  padding:10px;
+
+  border-radius:9px;
+
+  background:#eef7ff;
+
+  color:#53718d;
+
+  font-size:11px;
+
+  line-height:1.45;
+
+  text-align:left;
+}
+
+
+.deposit-proof-reminder span{
+  font-size:17px;
+}
+
+
+.deposit-proof-reminder p{
+  margin:0;
+}
+
+
+.deposit-proof-reminder b{
+  color:#2577be;
+}
+
+
+.deposit-proof>label{
+  margin-top:3px;
+
+  color:#3f5063 !important;
+
+  font-size:13px !important;
+}
+
+
+.deposit-proof input[type="file"]{
+  min-height:46px !important;
+
+  padding:8px !important;
+
+  border:
+    1px dashed
+    #9db8d4 !important;
+
+  border-radius:9px !important;
+
+  background:#f8fbff !important;
+
+  color:#5d6e80;
+}
+
+
+.confirm-payment-btn{
+  min-height:46px !important;
+
+  border-radius:9px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #21ae70,
+      #108f58
+    ) !important;
+
+  box-shadow:
+    0 6px 14px
+    rgba(21,151,94,.2);
+
+  font-size:14px;
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media(max-width:760px){
+
+  #depositModal{
+    padding:10px !important;
+  }
+
+
+  .deposit-modal-card{
+    width:calc(100vw - 20px) !important;
+
+    max-height:
+      calc(100dvh - 20px) !important;
+
+    padding:17px !important;
+
+    border-radius:16px !important;
+  }
+
+
+  .deposit-modal-header{
+    margin-bottom:12px;
+  }
+
+
+  .deposit-offer-card{
+    padding:12px;
+  }
+
+
+  .deposit-offer-title strong{
+    font-size:16px;
+  }
+
+
+  .deposit-offer-x3{
+    min-width:45px;
+
+    height:34px;
+
+    font-size:18px;
+  }
+
+
+  .deposit-offer-tags{
+    flex-wrap:wrap;
+  }
+
+
+  .deposit-input-wrap input{
+    height:46px !important;
+  }
+
+
+  .deposit-pay-btn{
+    height:46px;
+  }
+
+
+  .deposit-qr-box{
+    padding:12px !important;
+  }
+
+
+  .deposit-qr-image img{
+    width:205px !important;
+
+    max-width:78% !important;
+  }
+
+
+  .deposit-transfer-note{
+    max-width:100%;
+  }
+
+}
