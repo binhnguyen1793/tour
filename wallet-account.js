@@ -362,71 +362,164 @@ function updateDepositBonus(){
 }
 
 function resetDepositModal(){
+
   el('depositForm')?.reset();
 
+
+  /*
+   * Ẩn toàn bộ khu QR
+   * khi mở popup lần đầu.
+   */
   el('depositQrBox')
     ?.classList.add('hidden');
+
 
   el('depositProof')
     ?.classList.add('hidden');
 
-  el('depositStatus').innerHTML=
-    '<b>\u0110ang t\u1ea1o QR...</b>';
 
-  el('depositCountdown').textContent=
-    '01:00';
+  /*
+   * Reset trạng thái QR.
+   */
+  if(el('depositStatus')){
 
-  el('depositQrImage').innerHTML='';
+    el('depositStatus').textContent=
+      'Đang tạo QR...';
 
+  }
+
+
+  /*
+   * Countdown chỉ dùng trong lúc
+   * chờ bot tạo QR.
+   */
+  if(el('depositCountdown')){
+
+    el('depositCountdown').textContent=
+      '01:00';
+
+    el('depositCountdown')
+      .classList.add('hidden');
+
+  }
+
+
+  /*
+   * Ghi chú chuyển khoản chỉ hiện
+   * SAU KHI QR được tạo thành công.
+   */
   el('depositIpNote')
     ?.classList.add('hidden');
 
-  el('depositMessage').textContent='';
 
-  el('depositMessage').className=
-    'wallet-message';
+  /*
+   * Xóa QR cũ.
+   */
+  if(el('depositQrImage')){
 
-  el('confirmDeposit').disabled=false;
+    el('depositQrImage').innerHTML='';
 
-  el('confirmDeposit').dataset.done=
-    'false';
+  }
 
-  el('createDepositQr').disabled=false;
 
-  el('createDepositQr').textContent=
-    '\u0110\u0103ng k\u00fd & l\u1ea5y QR';
+  /*
+   * Reset thông báo.
+   */
+  if(el('depositMessage')){
 
-  clearInterval(walletDepositTimer);
+    el('depositMessage').textContent='';
+
+    el('depositMessage').className=
+      'wallet-message';
+
+  }
+
+
+  /*
+   * Reset nút xác nhận.
+   */
+  if(el('confirmDeposit')){
+
+    el('confirmDeposit').disabled=false;
+
+    el('confirmDeposit').dataset.done=
+      'false';
+
+  }
+
+
+  /*
+   * Nút chính luôn tên là:
+   * THANH TOÁN
+   */
+  if(el('createDepositQr')){
+
+    el('createDepositQr').disabled=false;
+
+    el('createDepositQr').textContent=
+      'Thanh toán';
+
+  }
+
+
+  /*
+   * Dừng timer cũ.
+   */
+  clearInterval(
+    walletDepositTimer
+  );
+
   walletDepositTimer=null;
 
+
+  /*
+   * Xóa ObjectURL cũ.
+   */
   if(walletQrObjectUrl){
+
     URL.revokeObjectURL(
       walletQrObjectUrl
     );
 
     walletQrObjectUrl='';
+
   }
 
+
   updateDepositBonus();
+
 }
 
 function openDeposit(){
+
   if(!requireLogin()){
     return;
   }
 
+
   closeDrawer();
+
   hideAccountDropdown();
+
   closeWalletGift();
+
   resetDepositModal();
 
-  el('depositOfferText').textContent=
-    'Ưu đãi hôm nay: X3 khoản nạp đầu không giới hạn cho các khoản nạp từ 1.000.000 VND.';
+
+  /*
+   * Không set textContent cho
+   * depositOfferText nữa.
+   *
+   * Vì phần ưu đãi đã được dựng
+   * đẹp bằng HTML.
+   */
+
 
   walletSetModal(
     'depositModal',
     true
   );
+
 }
 
 function closeDeposit(){
@@ -439,103 +532,218 @@ function closeDeposit(){
 }
 
 function startDepositCountdown(seconds){
-  clearInterval(walletDepositTimer);
+
+  clearInterval(
+    walletDepositTimer
+  );
+
 
   let remaining=seconds;
 
+  const countdown=
+    el('depositCountdown');
+
+
+  if(countdown){
+
+    countdown
+      .classList.remove('hidden');
+
+  }
+
+
   const draw=()=>{
+
+    if(!countdown){
+      return;
+    }
+
+
     const minutes=
       String(
-        Math.floor(remaining/60)
-      ).padStart(2,'0');
+        Math.floor(
+          remaining/60
+        )
+      )
+      .padStart(
+        2,
+        '0'
+      );
+
 
     const secondsPart=
       String(
         remaining%60
-      ).padStart(2,'0');
+      )
+      .padStart(
+        2,
+        '0'
+      );
 
-    el('depositCountdown').textContent=
+
+    countdown.textContent=
       `${minutes}:${secondsPart}`;
 
+
+    /*
+     * Đây KHÔNG phải hạn sử dụng QR.
+     *
+     * Đây chỉ là thời gian dự kiến
+     * chờ máy chủ tạo QR.
+     */
     if(remaining<=0){
+
       clearInterval(
         walletDepositTimer
       );
 
       walletDepositTimer=null;
 
-      el('depositStatus').textContent=
-        'QR \u0111\u00e3 h\u1ebft th\u1eddi gian. Vui l\u00f2ng t\u1ea1o l\u1ea1i.';
 
-      el('depositProof')
-        .classList.add('hidden');
+      countdown.textContent=
+        'Đang xử lý...';
+
+
+      if(el('depositStatus')){
+
+        el('depositStatus').textContent=
+          'Máy chủ đang tiếp tục tạo QR...';
+
+      }
+
 
       return;
+
     }
 
+
     remaining-=1;
+
   };
+
 
   draw();
 
+
   walletDepositTimer=
-    setInterval(draw,1000);
+    setInterval(
+      draw,
+      1000
+    );
+
 }
 
-async function handleDepositSubmit(event){
+async function handleDepositSubmit(
+  event
+){
+
   event.preventDefault();
+
 
   const amount=
     sanitizeDepositAmountInput(
       el('depositAmount')
     );
 
-    if(amount<MIN_DEPOSIT_AMOUNT){
-      toast(
-        'Số tiền ít nhất phải trên 50.000 VND.',
-        true
-      );
-    
-      const message=el('depositMessage');
-    
-      if(message){
-        message.textContent=
-          'Số tiền ít nhất phải trên 50.000 VND.';
-    
-        message.className=
-          'wallet-message error';
-      }
-    
-      return;
+
+  /*
+   * MIN 50.000
+   */
+  if(
+    amount<
+    MIN_DEPOSIT_AMOUNT
+  ){
+
+    toast(
+      'Số tiền nạp tối thiểu là 50.000 VND.',
+      true
+    );
+
+
+    const message=
+      el('depositMessage');
+
+
+    if(message){
+
+      message.textContent=
+        'Số tiền nạp tối thiểu là 50.000 VND.';
+
+      message.className=
+        'wallet-message error';
+
     }
+
+
+    return;
+
+  }
+
 
   const button=
     el('createDepositQr');
 
+
   button.disabled=true;
-  button.textContent='Đang tạo QR...';
 
+  button.textContent=
+    'Đang xử lý thanh toán...';
+
+
+  /*
+   * Hiện khu QR.
+   */
   el('depositQrBox')
-    .classList.remove('hidden');
-
-  el('depositProof')
-    .classList.add('hidden');
-
-  el('depositIpNote')
     ?.classList.remove('hidden');
 
-  el('depositStatus').textContent=
-    'Đang tạo QR...';
 
-  el('depositQrImage').innerHTML='';
+  /*
+   * Chưa có QR thì chưa hiện
+   * upload ảnh.
+   */
+  el('depositProof')
+    ?.classList.add('hidden');
 
-  startDepositCountdown(60);
+
+  /*
+   * Chưa có QR thì chưa hiện
+   * lưu ý chuyển khoản.
+   */
+  el('depositIpNote')
+    ?.classList.add('hidden');
+
+
+  if(el('depositStatus')){
+
+    el('depositStatus').textContent=
+      'Đang tạo mã QR thanh toán...';
+
+  }
+
+
+  if(el('depositQrImage')){
+
+    el('depositQrImage').innerHTML='';
+
+  }
+
+
+  /*
+   * Countdown này chỉ là thời gian
+   * chờ tạo QR.
+   */
+  startDepositCountdown(
+    60
+  );
+
 
   try{
+
     const response=
       await fetch(
         WALLET_QR_API_URL,
         {
+
           method:'POST',
 
           headers:{
@@ -545,63 +753,162 @@ async function handleDepositSubmit(event){
 
           body:
             `price=${encodeURIComponent(amount)}`
+
         }
       );
 
+
     if(!response.ok){
-      throw new Error('QR error');
+
+      throw new Error(
+        'QR error'
+      );
+
     }
+
 
     const blob=
       await response.blob();
 
-    if(walletQrObjectUrl){
-      URL.revokeObjectURL(
-        walletQrObjectUrl
-      );
-    }
 
-    walletQrObjectUrl=
-      URL.createObjectURL(blob);
-
-    const image=
-      document.createElement('img');
-
-    image.src=
-      walletQrObjectUrl;
-
-    image.alt=
-      `QR nạp ${fmt(amount)} VND`;
-
-    el('depositQrImage')
-      .appendChild(image);
-
-    el('depositStatus').textContent=
-      'Quét QR để thực hiện chuyển khoản';
-
-    el('depositProof')
-      .classList.remove('hidden');
-
-  }catch{
+    /*
+     * =============================
+     * QR ĐÃ TRẢ VỀ
+     * =============================
+     *
+     * PHẢI DỪNG TIMER NGAY.
+     *
+     * Đây là lỗi file cũ đang thiếu.
+     */
     clearInterval(
       walletDepositTimer
     );
 
     walletDepositTimer=null;
 
-    el('depositStatus').textContent=
-      'Không tạo được QR. Kiểm tra lại máy chủ QR rồi thử lại.';
+
+    /*
+     * Không cần countdown nữa.
+     */
+    el('depositCountdown')
+      ?.classList.add('hidden');
+
+
+    /*
+     * Xóa URL QR cũ.
+     */
+    if(walletQrObjectUrl){
+
+      URL.revokeObjectURL(
+        walletQrObjectUrl
+      );
+
+    }
+
+
+    walletQrObjectUrl=
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const image=
+      document.createElement(
+        'img'
+      );
+
+
+    image.src=
+      walletQrObjectUrl;
+
+
+    image.alt=
+      `QR thanh toán ${fmt(amount)} VND`;
+
+
+    /*
+     * Thêm QR lên màn hình.
+     */
+    el('depositQrImage')
+      ?.replaceChildren(
+        image
+      );
+
+
+    /*
+     * Status sau khi QR đã có.
+     */
+    if(el('depositStatus')){
+
+      el('depositStatus').textContent=
+        'QR thanh toán đã sẵn sàng';
+
+    }
+
+
+    /*
+     * Hiện lưu ý:
+     * KHÔNG SỬA NỘI DUNG CK
+     */
+    el('depositIpNote')
+      ?.classList.remove('hidden');
+
+
+    /*
+     * QUAN TRỌNG:
+     * hiện lại phần upload ảnh
+     * + nút xác nhận.
+     */
+    el('depositProof')
+      ?.classList.remove('hidden');
+
+
+  }catch(error){
+
+    /*
+     * Dừng timer khi lỗi.
+     */
+    clearInterval(
+      walletDepositTimer
+    );
+
+    walletDepositTimer=null;
+
+
+    el('depositCountdown')
+      ?.classList.add('hidden');
+
+
+    if(el('depositStatus')){
+
+      el('depositStatus').textContent=
+        'Không tạo được QR. Vui lòng thử lại.';
+
+    }
+
 
     toast(
-      'Lỗi tạo QR nạp tiền.',
+      'Lỗi tạo QR thanh toán.',
       true
     );
 
+
   }finally{
+
     button.disabled=false;
-    button.textContent='Tạo lại QR';
+
+    /*
+     * Theo yêu cầu của bạn:
+     * không còn
+     * "Đăng ký & lấy QR"
+     */
+    button.textContent=
+      'Thanh toán';
+
   }
+
 }
+
 function confirmDeposit(){
   const amount=sanitizeDepositAmountInput(
     el('depositAmount')
@@ -624,11 +931,19 @@ function confirmDeposit(){
     return;
   }
 
-  if(!el('depositUpload').files.length){
+  if(
+    !el('depositUpload')
+      .files.length
+  ){
+  
     message.textContent=
-      'Bạn cần tải ảnh xác nhận trước.';
-    message.className='wallet-message error';
+      'Vui lòng tải ảnh thanh toán ngân hàng trước khi xác nhận.';
+  
+    message.className=
+      'wallet-message error';
+  
     return;
+  
   }
 
   if(button.dataset.done==='true'){
@@ -670,7 +985,7 @@ function confirmDeposit(){
   renderAll();
 
   message.textContent=
-    `✅ Đã cộng ${fmt(credited)} VND vào tài khoản.`;
+    `✅ Xác nhận thanh toán thành công. Đã cộng ${fmt(credited)} VND vào tài khoản.`;
 
   message.className=
     'wallet-message success';
