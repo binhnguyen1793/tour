@@ -885,7 +885,12 @@ async function handleDepositSubmit(
 
     el('depositCountdown')
       ?.classList.add('hidden');
-
+    
+        el('depositWaitingNote')
+      ?.classList.add('hidden');
+    
+    el('depositTransferNote')
+      ?.classList.add('hidden');
 
     if(el('depositStatus')){
 
