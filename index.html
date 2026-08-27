@@ -472,32 +472,281 @@
 </div>
 
 <!-- Popup nạp tiền và tạo QR -->
-<div id="depositModal" class="modal hidden" aria-hidden="true">
-  <div class="modal-card wallet-modal-card" role="dialog" aria-modal="true" aria-labelledby="depositTitle">
-    <button id="closeDeposit" class="modal-close" type="button" aria-label="Đóng">×</button>
-    <h2 id="depositTitle">🎁 Nạp tiền</h2>
-    <p id="depositOfferText" class="wallet-modal-note">Ưu đãi hôm nay: X3 khoản nạp đầu không giới hạn cho các thẻ nạp từ 1.000.000 VND trở lên.</p>
+<!-- =========================================================
+     POPUP NẠP TIỀN
+     ========================================================= -->
+<div
+  id="depositModal"
+  class="modal hidden"
+  aria-hidden="true"
+>
+  <div
+    class="modal-card wallet-modal-card deposit-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="depositTitle"
+  >
 
-    <form id="depositForm" class="wallet-form">
-      <label for="depositAmount">Số tiền nạp</label>
-      <input id="depositAmount" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="Nhập số tiền muốn nạp" required>
-      <p id="depositBonus" class="deposit-bonus">Nhập số tiền để xem giá trị nhận.</p>
-      <button id="createDepositQr" class="wallet-primary-btn" type="submit">Đăng ký &amp; lấy QR</button>
+    <button
+      id="closeDeposit"
+      class="modal-close"
+      type="button"
+      aria-label="Đóng"
+    >
+      ×
+    </button>
+
+
+    <!-- HEADER -->
+    <div class="deposit-modal-header">
+
+      <div class="deposit-title-icon">
+        💳
+      </div>
+
+      <div>
+        <h2 id="depositTitle">
+          Nạp tiền
+        </h2>
+
+        <p>
+          Thanh toán nhanh bằng mã QR
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ƯU ĐÃI -->
+    <div
+      id="depositOfferText"
+      class="deposit-offer-card"
+    >
+
+      <div class="deposit-offer-head">
+
+        <div class="deposit-offer-gift">
+          🎁
+        </div>
+
+        <div class="deposit-offer-title">
+
+          <small>
+            ƯU ĐÃI HÔM NAY
+          </small>
+
+          <strong>
+            NẠP ĐẦU NHẬN X3
+          </strong>
+
+        </div>
+
+        <div class="deposit-offer-x3">
+          X3
+        </div>
+
+      </div>
+
+
+      <div class="deposit-offer-description">
+
+        Khoản nạp đầu tiên từ
+        <b>1.000.000 VND</b>
+        được nhân
+        <strong>3 lần giá trị</strong>.
+
+      </div>
+
+
+      <div class="deposit-offer-tags">
+
+        <span>
+          ⚡ Nhận nhanh
+        </span>
+
+        <span>
+          🎁 Không giới hạn số tiền
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- FORM NHẬP TIỀN -->
+    <form
+      id="depositForm"
+      class="wallet-form deposit-payment-form"
+    >
+
+      <label for="depositAmount">
+        Số tiền muốn nạp
+      </label>
+
+
+      <div class="deposit-input-wrap">
+
+        <input
+          id="depositAmount"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          autocomplete="off"
+          placeholder="Nhập số tiền muốn nạp"
+          required
+        >
+
+        <span>
+          VND
+        </span>
+
+      </div>
+
+
+      <div class="deposit-minimum">
+        Tối thiểu
+        <b>50.000 VND</b>
+      </div>
+
+
+      <div
+        id="depositBonus"
+        class="deposit-bonus"
+      >
+        Nhập số tiền để xem giá trị nhận.
+      </div>
+
+
+      <button
+        id="createDepositQr"
+        class="wallet-primary-btn deposit-pay-btn"
+        type="submit"
+      >
+        Thanh toán
+      </button>
+
     </form>
 
-    <section id="depositQrBox" class="deposit-qr-box hidden">
-      <p id="depositStatus"><b>Đang tạo QR...</b></p>
-      <div id="depositCountdown" class="deposit-countdown">01:00</div>
-      <p id="depositIpNote" class="deposit-ip-note hidden">* Đang kiểm tra IP để xác minh là lần nạp đầu. Vui lòng không thoát khỏi màn hình đếm ngược.</p>
-      <div id="depositQrImage" class="deposit-qr-image"></div>
 
-      <div id="depositProof" class="deposit-proof hidden">
-        <label for="depositUpload">Ảnh xác nhận chuyển khoản</label>
-        <input id="depositUpload" type="file" accept="image/*">
-        <button id="confirmDeposit" class="wallet-primary-btn" type="button">Đã chuyển khoản</button>
-        <p id="depositMessage" class="wallet-message"></p>
+    <!-- QR -->
+    <section
+      id="depositQrBox"
+      class="deposit-qr-box hidden"
+    >
+
+      <div class="deposit-qr-header">
+
+        <div class="deposit-qr-success-icon">
+          ✓
+        </div>
+
+        <div>
+
+          <strong id="depositStatus">
+            Đang tạo QR...
+          </strong>
+
+          <small>
+            Quét mã bằng ứng dụng ngân hàng
+          </small>
+
+        </div>
+
       </div>
+
+
+      <!--
+        Countdown này chỉ dùng trong lúc
+        ĐANG CHỜ SERVER tạo QR.
+
+        Khi QR trả về sẽ tự ẩn.
+      -->
+      <div
+        id="depositCountdown"
+        class="deposit-countdown hidden"
+      >
+        01:00
+      </div>
+
+
+      <!--
+        Giữ ID cũ để không phá JS.
+        Nội dung mới hoàn toàn.
+      -->
+      <div
+        id="depositIpNote"
+        class="deposit-transfer-note hidden"
+      >
+
+        <span>⚠️</span>
+
+        <p>
+          <b>Lưu ý:</b>
+          Không chỉnh sửa nội dung chuyển khoản
+          được tạo sẵn trong mã QR.
+        </p>
+
+      </div>
+
+
+      <!-- QR SERVER TRẢ VỀ -->
+      <div
+        id="depositQrImage"
+        class="deposit-qr-image"
+      ></div>
+
+
+      <!-- XÁC NHẬN -->
+      <div
+        id="depositProof"
+        class="deposit-proof hidden"
+      >
+
+        <div class="deposit-proof-reminder">
+
+          <span>
+            📸
+          </span>
+
+          <p>
+            Sau khi thanh toán thành công,
+            hãy <b>chụp lại giao dịch ngân hàng</b>
+            và tải ảnh lên bên dưới để xác nhận.
+          </p>
+
+        </div>
+
+
+        <label for="depositUpload">
+          Tải ảnh thanh toán ngân hàng
+        </label>
+
+
+        <input
+          id="depositUpload"
+          type="file"
+          accept="image/*"
+        >
+
+
+        <button
+          id="confirmDeposit"
+          class="wallet-primary-btn confirm-payment-btn"
+          type="button"
+        >
+          Xác nhận thanh toán
+        </button>
+
+
+        <p
+          id="depositMessage"
+          class="wallet-message"
+        ></p>
+
+      </div>
+
     </section>
+
   </div>
 </div>
 
