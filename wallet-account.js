@@ -980,7 +980,25 @@ function confirmDeposit(){
 
   account.balance+=credited;
   account.firstDepositUsed=true;
-
+  /*
+   * Tiền nạp THỰC TẾ tạo ra yêu cầu vòng cược.
+   *
+   * Ví dụ:
+   * nạp 1 triệu nhận X3 = ví +3 triệu
+   * nhưng chỉ phải chơi đủ 1 triệu.
+   */
+  account.withdrawTurnoverRequired=
+    Number(
+      account.withdrawTurnoverRequired||0
+    )+
+    Number(amount);
+  
+  
+  account.withdrawTurnoverCompleted=
+    Number(
+      account.withdrawTurnoverCompleted||0
+    );
+  
   account.walletTransactions.unshift({
     id:`NAP-${Date.now()}`,
     type:'deposit',
@@ -1010,59 +1028,432 @@ function confirmDeposit(){
 }
 
 function walletProfileReady(account){
+
   const profile=
     account?.profile||{};
 
+
   return Boolean(
     profile.fullname&&
+    profile.phone&&
     profile.bank&&
     profile.bankName&&
     profile.bankAccount
   );
+
+}
+
+function walletTurnoverState(account){
+
+  const required=
+    Number(
+      account?.withdrawTurnoverRequired||0
+    );
+
+
+  const completedRaw=
+    Number(
+      account?.withdrawTurnoverCompleted||0
+    );
+
+
+  const completed=
+    Math.min(
+      Math.max(
+        0,
+        completedRaw
+      ),
+      required
+    );
+
+
+  const remaining=
+    Math.max(
+      0,
+      required-completed
+    );
+
+
+  const percent=
+    required>0
+      ? Math.min(
+          100,
+          Math.round(
+            completed/
+            required*
+            100
+          )
+        )
+      : 100;
+
+
+  return{
+    required,
+    completed,
+    remaining,
+    percent,
+    ready:remaining<=0
+  };
+
+}
+
+
+function renderWithdrawRequirements(
+  account
+){
+
+  const turnover=
+    walletTurnoverState(
+      account
+    );
+
+
+  const profileReady=
+    walletProfileReady(
+      account
+    );
+
+
+  /*
+   * ĐIỀU KIỆN 1
+   */
+  const turnoverCard=
+    el('withdrawTurnoverCondition');
+
+
+  if(turnoverCard){
+
+    turnoverCard.classList.toggle(
+      'done',
+      turnover.ready
+    );
+
+
+    turnoverCard.classList.toggle(
+      'waiting',
+      !turnover.ready
+    );
+
+  }
+
+
+  if(el('withdrawTurnoverIcon')){
+
+    el('withdrawTurnoverIcon')
+      .textContent=
+      turnover.ready
+        ? '✓'
+        : '!';
+
+  }
+
+
+  if(el('withdrawTurnoverText')){
+
+    if(turnover.ready){
+
+      el('withdrawTurnoverText')
+        .innerHTML=
+        `
+          <b>
+            Đã hoàn thành vòng cược
+          </b>
+
+          <span>
+            Bạn đã sử dụng đủ số tiền nạp
+            để tham gia trò chơi.
+          </span>
+        `;
+
+    }else{
+
+      el('withdrawTurnoverText')
+        .innerHTML=
+        `
+          <b>
+            Chưa hoàn thành vòng cược
+          </b>
+
+          <span>
+            Tổng tiền cần tham gia:
+            <strong>
+              ${fmt(turnover.required)} VND
+            </strong>
+          </span>
+
+          <span>
+            Đã tham gia:
+            <strong>
+              ${fmt(turnover.completed)} VND
+            </strong>
+          </span>
+
+          <span>
+            Còn cần tham gia:
+            <strong>
+              ${fmt(turnover.remaining)} VND
+            </strong>
+          </span>
+        `;
+
+    }
+
+  }
+
+
+  if(el('withdrawTurnoverProgress')){
+
+    el('withdrawTurnoverProgress')
+      .style.width=
+      `${turnover.percent}%`;
+
+  }
+
+
+  /*
+   * ĐIỀU KIỆN 2
+   */
+  const profileCard=
+    el('withdrawProfileCondition');
+
+
+  if(profileCard){
+
+    profileCard.classList.toggle(
+      'done',
+      profileReady
+    );
+
+
+    profileCard.classList.toggle(
+      'waiting',
+      !profileReady
+    );
+
+  }
+
+
+  if(el('withdrawProfileIcon')){
+
+    el('withdrawProfileIcon')
+      .textContent=
+      profileReady
+        ? '✓'
+        : '!';
+
+  }
+
+
+  if(el('withdrawProfileText')){
+
+    el('withdrawProfileText')
+      .innerHTML=
+      profileReady
+        ? `
+            <b>
+              Hồ sơ nhận tiền đã hoàn tất
+            </b>
+
+            <span>
+              Thông tin tài khoản nhận tiền
+              đã được cập nhật đầy đủ.
+            </span>
+          `
+        : `
+            <b>
+              Hồ sơ nhận tiền chưa hoàn tất
+            </b>
+
+            <span>
+              Vui lòng cập nhật đầy đủ họ tên,
+              số điện thoại và thông tin ngân hàng
+              trước khi rút tiền.
+            </span>
+          `;
+
+  }
+
+
+  /*
+   * Nút sang Account.
+   */
+  el('withdrawProfileButton')
+    ?.classList.toggle(
+      'hidden',
+      profileReady
+    );
+
+
+  /*
+   * Chỉ hiện form rút khi
+   * CẢ HAI điều kiện đều đạt.
+   */
+  const allReady=
+    turnover.ready&&
+    profileReady;
+
+
+  el('withdrawReadyContent')
+    ?.classList.toggle(
+      'hidden',
+      !allReady
+    );
+
+
+  el('withdrawNotReadyMessage')
+    ?.classList.toggle(
+      'hidden',
+      allReady
+    );
+
+
+  if(!allReady){
+    return false;
+  }
+
+
+  /*
+   * =====================================================
+   * ĐỦ ĐIỀU KIỆN
+   * → hiển thị thông tin người nhận
+   * =====================================================
+   */
+
+  const profile=
+    account.profile||{};
+
+
+  if(el('withdrawRecipientName')){
+
+    el('withdrawRecipientName')
+      .textContent=
+      profile.fullname||'';
+
+  }
+
+
+  if(el('withdrawRecipientPhone')){
+
+    el('withdrawRecipientPhone')
+      .textContent=
+      profile.phone||'';
+
+  }
+
+
+  if(el('withdrawRecipientBank')){
+
+    el('withdrawRecipientBank')
+      .textContent=
+      profile.bank||'';
+
+  }
+
+
+  if(el('withdrawRecipientOwner')){
+
+    el('withdrawRecipientOwner')
+      .textContent=
+      profile.bankName||'';
+
+  }
+
+
+  if(el('withdrawRecipientAccount')){
+
+    el('withdrawRecipientAccount')
+      .textContent=
+      profile.bankAccount||'';
+
+  }
+
+
+  if(el('withdrawAvailableBalance')){
+
+    el('withdrawAvailableBalance')
+      .textContent=
+      `${fmt(account.balance)} VND`;
+
+  }
+
+
+  return true;
+
 }
 
 function openWithdraw(){
+
   if(!requireLogin()){
     return;
   }
 
-  const account=user();
 
-  if(!walletProfileReady(account)){
-    toast(
-      'Cần cập nhật hồ sơ ngân hàng trước khi rút.',
-      true
-    );
+  const account=
+    user();
 
-    setTimeout(
-      ()=>goAccount('profile'),
-      700
-    );
 
+  if(!account){
     return;
   }
 
+
   closeDrawer();
+
   hideAccountDropdown();
+
   closeWalletGift();
 
-  el('withdrawAmount').value='';
 
-  el('withdrawAmount').max=
-    String(account.balance||0);
+  /*
+   * Reset input.
+   */
+  if(el('withdrawAmount')){
 
-  el('withdrawMessage').textContent=
-    `Số dư khả dụng: ${fmt(account.balance)} VND`;
+    el('withdrawAmount').value='';
 
-  el('withdrawMessage').className=
-    'wallet-message';
+    el('withdrawAmount').max=
+      String(
+        account.balance||0
+      );
 
-  el('confirmWithdraw').disabled=false;
+  }
 
+
+  if(el('withdrawMessage')){
+
+    el('withdrawMessage')
+      .textContent='';
+
+    el('withdrawMessage')
+      .className=
+      'wallet-message';
+
+  }
+
+
+  if(el('confirmWithdraw')){
+
+    el('confirmWithdraw')
+      .disabled=false;
+
+  }
+
+
+  /*
+   * Mở popup trước,
+   * sau đó cho người dùng nhìn rõ
+   * 2 điều kiện.
+   */
   walletSetModal(
     'withdrawModal',
     true
   );
+
+
+  renderWithdrawRequirements(
+    account
+  );
+
 }
 
 function closeWithdraw(){
@@ -1093,15 +1484,44 @@ function confirmWithdrawRequest(){
     return;
   }
 
-  if(amount<=0){
+  /*
+   * Chặn ở tầng logic,
+   * không chỉ dựa vào giao diện.
+   */
+  const turnover=
+    walletTurnoverState(
+      account
+    );
+  
+  
+  if(
+    !walletProfileReady(account)||
+    !turnover.ready
+  ){
+  
+    renderWithdrawRequirements(
+      account
+    );
+  
     message.textContent=
-      'Vui lòng nhập số tiền muốn rút.';
-
+      'Bạn chưa hoàn thành đủ điều kiện rút tiền.';
+  
     message.className=
       'wallet-message error';
-
+  
     return;
+  
   }
+    
+    if(amount<=0){
+      message.textContent=
+        'Vui lòng nhập số tiền muốn rút.';
+  
+      message.className=
+        'wallet-message error';
+  
+      return;
+    }
 
   if(amount>account.balance){
     message.textContent=
@@ -1339,7 +1759,16 @@ function bindWalletAddon(){
 
   el('giftDepositNow').onclick=
     openDeposit;
-
+  
+  el('withdrawProfileButton')
+  ?.addEventListener(
+    'click',
+    ()=>{
+      window.location.href=
+        'account.html?tab=profile&return=withdraw';
+    }
+  );
+  
   el('closeDeposit').onclick=
     closeDeposit;
 
