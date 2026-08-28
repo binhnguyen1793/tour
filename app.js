@@ -2119,7 +2119,59 @@ function placeDrafts(drafts){
   }
 
   currentUser.balance-=total;
+  /*
+   * =========================================================
+   * CẬP NHẬT ĐIỀU KIỆN VÒNG CƯỢC ĐỂ RÚT TIỀN
+   *
+   * Ví dụ:
+   * Nạp 1.000.000
+   * → phải cược đủ tổng cộng 1.000.000
+   *
+   * Tiền thắng / tiền bonus KHÔNG làm tăng
+   * số tiền phải cược.
+   * =========================================================
+   */
+  
+  currentUser.withdrawTurnoverRequired=
+    Number(
+      currentUser.withdrawTurnoverRequired||0
+    );
+  
+  currentUser.withdrawTurnoverCompleted=
+    Number(
+      currentUser.withdrawTurnoverCompleted||0
+    );
+  
+  
+  const turnoverRemaining=
+    Math.max(
+      0,
+      currentUser.withdrawTurnoverRequired-
+      currentUser.withdrawTurnoverCompleted
+    );
+  
+  
+  /*
+   * Chỉ tính phần cược còn cần thiết.
+   *
+   * Ví dụ:
+   * còn cần cược 200k
+   * nhưng vé này cược 500k
+   * → chỉ cộng tiến độ thêm 200k.
+   *
+   * 300k dư KHÔNG để dành cho lần nạp sau.
+   */
+  const turnoverApplied=
+    Math.min(
+      total,
+      turnoverRemaining
+    );
+  
+  
+  currentUser.withdrawTurnoverCompleted+=
+    turnoverApplied;
 
+  
   const drawDate=nextDrawDate();
   const createdAt=new Date().toISOString();
 
