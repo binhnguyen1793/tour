@@ -607,8 +607,7 @@
       }
 
       /*
-       * Mobile: sidebar trở thành menu xổ dọc.
-       * Mặc định ẩn hoàn toàn sang trái.
+       * MOBILE ACCOUNT DRAWER - 1 CỘT
        */
       .account-sidebar{
         position:fixed;
@@ -617,11 +616,13 @@
         bottom:0;
         z-index:45;
 
-        width:min(82vw,290px);
-        max-width:290px;
+        width:min(82vw,300px);
+        max-width:300px;
+
+        display:block!important;
+        overflow-y:auto;
 
         border-radius:0 12px 12px 0;
-        overflow-y:auto;
 
         transform:translateX(-105%);
         transition:transform .22s ease;
@@ -633,50 +634,144 @@
         transform:translateX(0)
       }
 
+      /*
+       * USER CARD - thông tin nằm ngang
+       */
       .account-user-card{
-        padding:15px 14px
+        width:100%;
+        padding:14px;
+        display:block;
+        background:rgba(0,59,101,.17)
+      }
+
+      .account-user-main{
+        width:100%;
+        display:flex;
+        flex-direction:row;
+        align-items:center;
+        gap:10px
+      }
+
+      .account-user-avatar{
+        width:42px;
+        height:42px;
+        flex:0 0 42px
+      }
+
+      .account-user-main > div:last-child{
+        flex:1;
+        min-width:0
+      }
+
+      .account-user-main strong{
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis
       }
 
       .account-side-balance{
-        display:block;
-        margin-top:12px
+        display:flex!important;
+        align-items:flex-start;
+        justify-content:space-between;
+        gap:10px;
+
+        margin-top:11px;
+        padding-top:10px;
+
+        border-top:1px solid rgba(255,255,255,.18)
       }
 
+      .account-side-balance div{
+        flex:1;
+        margin:0!important;
+
+        display:flex;
+        flex-direction:column;
+        gap:2px
+      }
+
+      .account-side-balance div:last-child{
+        text-align:right
+      }
+
+      /*
+       * MENU - 1 CỘT DỌC
+       */
       .account-menu-group{
-        display:block;
+        width:100%;
+        display:block!important;
         overflow:visible;
-        padding:8px 0
+        padding:7px 0
       }
 
       .account-menu-label{
         display:block;
-        padding:10px 15px 6px;
-        color:rgba(255,255,255,.64);
-        font-size:10px
+        width:100%;
+
+        padding:10px 15px 5px;
+
+        color:rgba(255,255,255,.62);
+        font-size:10px;
+        font-weight:700
       }
 
       .account-menu-btn,
       .account-menu-link{
-        width:100%;
-        min-height:45px;
+        width:100%!important;
+        min-height:44px;
+
         padding:0 15px;
+
+        display:flex!important;
+        flex-direction:row!important;
+        align-items:center;
+
+        gap:10px;
+
         border-radius:0;
-        font-size:13px
+
+        white-space:nowrap;
+        font-size:13px;
+        text-align:left
+      }
+
+      .account-menu-icon{
+        width:23px;
+        flex:0 0 23px;
+        text-align:center
+      }
+
+      .account-menu-btn > span:last-of-type,
+      .account-menu-link > span:last-of-type{
+        flex:1;
+        min-width:0;
+
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis
       }
 
       .account-menu-btn.active{
-        box-shadow:inset 4px 0 0 #6ad4ff;
-        background:rgba(0,54,95,.28)
+        background:rgba(0,54,95,.28);
+        box-shadow:inset 4px 0 0 #6ad4ff
       }
 
       .account-menu-danger{
-        display:inline-grid
+        display:inline-grid;
+        flex:0 0 auto;
+        margin-left:auto
       }
 
+      /*
+       * ĐĂNG XUẤT
+       */
       .account-side-logout{
         display:block;
-        margin:12px 14px 18px;
-        width:calc(100% - 28px)
+
+        width:calc(100% - 28px);
+        height:40px;
+
+        margin:12px 14px 18px
       }
 
       .account-main{
@@ -824,6 +919,7 @@
       <div id="accountPanel" class="account-panel"></div>
     </section>
   </main>
+
   <script>
   (()=>{
     /*
@@ -1807,4 +1903,3 @@
   </script>
 </body>
 </html>
-
