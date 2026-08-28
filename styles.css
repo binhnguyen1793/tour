@@ -3887,3 +3887,230 @@ body.popup-open{
   }
 
 }
+/* =========================================================
+   WITHDRAW - 2 ĐIỀU KIỆN + THÔNG TIN NHẬN TIỀN
+   ========================================================= */
+
+.withdraw-modal-card{
+  width:min(470px,calc(100vw - 28px))!important;
+  max-height:calc(100dvh - 26px)!important;
+  overflow:auto!important;
+  padding:21px!important;
+  border-radius:17px!important;
+}
+
+.withdraw-modal-head{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  margin-bottom:15px;
+  padding-right:25px;
+}
+
+.withdraw-title-icon{
+  width:43px;
+  height:43px;
+  flex:0 0 43px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:linear-gradient(145deg,#34b57a,#168d58);
+  color:#fff;
+  font-size:21px;
+}
+
+.withdraw-modal-head h2{
+  margin:0!important;
+  color:#324459;
+  font-size:21px!important;
+}
+
+.withdraw-modal-head p{
+  margin:3px 0 0;
+  color:#8994a1;
+  font-size:11px;
+}
+
+.withdraw-condition-list{
+  display:grid;
+  gap:9px;
+}
+
+.withdraw-condition-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:37px 1fr;
+  gap:10px;
+  padding:12px;
+  overflow:hidden;
+  border-radius:10px;
+  border:1px solid #e1e7ed;
+}
+
+.withdraw-condition-card.waiting{
+  border-color:#f1c3c7;
+  background:#fff7f7;
+}
+
+.withdraw-condition-card.done{
+  border-color:#bfe6d3;
+  background:#f3fcf8;
+}
+
+.withdraw-condition-icon{
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:#ee5964;
+  color:#fff;
+  font-weight:900;
+}
+
+.withdraw-condition-card.done
+.withdraw-condition-icon{
+  background:#24a66c;
+}
+
+.withdraw-condition-content{
+  display:grid;
+  gap:3px;
+  min-width:0;
+}
+
+.withdraw-condition-content>b{
+  color:#3a4b5e;
+  font-size:13px;
+}
+
+.withdraw-condition-content span{
+  display:block;
+  color:#778595;
+  font-size:11px;
+  line-height:1.45;
+}
+
+.withdraw-condition-content strong{
+  color:#d0582f;
+}
+
+.withdraw-condition-card.done
+.withdraw-condition-content strong{
+  color:#178759;
+}
+
+.withdraw-condition-progress{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:4px;
+  background:#edf0f3;
+}
+
+.withdraw-condition-progress i{
+  display:block;
+  height:100%;
+  background:#3a9df0;
+  transition:width .25s;
+}
+
+.withdraw-profile-btn{
+  width:100%;
+  min-height:42px;
+  margin-top:10px;
+  border:0;
+  border-radius:8px;
+  background:linear-gradient(#4aa2f7,#187edc);
+  color:#fff;
+  font-weight:800;
+}
+
+.withdraw-not-ready{
+  margin-top:10px;
+  padding:9px 10px;
+  border-radius:8px;
+  background:#f2f5f8;
+  color:#7b8795;
+  font-size:11px;
+  text-align:center;
+}
+
+.withdraw-banner-image{
+  display:block;
+  width:100%;
+  max-height:145px;
+  margin:13px auto 10px;
+  object-fit:cover;
+  border-radius:10px;
+}
+
+.withdraw-recipient-card{
+  margin-top:12px;
+  padding:12px;
+  border:1px solid #dfe7ef;
+  border-radius:10px;
+  background:#f9fbfd;
+}
+
+.withdraw-recipient-title{
+  margin-bottom:9px;
+  color:#34475c;
+  font-size:13px;
+  font-weight:800;
+}
+
+.withdraw-info-row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:6px 0;
+  border-bottom:1px dashed #e0e6ec;
+  font-size:11px;
+}
+
+.withdraw-info-row:last-child{
+  border-bottom:0;
+}
+
+.withdraw-info-row span{
+  color:#84909e;
+}
+
+.withdraw-info-row b{
+  color:#3f5063;
+  text-align:right;
+}
+
+.withdraw-info-row.balance{
+  margin-top:4px;
+  padding-top:9px;
+}
+
+.withdraw-info-row.balance strong{
+  color:#1682db;
+  font-size:14px;
+}
+
+.withdraw-form{
+  margin-top:12px;
+}
+
+.withdraw-confirm-btn{
+  background:linear-gradient(
+    135deg,
+    #22ae70,
+    #108e58
+  )!important;
+}
+
+@media(max-width:760px){
+
+  .withdraw-modal-card{
+    width:calc(100vw - 20px)!important;
+    max-height:calc(100dvh - 20px)!important;
+    padding:16px!important;
+  }
+
+}
