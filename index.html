@@ -738,19 +738,260 @@
   </div>
 </div>
 
-<!-- Popup rút tiền -->
-<div id="withdrawModal" class="modal hidden" aria-hidden="true">
-  <div class="modal-card wallet-modal-card" role="dialog" aria-modal="true" aria-labelledby="withdrawTitle">
-    <button id="closeWithdraw" class="modal-close" type="button" aria-label="Đóng">×</button>
-    <h2 id="withdrawTitle">💸 Yêu cầu rút tiền</h2>
-    <p class="wallet-modal-note">Tiền sẽ được giữ lại trong lúc chờ xác minh.</p>
-    <div class="wallet-form">
-      <label for="withdrawAmount">Số tiền muốn rút</label>
-      <input id="withdrawAmount" type="number" min="1" step="1000" placeholder="Nhập số tiền">
-      <button id="confirmWithdraw" class="wallet-primary-btn" type="button">Gửi yêu cầu</button>
-      <p id="withdrawMessage" class="wallet-message"></p>
+<!-- =========================================================
+     POPUP RÚT TIỀN
+     ========================================================= -->
+
+<div
+  id="withdrawModal"
+  class="modal hidden"
+  aria-hidden="true"
+>
+
+  <div
+    class="modal-card wallet-modal-card withdraw-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="withdrawTitle"
+  >
+
+    <button
+      id="closeWithdraw"
+      class="modal-close"
+      type="button"
+      aria-label="Đóng"
+    >
+      ×
+    </button>
+
+
+    <div class="withdraw-modal-head">
+
+      <div class="withdraw-title-icon">
+        💸
+      </div>
+
+      <div>
+
+        <h2 id="withdrawTitle">
+          Rút tiền
+        </h2>
+
+        <p>
+          Kiểm tra điều kiện trước khi gửi yêu cầu
+        </p>
+
+      </div>
+
     </div>
+
+
+    <!-- =====================================================
+         2 ĐIỀU KIỆN
+         ===================================================== -->
+
+    <div class="withdraw-condition-list">
+
+
+      <!-- ĐIỀU KIỆN 1 -->
+
+      <div
+        id="withdrawTurnoverCondition"
+        class="withdraw-condition-card waiting"
+      >
+
+        <div
+          id="withdrawTurnoverIcon"
+          class="withdraw-condition-icon"
+        >
+          !
+        </div>
+
+
+        <div
+          id="withdrawTurnoverText"
+          class="withdraw-condition-content"
+        >
+          <b>
+            Kiểm tra vòng cược
+          </b>
+
+          <span>
+            Đang kiểm tra...
+          </span>
+        </div>
+
+
+        <div class="withdraw-condition-progress">
+          <i
+            id="withdrawTurnoverProgress"
+            style="width:0%"
+          ></i>
+        </div>
+
+      </div>
+
+
+      <!-- ĐIỀU KIỆN 2 -->
+
+      <div
+        id="withdrawProfileCondition"
+        class="withdraw-condition-card waiting"
+      >
+
+        <div
+          id="withdrawProfileIcon"
+          class="withdraw-condition-icon"
+        >
+          !
+        </div>
+
+
+        <div
+          id="withdrawProfileText"
+          class="withdraw-condition-content"
+        >
+          <b>
+            Kiểm tra hồ sơ nhận tiền
+          </b>
+
+          <span>
+            Đang kiểm tra...
+          </span>
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+    <button
+      id="withdrawProfileButton"
+      class="withdraw-profile-btn hidden"
+      type="button"
+    >
+      Hoàn thiện hồ sơ
+    </button>
+
+
+    <div
+      id="withdrawNotReadyMessage"
+      class="withdraw-not-ready"
+    >
+      Hoàn thành cả hai điều kiện trên
+      để tiếp tục rút tiền.
+    </div>
+
+
+    <!-- =====================================================
+         CHỈ HIỆN KHI ĐỦ 2 ĐIỀU KIỆN
+         ===================================================== -->
+
+    <div
+      id="withdrawReadyContent"
+      class="hidden"
+    >
+
+
+      <!--
+        ẢNH BẠN SẼ TỰ TẠO.
+
+        Sau này upload ảnh lên GitHub với tên:
+        withdraw-banner.png
+
+        Nếu chưa có ảnh thì có thể để nguyên.
+      -->
+      <img
+        src="./withdraw-banner.png"
+        alt=""
+        class="withdraw-banner-image"
+        onerror="this.style.display='none'"
+      >
+
+
+      <div class="withdraw-recipient-card">
+
+        <div class="withdraw-recipient-title">
+          Thông tin nhận tiền
+        </div>
+
+
+        <div class="withdraw-info-row">
+          <span>Họ và tên</span>
+          <b id="withdrawRecipientName">--</b>
+        </div>
+
+
+        <div class="withdraw-info-row">
+          <span>Số điện thoại</span>
+          <b id="withdrawRecipientPhone">--</b>
+        </div>
+
+
+        <div class="withdraw-info-row">
+          <span>Ngân hàng</span>
+          <b id="withdrawRecipientBank">--</b>
+        </div>
+
+
+        <div class="withdraw-info-row">
+          <span>Chủ tài khoản</span>
+          <b id="withdrawRecipientOwner">--</b>
+        </div>
+
+
+        <div class="withdraw-info-row">
+          <span>Số tài khoản</span>
+          <b id="withdrawRecipientAccount">--</b>
+        </div>
+
+
+        <div class="withdraw-info-row balance">
+          <span>Số dư khả dụng</span>
+          <strong id="withdrawAvailableBalance">
+            0 VND
+          </strong>
+        </div>
+
+      </div>
+
+
+      <div class="wallet-form withdraw-form">
+
+        <label for="withdrawAmount">
+          Số tiền muốn rút
+        </label>
+
+        <input
+          id="withdrawAmount"
+          type="number"
+          min="1"
+          step="1000"
+          placeholder="Nhập số tiền muốn rút"
+        >
+
+
+        <button
+          id="confirmWithdraw"
+          class="wallet-primary-btn withdraw-confirm-btn"
+          type="button"
+        >
+          Xác nhận rút tiền
+        </button>
+
+
+        <p
+          id="withdrawMessage"
+          class="wallet-message"
+        ></p>
+
+      </div>
+
+    </div>
+
   </div>
+
 </div>
 
 <!-- Thông báo hoạt động -->
