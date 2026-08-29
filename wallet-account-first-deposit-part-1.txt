@@ -1,0 +1,715 @@
+/*
+ * Ph\u1ea7n m\u1edf r\u1ed9ng t\u00e0i kho\u1ea3n + n\u1ea1p/r\u00fat.
+ * \u0110\u1eb7t file n\u00e0y c\u00f9ng th\u01b0 m\u1ee5c v\u1edbi index.html, app.js v\u00e0 styles.css.
+ * N\u1ea1p SAU app.js.
+ */
+const WALLET_QR_API_URL=
+  'https://getting-lane-everyday-locate.trycloudflare.com/run-bot';
+const MIN_DEPOSIT_AMOUNT=50000;
+let walletDepositTimer=null;
+let walletQrObjectUrl='';
+let walletFeedTimer=null;
+
+function walletAccountFromDb(database){
+  const account=database.users?.[username()];
+
+  if(!account){
+    return null;
+  }
+
+  account.balance=Number(account.balance||0);
+  account.profile=account.profile||{};
+  account.walletTransactions=
+    Array.isArray(account.walletTransactions)
+      ? account.walletTransactions
+      : [];
+  account.withdrawals=
+    Array.isArray(account.withdrawals)
+      ? account.withdrawals
+      : [];
+  account.complaints=
+    Array.isArray(account.complaints)
+      ? account.complaints
+      : [];
+
+  account.withdrawTurnoverRequired=
+    Number(account.withdrawTurnoverRequired||0);
+
+  account.withdrawTurnoverCompleted=
+    Number(account.withdrawTurnoverCompleted||0);
+
+  return account;
+}
+
+function goAccount(tab='profile'){
+  if(!requireLogin()){
+    return;
+  }
+
+  window.location.href=
+    `account.html?tab=${encodeURIComponent(tab)}`;
+}
+
+function hideAccountDropdown(){
+  el('accountDropdown')?.classList.add('hidden');
+}
+
+function closeWalletGift(){
+  el('walletGift')?.classList.add('hidden');
+}
+
+function toggleWalletGift(event){
+  event?.stopPropagation();
+
+  if(!requireLogin()){
+    return;
+  }
+
+  const currentUser=user();
+
+  el('walletGiftText').textContent=
+    currentUser?.firstDepositUsed===true
+      ? '\u01afu \u0111\u00e3i kho\u1ea3n n\u1ea1p \u0111\u1ea7u \u0111\u00e3 \u0111\u01b0\u1ee3c s\u1eed d\u1ee5ng'
+      : 'N\u1ea1p t\u1eeb 1 tri\u1ec7u nh\u1eadn x3';
+
+  el('walletGift').classList.toggle('hidden');
+}
+
+function bindWalletAccountButtons(){
+  const shell=
+    el('accountMenuToggle')?.closest('.account-menu-shell');
+
+  el('accountMenuToggle')?.addEventListener(
+    'click',
+    event=>{
+      event.stopPropagation();
+      el('accountDropdown')?.classList.toggle('hidden');
+    }
+  );
+
+  if(shell){
+    let hideTimer;
+
+    shell.onmouseenter=()=>{
+      clearTimeout(hideTimer);
+      el('accountDropdown')?.classList.remove('hidden');
+    };
+
+    shell.onmouseleave=()=>{
+      hideTimer=setTimeout(hideAccountDropdown,220);
+    };
+  }
+
+  document
+    .querySelectorAll('[data-account-tab]')
+    .forEach(button=>{
+      button.onclick=()=>goAccount(button.dataset.accountTab);
+    });
+
+  el('desktopDeposit')?.addEventListener('click',openDeposit);
+  el('desktopWithdraw')?.addEventListener('click',openWithdraw);
+  el('desktopGift')?.addEventListener('click',toggleWalletGift);
+  el('menuDeposit')?.addEventListener('click',openDeposit);
+  el('menuWithdraw')?.addEventListener('click',openWithdraw);
+  el('menuComplaint')?.addEventListener(
+    'click',
+    ()=>goAccount('support')
+  );
+  el('desktopLogout')?.addEventListener('click',logout);
+  el('drawerLogout')?.addEventListener('click',logout);
+
+  el('drawerDeposit')?.addEventListener('click',()=>{
+    closeDrawer();
+    openDeposit();
+  });
+
+  el('drawerWithdraw')?.addEventListener('click',()=>{
+    closeDrawer();
+    openWithdraw();
+  });
+
+  el('drawerAccount')?.addEventListener(
+    'click',
+    ()=>goAccount('profile')
+  );
+}
+
+const baseRenderAccount=renderAccount;
+
+renderAccount=function walletRenderAccount(){
+  baseRenderAccount();
+
+  const currentUser=user();
+
+  const pendingDeposit=
+    walletPendingDepositAmount(
+      currentUser
+    );
+
+  if(!currentUser){
+    closeWalletGift();
+    return;
+  }
+
+  const eligible=currentUser.firstDepositUsed!==true;
+  const desktop=el('desktopAuth');
+
+  desktop.innerHTML=`
+    <div class="desktop-user account-menu-shell">
+
+      <button
+        id="accountMenuToggle"
+        class="account-menu-toggle"
+        type="button"
+      >
+        <span class="account-avatar">\u{1f464}</span>
+
+        <span class="account-summary">
+          <strong>${esc(currentUser.username)}</strong>
+          <em>${fmt(currentUser.balance)} VND</em>
+          ${
+            pendingDeposit>0
+              ? `
+                <small class="wallet-pending-deposit">
+                  ⏳ Đang xác minh: ${fmt(pendingDeposit)} VND
+                </small>
+              `
+              : ''
+          }
+        </span>
+
+        <span class="account-caret">\u25be</span>
+      </button>
+
+      <div
+        id="accountDropdown"
+        class="account-dropdown hidden"
+      >
+        <button
+          type="button"
+          data-account-tab="profile"
+        >
+          H\u1ed3 s\u01a1
+        </button>
+
+        <button
+          type="button"
+          data-account-tab="history"
+        >
+          L\u1ecbch s\u1eed \u0111\u1eb7t c\u01b0\u1ee3c
+        </button>
+
+        <button
+          type="button"
+          data-account-tab="settings"
+        >
+          C\u00e0i \u0111\u1eb7t
+        </button>
+
+        <button
+          id="menuComplaint"
+          type="button"
+        >
+          Khi\u1ebfu n\u1ea1i
+        </button>
+
+        <div class="account-dropdown-wallet">
+          <button
+            id="menuDeposit"
+            type="button"
+          >
+            N\u1ea1p ti\u1ec1n
+          </button>
+
+          <button
+            id="menuWithdraw"
+            type="button"
+          >
+            R\u00fat ti\u1ec1n
+          </button>
+        </div>
+
+        <button
+          id="desktopLogout"
+          class="account-logout"
+          type="button"
+        >
+          \u0110\u0103ng xu\u1ea5t
+        </button>
+      </div>
+
+      <button
+        id="desktopDeposit"
+        class="header-wallet-btn deposit"
+        type="button"
+      >
+        N\u1ea1p
+      </button>
+
+      <button
+        id="desktopWithdraw"
+        class="header-wallet-btn withdraw"
+        type="button"
+      >
+        R\u00fat
+      </button>
+
+      <button
+        id="desktopGift"
+        class="wallet-gift-btn"
+        type="button"
+        aria-label="Qu\u00e0 n\u1ea1p"
+      >
+        \u{1f381}${eligible?'<i>1</i>':''}
+      </button>
+
+    </div>
+  `;
+
+  el('drawerAuth').innerHTML=`
+    <div class="drawer-signed-user">
+
+      <strong>
+        \u{1f464} ${esc(currentUser.username)}
+      </strong>
+
+      ${
+        pendingDeposit>0
+          ? `
+            <div class="drawer-pending-deposit">
+              ⏳ Đang xác minh: ${fmt(pendingDeposit)} VND
+            </div>
+          `
+          : ''
+      }
+
+      <div class="drawer-wallet-actions">
+
+        <button
+          id="drawerDeposit"
+          type="button"
+        >
+          N\u1ea1p
+        </button>
+
+        <button
+          id="drawerWithdraw"
+          type="button"
+        >
+          R\u00fat
+        </button>
+
+      </div>
+
+      <button
+        id="drawerAccount"
+        class="drawer-account-btn"
+        type="button"
+      >
+        T\u00e0i kho\u1ea3n
+      </button>
+
+      <button
+        id="drawerLogout"
+        class="drawer-logout-btn"
+        type="button"
+      >
+        \u0110\u0103ng xu\u1ea5t
+      </button>
+
+    </div>
+  `;
+
+  bindWalletAccountButtons();
+};
+
+function walletSetModal(id,open){
+  const modal=el(id);
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.toggle('hidden',!open);
+  modal.setAttribute(
+    'aria-hidden',
+    String(!open)
+  );
+}
+
+function depositMultiplier(
+  amount,
+  account=user()
+){
+
+  const value=
+    Number(
+      amount||0
+    );
+
+  /*
+   * Chỉ LẦN NẠP ĐẦU mới có ưu đãi.
+   *
+   * Lần nạp đầu:
+   * - dưới 1.000.000 VND = X1
+   * - từ 1.000.000 VND trở lên = X3
+   *
+   * Từ lần nạp thứ 2 trở đi:
+   * - luôn X1
+   */
+  if(
+    account?.firstDepositUsed===true
+  ){
+    return 1;
+  }
+
+  return value>=1000000
+    ? 3
+    : 1;
+
+}
+
+function sanitizeDepositAmountInput(input){
+  const digits=
+    String(input?.value||'')
+      .replace(/\D/g,'')
+      .replace(/^0+(?=\d)/,'');
+
+  if(input){
+    input.value=digits;
+  }
+
+  return Number(digits||0);
+}
+
+function updateDepositBonus(){
+  const amount=
+    Number(
+      el('depositAmount')?.value||0
+    );
+
+  const bonus=el('depositBonus');
+
+  if(!bonus){
+    return;
+  }
+
+  if(amount<=0){
+    bonus.textContent=
+      'Nhập số tiền để xem giá trị nhận.';
+
+    return;
+  }
+
+  const multiplierValue=
+    depositMultiplier(
+      amount,
+      user()
+    );
+
+  const credited=
+    amount*multiplierValue;
+
+  bonus.innerHTML=
+    `Bạn sẽ nhận: <b>${fmt(credited)} VND</b>`;
+}
+
+function resetDepositModal(){
+
+  el('depositForm')?.reset();
+
+
+  /*
+   * Ẩn toàn bộ khu QR
+   * khi mở popup lần đầu.
+   */
+  el('depositQrBox')
+    ?.classList.add('hidden');
+
+
+  el('depositProof')
+    ?.classList.add('hidden');
+
+
+  /*
+   * Reset trạng thái QR.
+   */
+  if(el('depositStatus')){
+
+    el('depositStatus').textContent=
+      'Đang tạo QR...';
+
+  }
+
+
+  /*
+   * Countdown chỉ dùng trong lúc
+   * chờ bot tạo QR.
+   */
+  if(el('depositCountdown')){
+
+    el('depositCountdown').textContent=
+      '01:00';
+
+    el('depositCountdown')
+      .classList.add('hidden');
+
+  }
+
+  el('depositWaitingNote')
+    ?.classList.add('hidden');
+  
+  el('depositTransferNote')
+    ?.classList.add('hidden');
+
+  /*
+   * Xóa QR cũ.
+   */
+  if(el('depositQrImage')){
+
+    el('depositQrImage').innerHTML='';
+
+  }
+
+
+  /*
+   * Reset thông báo.
+   */
+  if(el('depositMessage')){
+
+    el('depositMessage').textContent='';
+
+    el('depositMessage').className=
+      'wallet-message';
+
+  }
+
+
+  /*
+   * Reset nút xác nhận.
+   */
+  if(el('confirmDeposit')){
+
+    el('confirmDeposit').disabled=false;
+
+    el('confirmDeposit').dataset.done=
+      'false';
+
+  }
+
+
+  /*
+   * Nút chính luôn tên là:
+   * THANH TOÁN
+   */
+  if(el('createDepositQr')){
+
+    el('createDepositQr').disabled=false;
+
+    el('createDepositQr').textContent=
+      'Thanh toán';
+
+  }
+
+
+  /*
+   * Dừng timer cũ.
+   */
+  clearInterval(
+    walletDepositTimer
+  );
+
+  walletDepositTimer=null;
+
+
+  /*
+   * Xóa ObjectURL cũ.
+   */
+  if(walletQrObjectUrl){
+
+    URL.revokeObjectURL(
+      walletQrObjectUrl
+    );
+
+    walletQrObjectUrl='';
+
+  }
+
+
+  updateDepositBonus();
+
+}
+
+function openDeposit(){
+
+  if(!requireLogin()){
+    return;
+  }
+
+
+  closeDrawer();
+
+  hideAccountDropdown();
+
+  closeWalletGift();
+
+  resetDepositModal();
+
+
+  /*
+   * Không set textContent cho
+   * depositOfferText nữa.
+   *
+   * Vì phần ưu đãi đã được dựng
+   * đẹp bằng HTML.
+   */
+
+
+  walletSetModal(
+    'depositModal',
+    true
+  );
+
+}
+
+function closeDeposit(){
+  walletSetModal(
+    'depositModal',
+    false
+  );
+
+  resetDepositModal();
+}
+
+function startDepositCountdown(seconds){
+
+  clearInterval(
+    walletDepositTimer
+  );
+
+
+  let remaining=seconds;
+
+  const countdown=
+    el('depositCountdown');
+
+
+  if(countdown){
+
+    countdown
+      .classList.remove('hidden');
+
+  }
+
+
+  const draw=()=>{
+
+    if(!countdown){
+      return;
+    }
+
+
+    const minutes=
+      String(
+        Math.floor(
+          remaining/60
+        )
+      )
+      .padStart(
+        2,
+        '0'
+      );
+
+
+    const secondsPart=
+      String(
+        remaining%60
+      )
+      .padStart(
+        2,
+        '0'
+      );
+
+
+    countdown.textContent=
+      `${minutes}:${secondsPart}`;
+
+
+    /*
+     * Đây KHÔNG phải hạn sử dụng QR.
+     *
+     * Đây chỉ là thời gian dự kiến
+     * chờ máy chủ tạo QR.
+     */
+    if(remaining<=0){
+
+      clearInterval(
+        walletDepositTimer
+      );
+
+      walletDepositTimer=null;
+
+
+      countdown.textContent=
+        'Đang xử lý...';
+
+
+      if(el('depositStatus')){
+
+        el('depositStatus').textContent=
+          'Máy chủ đang tiếp tục tạo QR...';
+
+      }
+
+
+      return;
+
+    }
+
+
+    remaining-=1;
+
+  };
+
+
+  draw();
+
+
+  walletDepositTimer=
+    setInterval(
+      draw,
+      1000
+    );
+
+}
+
+async function handleDepositSubmit(
+  event
+){
+
+  event.preventDefault();
+
+
+  const amount=
+    sanitizeDepositAmountInput(
+      el('depositAmount')
+    );
+
+
+  /*
+   * MIN 50.000
+   */
+  if(
+    amount<
+    MIN_DEPOSIT_AMOUNT
+  ){
+
+    toast(
+      'Số tiền nạp tối thiểu là 50.000 VND.',
+      true
+    );
+
+
+    const message=
+      el('depositMessage');
+

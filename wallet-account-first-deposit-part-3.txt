@@ -1,0 +1,716 @@
+  }
+
+  el('withdrawProfileButton')
+    ?.classList.toggle(
+      'hidden',
+      profileReady
+    );
+
+  const allReady=
+    turnover.ready&&
+    profileReady;
+
+  el('withdrawReadyContent')
+    ?.classList.toggle(
+      'hidden',
+      !allReady
+    );
+
+  el('withdrawNotReadyMessage')
+    ?.classList.toggle(
+      'hidden',
+      allReady
+    );
+
+  if(!allReady){
+    return false;
+  }
+
+  const profile=
+    account.profile||{};
+
+  if(el('withdrawRecipientName')){
+    el('withdrawRecipientName').textContent=
+      profile.fullname||'';
+  }
+
+  if(el('withdrawRecipientPhone')){
+    el('withdrawRecipientPhone').textContent=
+      profile.phone||'';
+  }
+
+  if(el('withdrawRecipientBank')){
+    el('withdrawRecipientBank').textContent=
+      profile.bank||'';
+  }
+
+  if(el('withdrawRecipientOwner')){
+    el('withdrawRecipientOwner').textContent=
+      profile.bankName||'';
+  }
+
+  if(el('withdrawRecipientAccount')){
+    el('withdrawRecipientAccount').textContent=
+      profile.bankAccount||'';
+  }
+
+  if(el('withdrawAvailableBalance')){
+    el('withdrawAvailableBalance').textContent=
+      `${fmt(account.balance)} VND`;
+  }
+
+  return true;
+
+}
+
+
+function openWithdraw(){
+
+  if(!requireLogin()){
+    return;
+  }
+
+  const account=
+    user();
+
+  if(!account){
+    return;
+  }
+
+  closeDrawer();
+  hideAccountDropdown();
+  closeWalletGift();
+
+  if(el('withdrawAmount')){
+    el('withdrawAmount').value='';
+    el('withdrawAmount').max=
+      String(account.balance||0);
+  }
+
+  if(el('withdrawMessage')){
+    el('withdrawMessage').textContent='';
+    el('withdrawMessage').className='wallet-message';
+  }
+
+  if(el('confirmWithdraw')){
+    el('confirmWithdraw').disabled=false;
+  }
+
+  walletSetModal(
+    'withdrawModal',
+    true
+  );
+
+  renderWithdrawRequirements(account);
+
+}
+
+
+function closeWithdraw(){
+  walletSetModal(
+    'withdrawModal',
+    false
+  );
+}
+
+
+function confirmWithdrawRequest(){
+
+  const amount=
+    Number(
+      el('withdrawAmount')?.value||0
+    );
+
+  const message=
+    el('withdrawMessage');
+
+  const database=
+    getDb();
+
+  const account=
+    walletAccountFromDb(database);
+
+  if(!account){
+    closeWithdraw();
+    openAuth('login');
+    return;
+  }
+
+  const turnover=
+    walletTurnoverState(account);
+
+  if(
+    !walletProfileReady(account)||
+    !turnover.ready
+  ){
+    renderWithdrawRequirements(account);
+    message.textContent=
+      'Bạn chưa hoàn thành đủ điều kiện rút tiền.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(amount<=0){
+    message.textContent=
+      'Vui lòng nhập số tiền muốn rút.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  if(amount>account.balance){
+    message.textContent=
+      'Số dư không đủ để tạo yêu cầu.';
+    message.className='wallet-message error';
+    return;
+  }
+
+  account.balance-=amount;
+
+  const request={
+    id:`RUT-${Date.now()}`,
+    amount,
+    status:'pending',
+    createdAt:new Date().toISOString(),
+    profile:{...account.profile}
+  };
+
+  account.withdrawals.unshift(request);
+
+  account.walletTransactions.unshift({
+    id:request.id,
+    type:'withdraw',
+    amount:-amount,
+    status:'pending',
+    createdAt:request.createdAt
+  });
+
+  saveDb(database);
+  renderAll();
+
+  el('confirmWithdraw').disabled=true;
+
+  message.textContent=
+    '✅ Đã gửi yêu cầu. Hệ thống đang xác minh (1–5 phút).';
+
+  message.className='wallet-message success';
+
+  setTimeout(
+    closeWithdraw,
+    1700
+  );
+
+}
+
+function showWalletLiveFeed(){
+  const box=el('liveFeed');
+
+  if(!box){
+    return;
+  }
+
+  /*
+   * Tên mô phỏng:
+   * giữ 3 ký tự đầu + ***
+   */
+  const fakeNames=[
+    'bin***',
+    'nam***',
+    'han***',
+    'min***',
+    'anh***',
+    'hoa***',
+    'duc***',
+    'bao***',
+    'huy***',
+    'lan***',
+    'mai***',
+    'son***',
+    'van***',
+    'yen***',
+    'tuy***',
+    'dat***',
+    'lin***',
+    'thu***',
+    'nga***',
+    'tam***'
+  ];
+
+  const name=
+    fakeNames[
+      Math.floor(
+        Math.random()*fakeNames.length
+      )
+    ];
+
+  /*
+   * Các mức tiền mô phỏng.
+   */
+  const depositValues=[
+    50000,
+    100000,
+    200000,
+    300000,
+    500000,
+    1000000,
+    1500000,
+    2000000,
+    3000000,
+    5000000
+  ];
+
+  const rewardValues=[
+    500000,
+    1000000,
+    1500000,
+    2000000,
+    3000000,
+    5000000,
+    8000000,
+    10000000,
+    13000000,
+    15000000,
+    20000000
+  ];
+
+  const depositMoney=
+    fmt(
+      depositValues[
+        Math.floor(
+          Math.random()*depositValues.length
+        )
+      ]
+    );
+
+  const rewardMoney=
+    fmt(
+      rewardValues[
+        Math.floor(
+          Math.random()*rewardValues.length
+        )
+      ]
+    );
+
+  /*
+   * Nội dung chạy ngẫu nhiên.
+   */
+  const messages=[
+    `🎁 ${name} vừa nhận ưu đãi X3 khoản nạp`,
+    `🎮 ${name} vừa tham gia`,
+    `💰 ${name} vừa nạp ${depositMoney} VND`,
+    `🎯 ${name} vừa đặt cược thành công`,
+    `🎁 ${name} vừa nhận ưu đãi X3 khoản nạp`,
+    `🏆 ${name} vừa nhận ${rewardMoney} VND`
+  ];
+
+  const item=
+    document.createElement('div');
+
+  item.className='feed-item';
+
+  item.textContent=
+    messages[
+      Math.floor(
+        Math.random()*messages.length
+      )
+    ];
+
+  /*
+   * Chỉ được có tối đa 2 dòng.
+   *
+   * Nếu đã đủ 2 dòng thì xóa
+   * dòng cũ nhất trước khi thêm.
+   */
+  while(box.children.length>=2){
+    box.lastElementChild?.remove();
+  }
+
+  /*
+   * Tin mới nằm trên cùng.
+   */
+  box.prepend(item);
+
+  /*
+   * Mỗi thông báo tồn tại 6 giây.
+   */
+  setTimeout(()=>{
+
+    if(!item.isConnected){
+      return;
+    }
+
+    item.classList.add('leaving');
+
+    setTimeout(()=>{
+
+      if(item.isConnected){
+        item.remove();
+      }
+
+    },350);
+
+  },4000);
+}
+
+
+/*
+ * Cứ đúng 5 giây
+ * xuất hiện một thông báo mới.
+ */
+function scheduleNextWalletFeed(){
+  clearTimeout(walletFeedTimer);
+
+  walletFeedTimer=
+    setTimeout(()=>{
+
+      showWalletLiveFeed();
+
+      scheduleNextWalletFeed();
+
+    },3000);
+}
+
+
+/*
+ * Thông báo đầu tiên xuất hiện
+ * sau khoảng 1 giây khi mở trang.
+ */
+setTimeout(()=>{
+
+  showWalletLiveFeed();
+
+  scheduleNextWalletFeed();
+
+},1000);
+
+function bindWalletAddon(){
+  el('closeWalletGift').onclick=
+    closeWalletGift;
+
+  el('giftDepositNow').onclick=
+    openDeposit;
+
+  el('withdrawProfileButton')
+    ?.addEventListener(
+      'click',
+      ()=>{
+        window.location.href=
+          'account.html?tab=profile&return=withdraw';
+      }
+    );
+
+  el('closeDeposit').onclick=
+    closeDeposit;
+
+  el('closeWithdraw').onclick=
+    closeWithdraw;
+
+  el('depositAmount').oninput=
+    event=>{
+      sanitizeDepositAmountInput(
+        event.currentTarget
+      );
+
+      updateDepositBonus();
+    };
+
+  el('depositForm').onsubmit=
+    handleDepositSubmit;
+
+  el('confirmDeposit').onclick=
+    confirmDeposit;
+
+  el('confirmWithdraw').onclick=
+    confirmWithdrawRequest;
+
+  [
+    'depositModal',
+    'withdrawModal'
+  ].forEach(id=>{
+
+    el(id).addEventListener(
+      'click',
+      event=>{
+
+        if(event.target!==el(id)){
+          return;
+        }
+
+        id==='depositModal'
+          ? closeDeposit()
+          : closeWithdraw();
+      }
+    );
+
+  });
+
+  document.addEventListener(
+    'click',
+    event=>{
+
+      if(
+        !event.target.closest(
+          '.account-menu-shell'
+        )
+      ){
+        hideAccountDropdown();
+      }
+
+      if(
+        !event.target.closest(
+          '#walletGift'
+        )&&
+        !event.target.closest(
+          '.wallet-gift-btn'
+        )
+      ){
+        closeWalletGift();
+      }
+
+    }
+  );
+
+  document.addEventListener(
+    'keydown',
+    event=>{
+
+      if(event.key!=='Escape'){
+        return;
+      }
+
+      hideAccountDropdown();
+      closeWalletGift();
+
+      if(
+        !el('depositModal')
+          .classList.contains('hidden')
+      ){
+        closeDeposit();
+      }
+
+      if(
+        !el('withdrawModal')
+          .classList.contains('hidden')
+      ){
+        closeWithdraw();
+      }
+
+    }
+  );
+}
+
+bindWalletAddon();
+renderAccount();
+
+/*
+ * Xử lý ngay các khoản nạp đã đủ thời gian xác minh.
+ */
+processPendingDeposits();
+
+/*
+ * Khi trang đang mở, cứ 3 giây kiểm tra một lần.
+ */
+setInterval(
+  processPendingDeposits,
+  3000
+);
+
+
+/* =========================================
+   POPUP QUẢNG CÁO X3
+   ========================================= */
+
+let x3PromoWaitingForRegister=false;
+
+
+function openX3Promo(){
+  const modal=el('x3PromoModal');
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.remove('hidden');
+
+  modal.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+}
+
+
+function closeX3Promo(){
+  const modal=el('x3PromoModal');
+
+  if(!modal){
+    return;
+  }
+
+  modal.classList.add('hidden');
+
+  modal.setAttribute(
+    'aria-hidden',
+    'true'
+  );
+}
+
+
+/*
+ * Khi bấm:
+ * - vùng nhập tiền
+ * - NHẬN ƯU ĐÃI
+ *
+ * đều chạy cùng một luồng.
+ */
+function claimX3Promotion(){
+
+  closeX3Promo();
+
+  /*
+   * Chưa đăng nhập
+   */
+  if(!user()){
+
+    x3PromoWaitingForRegister=true;
+
+    toast(
+      'Vui lòng đăng ký tài khoản trước khi nạp tiền.',
+      true
+    );
+
+    /*
+     * Mở thẳng màn hình ĐĂNG KÝ,
+     * không mở login.
+     */
+    openAuth('register');
+
+    return;
+  }
+
+
+  /*
+   * Đã có tài khoản
+   * → mở thẳng popup nạp tiền.
+   */
+  openDeposit();
+}
+
+
+/*
+ * Binding
+ */
+
+function bindX3Promo(){
+
+  el('closeX3Promo')
+    ?.addEventListener(
+      'click',
+      event=>{
+
+        event.stopPropagation();
+
+        closeX3Promo();
+
+      }
+    );
+
+
+  el('x3AmountHotspot')
+    ?.addEventListener(
+      'click',
+      claimX3Promotion
+    );
+
+
+  el('x3ClaimHotspot')
+    ?.addEventListener(
+      'click',
+      claimX3Promotion
+    );
+
+
+  /*
+   * Hộp quà nổi:
+   * click → mở lại popup X3.
+   */
+  el('floatingX3Gift')
+    ?.addEventListener(
+      'click',
+      openX3Promo
+    );
+
+
+  /*
+   * Click vùng tối bên ngoài
+   * cũng đóng được.
+   */
+  el('x3PromoModal')
+    ?.addEventListener(
+      'click',
+      event=>{
+
+        if(
+          event.target===
+          el('x3PromoModal')
+        ){
+          closeX3Promo();
+        }
+
+      }
+    );
+
+
+  /*
+   * ESC trên máy tính.
+   */
+  document.addEventListener(
+    'keydown',
+    event=>{
+
+      if(event.key==='Escape'){
+        closeX3Promo();
+      }
+
+    }
+  );
+}
+
+
+bindX3Promo();
+
+
+/*
+ * Khi vừa vào trang:
+ * đợi khoảng 1 giây rồi hiện popup.
+ *
+ * Chỉ tự động chạy 1 lần cho
+ * lần load trang hiện tại.
+ */
+setTimeout(()=>{
+
+  openX3Promo();
+
+},1000);
+
+
+const requestedWalletAction=
+  new URLSearchParams(
+    window.location.search
+  ).get('wallet');
+
+if(
+  requestedWalletAction==='deposit'
+){
+  setTimeout(
+    openDeposit,
+    0
+  );
+}
+
+if(
+  requestedWalletAction==='withdraw'
+){
+  setTimeout(
+    openWithdraw,
+    0
+  );
+}

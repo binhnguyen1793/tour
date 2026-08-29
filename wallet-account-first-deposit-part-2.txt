@@ -1,0 +1,715 @@
+
+    if(message){
+
+      message.textContent=
+        'Số tiền nạp tối thiểu là 50.000 VND.';
+
+      message.className=
+        'wallet-message error';
+
+    }
+
+
+    return;
+
+  }
+
+
+  const button=
+    el('createDepositQr');
+
+
+  button.disabled=true;
+
+  button.textContent=
+    'Đang xử lý thanh toán...';
+
+
+  /*
+   * Hiện khu QR.
+   */
+  el('depositQrBox')
+    ?.classList.remove('hidden');
+
+
+  /*
+   * Chưa có QR thì chưa hiện
+   * upload ảnh.
+   */
+  el('depositProof')
+    ?.classList.add('hidden');
+  /*
+   * Trong lúc bot đang tạo QR:
+   * hiện cảnh báo không rời màn hình.
+   */
+  el('depositWaitingNote')
+    ?.classList.remove('hidden');
+  
+  /*
+   * Chưa có QR thì chưa hiện
+   * cảnh báo nội dung chuyển khoản.
+   */
+  el('depositTransferNote')
+    ?.classList.add('hidden');
+
+
+
+  if(el('depositStatus')){
+
+    el('depositStatus').textContent=
+      'Đang tạo mã QR thanh toán...';
+
+  }
+
+
+  if(el('depositQrImage')){
+
+    el('depositQrImage').innerHTML='';
+
+  }
+
+
+  /*
+   * Countdown này chỉ là thời gian
+   * chờ tạo QR.
+   */
+  startDepositCountdown(
+    60
+  );
+
+
+  try{
+
+    const response=
+      await fetch(
+        WALLET_QR_API_URL,
+        {
+
+          method:'POST',
+
+          headers:{
+            'Content-Type':
+              'application/x-www-form-urlencoded'
+          },
+
+          body:
+            `price=${encodeURIComponent(amount)}`
+
+        }
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        'QR error'
+      );
+
+    }
+
+
+    const blob=
+      await response.blob();
+
+
+    /*
+     * =============================
+     * QR ĐÃ TRẢ VỀ
+     * =============================
+     *
+     * PHẢI DỪNG TIMER NGAY.
+     *
+     * Đây là lỗi file cũ đang thiếu.
+     */
+    clearInterval(
+      walletDepositTimer
+    );
+
+    walletDepositTimer=null;
+
+
+    /*
+     * Không cần countdown nữa.
+     */
+        el('depositCountdown')
+          ?.classList.add('hidden');
+        /*
+     * QR đã có:
+     * không cần cảnh báo chờ nữa.
+     */
+    el('depositWaitingNote')
+      ?.classList.add('hidden');
+    
+    /*
+     * Bây giờ mới hiện lưu ý
+     * không sửa nội dung chuyển khoản.
+     */
+    el('depositTransferNote')
+      ?.classList.remove('hidden');
+
+    /*
+     * Xóa URL QR cũ.
+     */
+    if(walletQrObjectUrl){
+
+      URL.revokeObjectURL(
+        walletQrObjectUrl
+      );
+
+    }
+
+
+    walletQrObjectUrl=
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const image=
+      document.createElement(
+        'img'
+      );
+
+
+    image.src=
+      walletQrObjectUrl;
+
+
+    image.alt=
+      `QR thanh toán ${fmt(amount)} VND`;
+
+
+    /*
+     * Thêm QR lên màn hình.
+     */
+    el('depositQrImage')
+      ?.replaceChildren(
+        image
+      );
+
+
+    /*
+     * Status sau khi QR đã có.
+     */
+    if(el('depositStatus')){
+
+      el('depositStatus').textContent=
+        'QR thanh toán đã sẵn sàng';
+
+    }
+
+
+
+    /*
+     * QUAN TRỌNG:
+     * hiện lại phần upload ảnh
+     * + nút xác nhận.
+     */
+    el('depositProof')
+      ?.classList.remove('hidden');
+
+
+  }catch(error){
+
+    /*
+     * Dừng timer khi lỗi.
+     */
+    clearInterval(
+      walletDepositTimer
+    );
+
+    walletDepositTimer=null;
+
+
+    el('depositCountdown')
+      ?.classList.add('hidden');
+
+
+    if(el('depositStatus')){
+
+      el('depositStatus').textContent=
+        'Không tạo được QR. Vui lòng thử lại.';
+
+    }
+
+
+    toast(
+      'Lỗi tạo QR thanh toán.',
+      true
+    );
+
+
+  }finally{
+
+    button.disabled=false;
+
+    /*
+     * Theo yêu cầu của bạn:
+     * không còn
+     * "Đăng ký & lấy QR"
+     */
+    button.textContent=
+      'Thanh toán';
+
+  }
+
+}
+
+function confirmDeposit(){
+
+  const amount=
+    sanitizeDepositAmountInput(
+      el('depositAmount')
+    );
+
+  const button=
+    el('confirmDeposit');
+
+  const message=
+    el('depositMessage');
+
+
+  if(amount<MIN_DEPOSIT_AMOUNT){
+
+    message.textContent=
+      'Số tiền nạp tối thiểu là 50.000 VND.';
+
+    message.className=
+      'wallet-message error';
+
+    return;
+
+  }
+
+
+  if(
+    !el('depositUpload')
+      ?.files?.length
+  ){
+
+    message.textContent=
+      'Vui lòng tải ảnh thanh toán ngân hàng trước khi xác nhận.';
+
+    message.className=
+      'wallet-message error';
+
+    return;
+
+  }
+
+
+  if(button.dataset.done==='true'){
+    return;
+  }
+
+
+  const database=
+    getDb();
+
+  const account=
+    walletAccountFromDb(
+      database
+    );
+
+
+  if(!account){
+
+    closeDeposit();
+
+    openAuth(
+      'login'
+    );
+
+    return;
+
+  }
+
+
+  const multiplierValue=
+    depositMultiplier(
+      amount,
+      account
+    );
+
+  const credited=
+    amount*
+    multiplierValue;
+
+
+  /*
+   * Ngay khi gửi xác nhận khoản nạp đầu,
+   * quyền ưu đãi lần đầu được xem là đã sử dụng.
+   *
+   * Làm ở đây để người dùng không thể tạo
+   * nhiều giao dịch đang xác minh rồi cùng hưởng X3.
+   */
+  if(
+    account.firstDepositUsed!==true
+  ){
+    account.firstDepositUsed=true;
+  }
+
+
+  /*
+   * CHƯA CỘNG TIỀN.
+   * Chỉ tạo giao dịch đang xác minh.
+   */
+  account.walletTransactions.unshift({
+
+    id:
+      `NAP-${Date.now()}`,
+
+    type:
+      'deposit',
+
+    amount,
+
+    credited,
+
+    bonusMultiplier:
+      multiplierValue,
+
+    status:
+      'verifying',
+
+    createdAt:
+      new Date().toISOString(),
+
+    verifyAt:
+      Date.now()+
+      (2*60*1000)
+
+  });
+
+
+  button.dataset.done=
+    'true';
+
+  button.disabled=
+    true;
+
+
+  saveDb(
+    database
+  );
+
+  renderAll();
+
+
+  message.innerHTML=
+    `
+      ✅ <b>Đã gửi xác nhận thanh toán.</b><br>
+      Hệ thống đang kiểm tra giao dịch.
+      Số tiền sẽ được cập nhật sau khi xác minh hoàn tất.
+    `;
+
+  message.className=
+    'wallet-message success';
+
+
+  /*
+   * Không bắt người dùng đứng chờ ở popup.
+   */
+  setTimeout(
+    closeDeposit,
+    2200
+  );
+
+}
+
+
+function walletPendingDepositAmount(
+  account=user()
+){
+
+  if(!account){
+    return 0;
+  }
+
+
+  return(
+    account.walletTransactions||[]
+  )
+    .filter(
+      item=>
+        item.type==='deposit'&&
+        item.status==='verifying'
+    )
+    .reduce(
+      (total,item)=>
+        total+
+        Number(item.amount||0),
+      0
+    );
+
+}
+
+
+function processPendingDeposits(){
+
+  const database=
+    getDb();
+
+  const account=
+    walletAccountFromDb(
+      database
+    );
+
+
+  if(!account){
+    return;
+  }
+
+
+  const now=
+    Date.now();
+
+  let changed=
+    false;
+
+  let latestCompleted=
+    null;
+
+
+  account.walletTransactions
+    .forEach(
+      transaction=>{
+
+        if(
+          transaction.type!=='deposit'||
+          transaction.status!=='verifying'
+        ){
+          return;
+        }
+
+
+        if(
+          Number(
+            transaction.verifyAt||0
+          )>
+          now
+        ){
+          return;
+        }
+
+
+        const credited=
+          Number(
+            transaction.credited||0
+          );
+
+        const originalAmount=
+          Number(
+            transaction.amount||0
+          );
+
+
+        /*
+         * Đủ thời gian xác minh:
+         * bây giờ mới cộng tiền.
+         */
+        account.balance+=
+          credited;
+
+
+        /*
+         * Vòng cược chỉ tính tiền nạp gốc,
+         * không tính phần X3.
+         */
+        account.withdrawTurnoverRequired=
+          Number(
+            account.withdrawTurnoverRequired||0
+          )+
+          originalAmount;
+
+        account.withdrawTurnoverCompleted=
+          Number(
+            account.withdrawTurnoverCompleted||0
+          );
+
+
+        transaction.status=
+          'completed';
+
+        transaction.completedAt=
+          new Date().toISOString();
+
+
+        latestCompleted=
+          transaction;
+
+        changed=
+          true;
+
+      }
+    );
+
+
+  if(!changed){
+    return;
+  }
+
+
+  saveDb(
+    database
+  );
+
+  renderAll();
+
+
+  if(latestCompleted){
+
+    toast(
+      `✅ Khoản nạp ${fmt(
+        latestCompleted.amount
+      )} VND đã được xác nhận.`
+    );
+
+  }
+
+}
+
+function walletProfileReady(account){
+
+  const profile=
+    account?.profile||{};
+
+  return Boolean(
+    profile.fullname&&
+    profile.phone&&
+    profile.bank&&
+    profile.bankName&&
+    profile.bankAccount
+  );
+
+}
+
+
+function walletTurnoverState(account){
+
+  const required=
+    Number(
+      account?.withdrawTurnoverRequired||0
+    );
+
+  const completedRaw=
+    Number(
+      account?.withdrawTurnoverCompleted||0
+    );
+
+  const completed=
+    Math.min(
+      Math.max(0,completedRaw),
+      required
+    );
+
+  const remaining=
+    Math.max(
+      0,
+      required-completed
+    );
+
+  const percent=
+    required>0
+      ? Math.min(
+          100,
+          Math.round(
+            completed/required*100
+          )
+        )
+      : 100;
+
+  return{
+    required,
+    completed,
+    remaining,
+    percent,
+    ready:remaining<=0
+  };
+
+}
+
+
+function renderWithdrawRequirements(account){
+
+  const turnover=
+    walletTurnoverState(account);
+
+  const profileReady=
+    walletProfileReady(account);
+
+  const turnoverCard=
+    el('withdrawTurnoverCondition');
+
+  if(turnoverCard){
+    turnoverCard.classList.toggle('done',turnover.ready);
+    turnoverCard.classList.toggle('waiting',!turnover.ready);
+  }
+
+  if(el('withdrawTurnoverIcon')){
+    el('withdrawTurnoverIcon').textContent=
+      turnover.ready?'✓':'!';
+  }
+
+  if(el('withdrawTurnoverText')){
+
+    if(turnover.ready){
+      el('withdrawTurnoverText').innerHTML=`
+        <b>Đã hoàn thành vòng cược</b>
+        <span>
+          Bạn đã sử dụng đủ số tiền nạp để tham gia trò chơi.
+        </span>
+      `;
+    }else{
+      el('withdrawTurnoverText').innerHTML=`
+        <b>Chưa hoàn thành vòng cược</b>
+        <span>
+          Tổng tiền cần tham gia:
+          <strong>${fmt(turnover.required)} VND</strong>
+        </span>
+        <span>
+          Đã tham gia:
+          <strong>${fmt(turnover.completed)} VND</strong>
+        </span>
+        <span>
+          Còn cần tham gia:
+          <strong>${fmt(turnover.remaining)} VND</strong>
+        </span>
+      `;
+    }
+  }
+
+  if(el('withdrawTurnoverProgress')){
+    el('withdrawTurnoverProgress').style.width=
+      `${turnover.percent}%`;
+  }
+
+  const profileCard=
+    el('withdrawProfileCondition');
+
+  if(profileCard){
+    profileCard.classList.toggle('done',profileReady);
+    profileCard.classList.toggle('waiting',!profileReady);
+  }
+
+  if(el('withdrawProfileIcon')){
+    el('withdrawProfileIcon').textContent=
+      profileReady?'✓':'!';
+  }
+
+  if(el('withdrawProfileText')){
+    el('withdrawProfileText').innerHTML=
+      profileReady
+        ? `
+            <b>Hồ sơ nhận tiền đã hoàn tất</b>
+            <span>
+              Thông tin tài khoản nhận tiền đã được cập nhật đầy đủ.
+            </span>
+          `
+        : `
+            <b>Hồ sơ nhận tiền chưa hoàn tất</b>
+            <span>
+              Vui lòng cập nhật đầy đủ họ tên, số điện thoại
+              và thông tin ngân hàng trước khi rút tiền.
+            </span>
+          `;
