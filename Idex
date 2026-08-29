@@ -1,0 +1,359 @@
+<!-- =========================================================
+     ĐĂNG NHẬP / ĐĂNG KÝ
+     ========================================================= -->
+<div
+  id="authModal"
+  class="modal hidden"
+  aria-hidden="true"
+>
+  <div
+    class="modal-card auth-modal-card"
+    role="dialog"
+    aria-modal="true"
+  >
+
+    <button
+      id="closeAuth"
+      class="modal-close"
+      type="button"
+      aria-label="Đóng"
+    >
+      ×
+    </button>
+
+
+    <!-- =========================
+         ĐĂNG NHẬP
+         ========================= -->
+    <div id="loginPane">
+
+      <div class="auth-heading">
+        <div class="auth-heading-icon">
+          👤
+        </div>
+
+        <div>
+          <h2>Đăng nhập</h2>
+          <p>
+            Đăng nhập để tiếp tục sử dụng tài khoản
+          </p>
+        </div>
+      </div>
+
+
+      <div class="auth-form">
+
+        <label class="auth-field">
+          <span>Tên đăng nhập</span>
+
+          <div class="auth-input-wrap">
+            <i>👤</i>
+
+            <input
+              id="loginUser"
+              autocomplete="username"
+              placeholder="Nhập tên đăng nhập"
+            >
+          </div>
+        </label>
+
+
+        <label class="auth-field">
+          <span>Mật khẩu</span>
+
+          <div class="auth-input-wrap">
+            <i>🔒</i>
+
+            <input
+              id="loginPass"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Nhập mật khẩu"
+            >
+          </div>
+        </label>
+
+
+        <button
+          id="doLogin"
+          class="auth-main-btn"
+          type="button"
+        >
+          Đăng nhập
+        </button>
+
+
+        <p class="auth-switch">
+          Chưa có tài khoản?
+
+          <button
+            id="showRegister"
+            class="link-btn"
+            type="button"
+          >
+            Đăng ký ngay
+          </button>
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================
+         ĐĂNG KÝ
+         ========================= -->
+    <div
+      id="registerPane"
+      class="hidden"
+    >
+
+      <div class="auth-heading register">
+        <div class="auth-heading-icon">
+          ✦
+        </div>
+
+        <div>
+          <h2>Đăng ký tài khoản</h2>
+
+          <p>
+            Tạo tài khoản nhanh để bắt đầu
+          </p>
+        </div>
+      </div>
+
+
+      <div class="register-note">
+        <span>🎁</span>
+
+        <div>
+          <b>Ưu đãi dành cho thành viên mới</b>
+          <small>
+            Hoàn tất đăng ký để nhận ưu đãi nạp đầu.
+          </small>
+        </div>
+      </div>
+
+
+      <div class="auth-form register-form">
+
+
+        <!-- MÃ GIỚI THIỆU -->
+        <label class="auth-field">
+
+          <span>
+            Mã giới thiệu
+            <em>Không bắt buộc</em>
+          </span>
+
+          <div class="auth-input-wrap">
+            <i>🎟️</i>
+
+            <input
+              id="registerReferral"
+              type="text"
+              autocomplete="off"
+              maxlength="20"
+              placeholder="Nhập mã giới thiệu nếu có"
+            >
+          </div>
+
+        </label>
+
+
+        <!-- USERNAME -->
+        <label class="auth-field">
+
+          <span>
+            Tài khoản thành viên
+            <b>*</b>
+          </span>
+
+          <div class="auth-input-wrap">
+            <i>👤</i>
+
+            <input
+              id="registerUser"
+              type="text"
+              autocomplete="username"
+              maxlength="16"
+              placeholder="Nhập tên tài khoản"
+            >
+          </div>
+
+          <small class="auth-field-help">
+            4–16 ký tự, phải có cả chữ và số.
+          </small>
+
+        </label>
+
+
+        <!-- PASSWORD -->
+        <label class="auth-field">
+
+          <span>
+            Mật khẩu đăng nhập
+            <b>*</b>
+          </span>
+
+          <div class="auth-input-wrap">
+            <i>🔒</i>
+
+            <input
+              id="registerPass"
+              type="password"
+              autocomplete="new-password"
+              maxlength="20"
+              placeholder="Nhập mật khẩu"
+            >
+          </div>
+
+          <small class="auth-field-help">
+            8–20 ký tự, phải có cả chữ và số.
+          </small>
+
+        </label>
+
+
+        <!-- CONFIRM PASSWORD -->
+        <label class="auth-field">
+
+          <span>
+            Xác nhận mật khẩu
+            <b>*</b>
+          </span>
+
+          <div class="auth-input-wrap">
+            <i>🔐</i>
+
+            <input
+              id="registerPassConfirm"
+              type="password"
+              autocomplete="new-password"
+              maxlength="20"
+              placeholder="Nhập lại mật khẩu"
+            >
+          </div>
+
+        </label>
+
+
+        <!-- FULL NAME -->
+        <label class="auth-field">
+
+          <span>
+            Họ và tên
+            <b>*</b>
+          </span>
+
+          <div class="auth-input-wrap">
+            <i>🪪</i>
+
+            <input
+              id="registerFullname"
+              type="text"
+              autocomplete="name"
+              maxlength="60"
+              placeholder="Nhập họ và tên"
+            >
+          </div>
+
+          <small class="auth-field-help">
+            Thông tin này sẽ được lưu vào hồ sơ tài khoản.
+          </small>
+
+        </label>
+
+
+        <!-- CAPTCHA -->
+        <label class="auth-field">
+
+          <span>
+            Mã xác nhận
+            <b>*</b>
+          </span>
+
+
+          <div class="register-captcha-row">
+
+            <div class="auth-input-wrap">
+              <i>✓</i>
+
+              <input
+                id="registerCaptchaInput"
+                type="text"
+                inputmode="numeric"
+                maxlength="4"
+                autocomplete="off"
+                placeholder="Nhập mã"
+              >
+            </div>
+
+
+            <button
+              id="registerCaptchaCode"
+              class="register-captcha-code captcha-box"
+              type="button"
+              title="Bấm để đổi mã"
+            >
+              0000
+            </button>
+
+          </div>
+
+        </label>
+
+
+        <!-- TERMS -->
+        <label class="register-agreement">
+
+          <input
+            id="registerAgree"
+            type="checkbox"
+          >
+
+          <span>
+            Tôi đã đủ tuổi hợp pháp và đồng ý
+            với các điều kiện mở tài khoản.
+          </span>
+
+        </label>
+
+
+        <!-- BUTTONS -->
+        <button
+          id="doRegister"
+          class="auth-main-btn"
+          type="button"
+        >
+          Đăng ký
+        </button>
+
+
+        <button
+          id="resetRegister"
+          class="auth-reset-btn"
+          type="button"
+        >
+          Làm mới
+        </button>
+
+
+        <p class="auth-switch">
+          Đã có tài khoản?
+
+          <button
+            id="showLogin"
+            class="link-btn"
+            type="button"
+          >
+            Đăng nhập
+          </button>
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
