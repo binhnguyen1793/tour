@@ -1,0 +1,36 @@
+/* =========================================================
+   TIỀN NẠP ĐANG XÁC MINH
+   ========================================================= */
+
+.wallet-pending-deposit{
+  display:block;
+
+  margin-top:2px;
+
+  color:#ffd66b;
+
+  font-size:10px;
+
+  line-height:13px;
+
+  font-style:normal;
+
+  font-weight:600;
+}
+
+
+.drawer-pending-deposit{
+  margin:5px 0 8px;
+
+  padding:6px 8px;
+
+  border-radius:6px;
+
+  background:rgba(255,255,255,.13);
+
+  color:#fff2b0;
+
+  font-size:11px;
+
+  line-height:15px;
+}
