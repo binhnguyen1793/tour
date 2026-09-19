@@ -1,0 +1,21 @@
+el('manualInput')?.addEventListener(
+  'input',
+  event=>{
+    const textarea=event.currentTarget;
+
+    // Chỉ cho nhập số, dấu phẩy, khoảng trắng.
+    // Không tự format lại dấu phẩy trong lúc người dùng đang gõ/xóa.
+    const cleaned=textarea.value.replace(/[^0-9,\s]/g,'');
+
+    if(textarea.value!==cleaned){
+      const caret=textarea.selectionStart??cleaned.length;
+      textarea.value=cleaned;
+      textarea.setSelectionRange(
+        Math.min(caret,cleaned.length),
+        Math.min(caret,cleaned.length)
+      );
+    }
+
+    updateSummary();
+  }
+);
