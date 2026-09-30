@@ -1,0 +1,11 @@
+function closeAuth(){
+  const wasRegisterOpen=
+    !el('registerPane').classList.contains('hidden');
+
+  el('authModal').classList.add('hidden');
+
+  if(wasRegisterOpen&&!user()){
+    openX3Promo();
+  }
+}
+
